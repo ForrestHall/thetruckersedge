@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     'Free CDL practice tests for every endorsement — General Knowledge, Air Brakes, HazMat, Doubles & Triples, and more. Study smarter, pass faster.',
 }
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 const endorsementColors: Record<string, string> = {
   'general-knowledge': 'bg-blue-50 text-blue-700 border-blue-200',

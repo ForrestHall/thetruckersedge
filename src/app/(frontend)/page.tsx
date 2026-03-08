@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { ArticleCard } from '@/components/ArticleCard'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 const tools = [
   {

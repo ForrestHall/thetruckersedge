@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     'Honest, experience-based guides on getting your CDL, finding the best trucking companies, owner-operator tips, and advancing your driving career.',
 }
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function GuidesPage() {
   const payload = await getPayload({ config })
