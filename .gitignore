@@ -25,6 +25,10 @@ dist/
 .DS_Store
 Thumbs.db
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 # Logs
 *.log
 npm-debug.log*
