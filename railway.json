@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "mkdir -p /tmp/payload-migrations && npx payload migrate:create --name auto && npx payload migrate && npx next start",
+    "startCommand": "mkdir -p /tmp/payload-migrations && npm run migrate && npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }

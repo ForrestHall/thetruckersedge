@@ -2,10 +2,12 @@
   "name": "thetruckersedge",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "migrate": "payload migrate:create --name auto && payload migrate",
     "generate:types": "payload generate:types",
     "payload": "payload"
   },
