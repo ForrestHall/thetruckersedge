@@ -46,18 +46,10 @@ export default buildConfig({
     dbReady = true
 
     try {
-      const db = payload.db as any
-      const pool = db.pool ?? db.drizzle?.session?.client
-
-      if (!pool) {
-        console.log('[DB Init] Could not access pool, skipping auto-init')
-        return
-      }
-
-      // Check if the users table exists — if not, this is a fresh DB
-      const result = await pool.query(
-        `SELECT to_regclass('public.users') AS tbl`
-      )
+      const { Pool } = await import('pg')
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+      const result = await pool.query(`SELECT to_regclass('public.users') AS tbl`)
+      await pool.end()
       const tableExists = result?.rows?.[0]?.tbl !== null
 
       if (!tableExists) {
