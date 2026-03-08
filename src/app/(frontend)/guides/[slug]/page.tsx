@@ -5,16 +5,17 @@ import config from '@payload-config'
 import { RichText } from '@/components/RichText'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export const revalidate = 3600
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: 'articles',
-    where: { slug: { equals: params.slug }, status: { equals: 'published' } },
+    where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
   })
   const article = docs[0]
@@ -27,11 +28,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Props) {
+  const { slug } = await params
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
     collection: 'articles',
-    where: { slug: { equals: params.slug }, status: { equals: 'published' } },
+    where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
   })
 
@@ -66,7 +68,6 @@ export default async function ArticlePage({ params }: Props) {
         <RichText content={article.content} />
       </div>
 
-      {/* CTA at bottom of every article */}
       <div className="mt-16 bg-brand-navy rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to get your CDL?</h3>
         <p className="text-gray-300 mb-6">Take a free practice test and see where you stand before your exam day.</p>

@@ -5,16 +5,17 @@ import config from '@payload-config'
 import { PracticeTestClient } from '@/components/PracticeTestClient'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export const revalidate = 3600
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: 'practice-tests',
-    where: { slug: { equals: params.slug }, status: { equals: 'published' } },
+    where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
   })
   const test = docs[0]
@@ -27,11 +28,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PracticeTestPage({ params }: Props) {
+  const { slug } = await params
   const payload = await getPayload({ config })
 
   const { docs } = await payload.find({
     collection: 'practice-tests',
-    where: { slug: { equals: params.slug }, status: { equals: 'published' } },
+    where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
   })
 
