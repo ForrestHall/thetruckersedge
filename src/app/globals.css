@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-gray-800 bg-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-brand-yellow text-brand-navy font-semibold rounded-lg hover:bg-brand-yellowDark transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white text-brand-navy font-semibold rounded-lg border-2 border-brand-navy hover:bg-brand-gray transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200;
+  }
+
+  .prose-truckers h2 {
+    @apply text-2xl font-bold text-brand-navy mt-8 mb-4;
+  }
+
+  .prose-truckers h3 {
+    @apply text-xl font-semibold text-brand-navy mt-6 mb-3;
+  }
+
+  .prose-truckers p {
+    @apply text-gray-700 leading-relaxed mb-4;
+  }
+
+  .prose-truckers ul {
+    @apply list-disc list-inside space-y-1 mb-4 text-gray-700;
+  }
+
+  .prose-truckers ol {
+    @apply list-decimal list-inside space-y-1 mb-4 text-gray-700;
+  }
+
+  .prose-truckers a {
+    @apply text-brand-yellow hover:text-brand-yellowDark underline;
+  }
+
+  .prose-truckers strong {
+    @apply font-semibold text-gray-900;
+  }
+}
