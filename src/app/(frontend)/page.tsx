@@ -16,7 +16,7 @@ const tools = [
     href: '/guides',
     icon: '📖',
     title: 'Career Guides',
-    description: 'How to get your CDL, OTR vs local trucking, becoming an owner-operator, and more.',
+    description: 'CDL guides for all 50 states, plus OTR vs local, owner-operator tips, and more.',
   },
   {
     href: '/tools/ifta-calculator',

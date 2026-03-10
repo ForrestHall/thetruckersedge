@@ -14,7 +14,7 @@ const links = {
   ],
   'Career Guides': [
     { href: '/guides', label: 'All Guides' },
-    { href: '/guides/how-to-get-cdl-georgia', label: 'Get Your CDL in Georgia' },
+    { href: '/guides#cdl-by-state', label: 'CDL by State (50 guides)' },
     { href: '/guides/otr-vs-local-trucking', label: 'OTR vs Local Trucking' },
     { href: '/guides/how-to-become-owner-operator', label: 'Become an Owner-Operator' },
   ],

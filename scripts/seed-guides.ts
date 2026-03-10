@@ -62,10 +62,95 @@ function buildContent(blocks: object[]) {
   }
 }
 
+const STATES = [
+  { name: 'Alabama', slug: 'alabama' },
+  { name: 'Alaska', slug: 'alaska' },
+  { name: 'Arizona', slug: 'arizona' },
+  { name: 'Arkansas', slug: 'arkansas' },
+  { name: 'California', slug: 'california' },
+  { name: 'Colorado', slug: 'colorado' },
+  { name: 'Connecticut', slug: 'connecticut' },
+  { name: 'Delaware', slug: 'delaware' },
+  { name: 'Florida', slug: 'florida' },
+  { name: 'Georgia', slug: 'georgia' },
+  { name: 'Hawaii', slug: 'hawaii' },
+  { name: 'Idaho', slug: 'idaho' },
+  { name: 'Illinois', slug: 'illinois' },
+  { name: 'Indiana', slug: 'indiana' },
+  { name: 'Iowa', slug: 'iowa' },
+  { name: 'Kansas', slug: 'kansas' },
+  { name: 'Kentucky', slug: 'kentucky' },
+  { name: 'Louisiana', slug: 'louisiana' },
+  { name: 'Maine', slug: 'maine' },
+  { name: 'Maryland', slug: 'maryland' },
+  { name: 'Massachusetts', slug: 'massachusetts' },
+  { name: 'Michigan', slug: 'michigan' },
+  { name: 'Minnesota', slug: 'minnesota' },
+  { name: 'Mississippi', slug: 'mississippi' },
+  { name: 'Missouri', slug: 'missouri' },
+  { name: 'Montana', slug: 'montana' },
+  { name: 'Nebraska', slug: 'nebraska' },
+  { name: 'Nevada', slug: 'nevada' },
+  { name: 'New Hampshire', slug: 'new-hampshire' },
+  { name: 'New Jersey', slug: 'new-jersey' },
+  { name: 'New Mexico', slug: 'new-mexico' },
+  { name: 'New York', slug: 'new-york' },
+  { name: 'North Carolina', slug: 'north-carolina' },
+  { name: 'North Dakota', slug: 'north-dakota' },
+  { name: 'Ohio', slug: 'ohio' },
+  { name: 'Oklahoma', slug: 'oklahoma' },
+  { name: 'Oregon', slug: 'oregon' },
+  { name: 'Pennsylvania', slug: 'pennsylvania' },
+  { name: 'Rhode Island', slug: 'rhode-island' },
+  { name: 'South Carolina', slug: 'south-carolina' },
+  { name: 'South Dakota', slug: 'south-dakota' },
+  { name: 'Tennessee', slug: 'tennessee' },
+  { name: 'Texas', slug: 'texas' },
+  { name: 'Utah', slug: 'utah' },
+  { name: 'Vermont', slug: 'vermont' },
+  { name: 'Virginia', slug: 'virginia' },
+  { name: 'Washington', slug: 'washington' },
+  { name: 'West Virginia', slug: 'west-virginia' },
+  { name: 'Wisconsin', slug: 'wisconsin' },
+  { name: 'Wyoming', slug: 'wyoming' },
+]
+
+function createStateCdlGuide(stateName: string, slug: string) {
+  return {
+    slug: `how-to-get-cdl-${slug}`,
+    title: `How to Get Your CDL in ${stateName} (2026 Guide)`,
+    relatedEndorsements: ['general-knowledge', 'air-brakes'] as string[],
+    excerpt: `Step-by-step guide to obtaining your Commercial Driver's License in ${stateName}. Covers requirements, testing, and where to find quality training.`,
+    content: buildContent([
+      heading('h2', `${stateName} CDL Requirements`),
+      paragraph(
+        `To get a Commercial Driver's License in ${stateName}, you must be at least 18 years old for intrastate driving or 21 for interstate. You'll need a valid ${stateName} driver's license, pass a medical exam (DOT physical), and complete the required knowledge and skills tests.`
+      ),
+      heading('h2', 'CDL Knowledge Tests'),
+      paragraph(
+        `${stateName} requires you to pass the General Knowledge test at minimum. Depending on the type of vehicle you plan to drive, you may also need Air Brakes, Combination Vehicles, or endorsement-specific tests (HazMat, Passenger, etc.). Each test typically has 50 questions, and you must score at least 80% to pass.`
+      ),
+      heading('h2', 'Skills Test (Behind-the-Wheel)'),
+      paragraph(
+        'The skills test includes a pre-trip inspection, basic vehicle control (backing, turns), and an on-road driving portion. You must provide a vehicle that matches the class of CDL you\'re testing for. Many drivers choose to attend a CDL training school that provides the truck and helps prepare you for all three portions.'
+      ),
+      heading('h2', `CDL Training Schools in ${stateName}`),
+      paragraph(
+        `${stateName} has approved CDL training programs, including community colleges and private trucking schools. Some carriers offer paid training programs where they cover your tuition in exchange for a commitment to drive for them. Contact your state DMV or check their website for a list of approved programs.`
+      ),
+      heading('h2', 'Next Steps'),
+      paragraph(
+        'Start by studying for your General Knowledge test. Use our free practice tests to identify weak areas. Once you pass the written tests, schedule your skills test with an approved tester. Many new drivers find that 3–4 weeks of focused training is enough to pass the CDL exam on the first try.'
+      ),
+    ]),
+  }
+}
+
 const GUIDES = [
   {
     slug: 'how-to-get-cdl-georgia',
     title: 'How to Get Your CDL in Georgia (2026 Guide)',
+    category: 'state' as const,
     relatedEndorsements: ['general-knowledge', 'air-brakes'] as string[],
     excerpt:
       'Step-by-step guide to obtaining your Commercial Driver\'s License in Georgia. Covers requirements, testing, and where to find quality training.',
@@ -95,6 +180,7 @@ const GUIDES = [
   {
     slug: 'otr-vs-local-trucking',
     title: 'OTR vs Local Trucking: Which Is Right for You?',
+    category: 'career' as const,
     relatedEndorsements: [] as string[],
     excerpt:
       'Compare over-the-road and local trucking jobs. Pay, home time, lifestyle, and how to decide which path fits your goals.',
@@ -131,6 +217,7 @@ const GUIDES = [
   {
     slug: 'how-to-become-owner-operator',
     title: 'How to Become an Owner-Operator: A Realistic Guide',
+    category: 'career' as const,
     relatedEndorsements: [] as string[],
     excerpt:
       'What it takes to run your own trucking business. Startup costs, finding loads, and the pros and cons of being your own boss.',
@@ -170,16 +257,21 @@ async function main() {
   try {
     const payload = await getPayload({ config })
 
-    // Ensure "Career Guides" category exists
-    const { docs: categories } = await payload.find({
+    // Ensure categories exist
+    const { docs: careerCats } = await payload.find({
       collection: 'categories',
       where: { slug: { equals: 'career-guides' } },
       limit: 1,
     })
+    const { docs: stateCats } = await payload.find({
+      collection: 'categories',
+      where: { slug: { equals: 'cdl-by-state' } },
+      limit: 1,
+    })
 
     let categoryId: number
-    if (categories.length > 0) {
-      categoryId = categories[0].id
+    if (careerCats.length > 0) {
+      categoryId = careerCats[0].id
       console.log('[seed] Category "Career Guides" already exists.')
     } else {
       const cat = await payload.create({
@@ -192,6 +284,23 @@ async function main() {
       })
       categoryId = cat.id
       console.log('[seed] Category "Career Guides" created.')
+    }
+
+    let stateCategoryId: number
+    if (stateCats.length > 0) {
+      stateCategoryId = stateCats[0].id
+      console.log('[seed] Category "CDL by State" already exists.')
+    } else {
+      const cat = await payload.create({
+        collection: 'categories',
+        data: {
+          name: 'CDL by State',
+          slug: 'cdl-by-state',
+          description: 'State-by-state guides for getting your Commercial Driver\'s License.',
+        },
+      })
+      stateCategoryId = cat.id
+      console.log('[seed] Category "CDL by State" created.')
     }
 
     const now = new Date().toISOString().split('T')[0]
@@ -214,7 +323,7 @@ async function main() {
           title: guide.title,
           slug: guide.slug,
           excerpt: guide.excerpt,
-          category: categoryId,
+          category: guide.category === 'state' ? stateCategoryId : categoryId,
           relatedEndorsements: guide.relatedEndorsements,
           content: guide.content,
           status: 'published',
@@ -225,7 +334,39 @@ async function main() {
       console.log(`[seed] Article "${guide.title}" created.`)
     }
 
-    console.log('[seed] Career guides seeding complete.')
+    // Seed CDL guides for the other 49 states (Georgia already in GUIDES) (Georgia uses custom GUIDES entry above)
+    for (const state of STATES) {
+      if (state.slug === 'georgia') continue // Georgia has custom content in GUIDES
+      const guide = createStateCdlGuide(state.name, state.slug)
+      const existing = await payload.find({
+        collection: 'articles',
+        where: { slug: { equals: guide.slug } },
+        limit: 1,
+      })
+
+      if (existing.docs.length > 0) {
+        console.log(`[seed] Article "${guide.slug}" already exists. Skipping.`)
+        continue
+      }
+
+      await payload.create({
+        collection: 'articles',
+        data: {
+          title: guide.title,
+          slug: guide.slug,
+          excerpt: guide.excerpt,
+          category: stateCategoryId,
+          relatedEndorsements: guide.relatedEndorsements,
+          content: guide.content,
+          status: 'published',
+          publishedAt: now,
+        },
+      })
+
+      console.log(`[seed] Article "${guide.title}" created.`)
+    }
+
+    console.log('[seed] Career guides seeding complete (50 state guides + career guides).')
     process.exit(0)
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
