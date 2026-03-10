@@ -31,9 +31,18 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
     case 'h2': return <h2 key={index}>{children}</h2>
     case 'h3': return <h3 key={index}>{children}</h3>
     case 'h4': return <h4 key={index} className="text-lg font-semibold text-brand-navy mt-5 mb-2">{children}</h4>
+    case 'heading': {
+      const Tag = (node.tag || 'h2') as keyof JSX.IntrinsicElements
+      return React.createElement(Tag, { key: index }, children)
+    }
     case 'ul': return <ul key={index}>{children}</ul>
     case 'ol': return <ol key={index}>{children}</ol>
     case 'li': return <li key={index}>{children}</li>
+    case 'list': {
+      const ListTag = node.listType === 'number' ? 'ol' : 'ul'
+      return React.createElement(ListTag, { key: index }, children)
+    }
+    case 'listitem': return <li key={index}>{children}</li>
     case 'link': {
       const url = node.fields?.url || node.url || '#'
       return (

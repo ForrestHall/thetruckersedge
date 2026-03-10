@@ -3,9 +3,14 @@ import Link from 'next/link'
 const links = {
   'CDL Test Prep': [
     { href: '/practice-tests', label: 'All Practice Tests' },
-    { href: '/practice-tests/cdl-general-knowledge', label: 'General Knowledge' },
-    { href: '/practice-tests/cdl-air-brakes', label: 'Air Brakes' },
-    { href: '/practice-tests/cdl-hazmat', label: 'HazMat' },
+    { href: '/practice-tests/cdl-general-knowledge-practice-test', label: 'General Knowledge' },
+    { href: '/practice-tests/cdl-air-brakes-practice-test', label: 'Air Brakes' },
+    { href: '/practice-tests/cdl-hazmat-practice-test', label: 'HazMat' },
+    { href: '/practice-tests/cdl-combination-vehicles-practice-test', label: 'Combination Vehicles' },
+    { href: '/practice-tests/cdl-doubles-triples-practice-test', label: 'Doubles & Triples' },
+    { href: '/practice-tests/cdl-passenger-practice-test', label: 'Passenger Transport' },
+    { href: '/practice-tests/cdl-school-bus-practice-test', label: 'School Bus' },
+    { href: '/practice-tests/cdl-tank-vehicles-practice-test', label: 'Tank Vehicles' },
   ],
   'Career Guides': [
     { href: '/guides', label: 'All Guides' },

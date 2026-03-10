@@ -45,6 +45,24 @@ export const Articles: CollectionConfig = {
       required: true,
     },
     {
+      name: 'relatedEndorsements',
+      type: 'select',
+      hasMany: true,
+      admin: {
+        description: 'CDL endorsements this guide relates to. Used to show related practice tests and vice versa.',
+      },
+      options: [
+        { label: 'General Knowledge', value: 'general-knowledge' },
+        { label: 'Air Brakes', value: 'air-brakes' },
+        { label: 'HazMat', value: 'hazmat' },
+        { label: 'Combination Vehicles', value: 'combination' },
+        { label: 'Doubles & Triples', value: 'doubles-triples' },
+        { label: 'Passenger Transport', value: 'passenger' },
+        { label: 'School Bus', value: 'school-bus' },
+        { label: 'Tank Vehicles', value: 'tank' },
+      ],
+    },
+    {
       name: 'content',
       type: 'richText',
       required: true,
