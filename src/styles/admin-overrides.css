@@ -1,35 +1,10 @@
-/* Fix admin panel sizing - ensure consistent base */
+/* Minimal admin refinements — scoped to Payload's layer */
 @layer payload {
   html {
     font-size: 16px;
   }
   body {
     font-size: 1rem;
-  }
-}
-
-/* Blog upload / file field improvements */
-@layer payload {
-  /* Upload field dropzone and preview area */
-  [data-field-type='upload'],
-  .field-type--upload,
-  [class*='file-field'],
-  [class*='upload-field'] {
-    min-height: 120px;
-  }
-  /* Lexical upload block / image block in rich text */
-  [class*='UploadBlock'],
-  [class*='upload-block'],
-  [data-lexical-decorator='true'] img {
-    max-width: 100%;
-    border-radius: 6px;
-    display: block;
-  }
-  /* Thumbnail preview consistency */
-  [class*='thumbnail'],
-  [class*='file-preview'] img,
-  [class*='upload'] img {
-    object-fit: cover;
-    border-radius: 4px;
+    line-height: 1.5;
   }
 }
