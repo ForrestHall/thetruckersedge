@@ -10,6 +10,7 @@
   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (reference the Postgres plugin)
   - `PAYLOAD_SECRET` = random 32+ char string from https://generate-secret.vercel.app/32
   - `NEXT_PUBLIC_SERVER_URL` = `https://thetruckersedge.com` (or your Railway URL)
+  - `NODE_ENV` = `development` — **required** so Payload pushes the schema to create tables (Payload only auto-creates tables in non-production)
 
 ## 3. Start Command
 - App **Settings** → Deploy → Start Command should be empty or `npm start`
