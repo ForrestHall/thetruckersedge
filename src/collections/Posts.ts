@@ -77,6 +77,15 @@ export const Posts: CollectionConfig = {
             description: 'Shown under the link in Google results (155 chars max).',
           },
         },
+        {
+          name: 'structuredData',
+          type: 'json',
+          label: 'Structured Data (JSON-LD)',
+          admin: {
+            description:
+              'Paste JSON-LD schema markup (e.g. Article, FAQPage). This will be injected into the page as a <script type="application/ld+json"> tag.',
+          },
+        },
       ],
     },
     {

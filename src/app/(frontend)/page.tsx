@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { ArticleCard } from '@/components/ArticleCard'
+import { PostCard } from '@/components/PostCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,12 +36,21 @@ const tools = [
 export default async function HomePage() {
   const payload = await getPayload({ config })
 
-  const { docs: recentArticles } = await payload.find({
-    collection: 'articles',
-    where: { status: { equals: 'published' } },
-    sort: '-publishedAt',
-    limit: 3,
-  })
+  const [{ docs: recentArticles }, { docs: recentPosts }] = await Promise.all([
+    payload.find({
+      collection: 'articles',
+      where: { status: { equals: 'published' } },
+      sort: '-publishedAt',
+      limit: 3,
+    }),
+    payload.find({
+      collection: 'posts',
+      where: { status: { equals: 'published' } },
+      sort: '-publishedAt',
+      limit: 3,
+      depth: 2,
+    }),
+  ])
 
   return (
     <>
@@ -120,6 +130,32 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Blog */}
+      <section className="py-16 px-4 bg-brand-gray">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-3xl font-bold text-brand-navy">From the Blog</h2>
+            <Link href="/blog" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
+              View all posts →
+            </Link>
+          </div>
+          {recentPosts.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {recentPosts.map((post) => (
+                <PostCard key={post.id} post={post as any} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No posts yet — check back soon!</p>
+              <Link href="/blog" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
+                Go to Blog →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
