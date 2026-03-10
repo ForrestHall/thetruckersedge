@@ -1,0 +1,9 @@
+/* Fix admin panel sizing - ensure consistent base */
+@layer payload {
+  html {
+    font-size: 16px;
+  }
+  body {
+    font-size: 1rem;
+  }
+}
