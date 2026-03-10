@@ -10,11 +10,11 @@
   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (reference the Postgres plugin)
   - `PAYLOAD_SECRET` = random 32+ char string from https://generate-secret.vercel.app/32
   - `NEXT_PUBLIC_SERVER_URL` = `https://thetruckersedge.com` (or your Railway URL)
-  - `NODE_ENV` = `development` — **required** so Payload pushes the schema to create tables (Payload only auto-creates tables in non-production)
 
 ## 3. Start Command
-- App **Settings** → Deploy → Start Command should be empty or `npm start`
-- Do NOT use `npm run migrate` — schema is created automatically via `push: true`
+- Use default from `railway.json`: `NODE_ENV=development npm start`
+- NODE_ENV=development is required at runtime so Payload pushes the schema (only runs in non-production)
+- Do NOT override with `npm run migrate`
 
 ## 4. Deploy
 - Push to GitHub; Railway auto-deploys
