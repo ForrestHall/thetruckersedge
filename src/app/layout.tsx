@@ -1,4 +1,3 @@
-import './globals.css'
 import { RootLayout as PayloadRootLayout } from '@payloadcms/next/layouts'
 import configPromise from '@payload-config'
 import { importMap } from './(payload)/admin/importMap'
