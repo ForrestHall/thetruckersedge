@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npx tsx scripts/init-db.ts && npx tsx scripts/seed-cdl-tests.ts && npx tsx scripts/seed-guides.ts && npm start",
+    "startCommand": "npx tsx scripts/init-db.ts && npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
