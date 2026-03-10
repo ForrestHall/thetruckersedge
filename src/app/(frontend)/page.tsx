@@ -7,6 +7,18 @@ export const dynamic = 'force-dynamic'
 
 const tools = [
   {
+    href: '/practice-tests',
+    icon: '📋',
+    title: 'CDL Practice Tests',
+    description: 'Free practice tests for every CDL endorsement — General Knowledge, Air Brakes, HazMat, and more.',
+  },
+  {
+    href: '/guides',
+    icon: '📖',
+    title: 'Career Guides',
+    description: 'How to get your CDL, OTR vs local trucking, becoming an owner-operator, and more.',
+  },
+  {
     href: '/tools/ifta-calculator',
     icon: '⛽',
     title: 'IFTA Fuel Tax Calculator',
@@ -17,12 +29,6 @@ const tools = [
     icon: '💰',
     title: 'Per Diem Calculator',
     description: 'Find out how much you can deduct as a truck driver per day on the road.',
-  },
-  {
-    href: '/practice-tests',
-    icon: '📋',
-    title: 'CDL Practice Tests',
-    description: 'Free practice tests for every CDL endorsement — General Knowledge, Air Brakes, HazMat, and more.',
   },
 ]
 
@@ -67,7 +73,7 @@ export default async function HomePage() {
       <section className="bg-brand-yellow py-6 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-brand-navy">
           {[
-            { value: '400+', label: 'Practice Questions' },
+            { value: '187', label: 'Practice Questions' },
             { value: 'Free', label: 'No Signup Required' },
             { value: '8', label: 'CDL Endorsements Covered' },
             { value: '11M+', label: 'US Trucking Jobs' },
@@ -80,12 +86,31 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Career Guides */}
+      {recentArticles.length > 0 && (
+        <section className="py-16 px-4 bg-brand-gray">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-10">
+              <h2 className="text-3xl font-bold text-brand-navy">Career Guides</h2>
+              <Link href="/guides" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
+                View all →
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {recentArticles.map((article) => (
+                <ArticleCard key={article.id} article={article as any} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Tools section */}
-      <section className="py-16 px-4 bg-brand-gray">
+      <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-brand-navy mb-3 text-center">Free Trucking Tools</h2>
           <p className="text-gray-500 text-center mb-10">Everything you need to pass your CDL and run a smarter operation.</p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {tools.map((tool) => (
               <Link key={tool.href} href={tool.href} className="card p-6 flex flex-col gap-3">
                 <div className="text-4xl">{tool.icon}</div>
@@ -118,25 +143,6 @@ export default async function HomePage() {
           <p className="text-gray-400 text-xs mt-4">No spam. Unsubscribe any time.</p>
         </div>
       </section>
-
-      {/* Recent articles */}
-      {recentArticles.length > 0 && (
-        <section className="py-16 px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-3xl font-bold text-brand-navy">Latest Guides</h2>
-              <Link href="/guides" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
-                View all →
-              </Link>
-            </div>
-            <div className="grid md:grid-cols-3 gap-6">
-              {recentArticles.map((article) => (
-                <ArticleCard key={article.id} article={article as any} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </>
   )
 }

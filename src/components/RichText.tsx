@@ -32,7 +32,7 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
     case 'h3': return <h3 key={index}>{children}</h3>
     case 'h4': return <h4 key={index} className="text-lg font-semibold text-brand-navy mt-5 mb-2">{children}</h4>
     case 'heading': {
-      const Tag = (node.tag || 'h2') as keyof JSX.IntrinsicElements
+      const Tag = (node.tag || 'h2') as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
       return React.createElement(Tag, { key: index }, children)
     }
     case 'ul': return <ul key={index}>{children}</ul>
