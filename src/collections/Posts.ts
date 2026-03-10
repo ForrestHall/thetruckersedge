@@ -38,6 +38,12 @@ export const Posts: CollectionConfig = {
       name: 'featuredImage',
       type: 'upload',
       relationTo: 'media',
+      admin: {
+        description: 'Main image for the post. Shown in listings and social previews.',
+      },
+      filterOptions: {
+        mimeType: { contains: 'image' },
+      },
     },
     {
       name: 'author',

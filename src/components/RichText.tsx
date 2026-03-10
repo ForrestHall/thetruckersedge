@@ -11,7 +11,13 @@ interface RichTextNode {
   url?: string
   fields?: { url?: string; newTab?: boolean }
   listType?: string
-  value?: { url?: string; alt?: string; width?: number; height?: number }
+  value?: {
+    url?: string
+    alt?: string
+    width?: number
+    height?: number
+    caption?: string
+  }
   relationTo?: string
 }
 
@@ -54,14 +60,20 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
     case 'upload': {
       if (node.value?.url) {
         return (
-          <img
-            key={index}
-            src={node.value.url}
-            alt={node.value.alt || ''}
-            width={node.value.width}
-            height={node.value.height}
-            className="rounded-lg my-6 w-full"
-          />
+          <figure key={index} className="my-8">
+            <img
+              src={node.value.url}
+              alt={node.value.alt || ''}
+              width={node.value.width}
+              height={node.value.height}
+              className="w-full max-w-full rounded-lg object-contain bg-gray-50"
+            />
+            {node.value.caption && (
+              <figcaption className="mt-2 text-sm text-gray-500 text-center">
+                {node.value.caption}
+              </figcaption>
+            )}
+          </figure>
         )
       }
       return null
