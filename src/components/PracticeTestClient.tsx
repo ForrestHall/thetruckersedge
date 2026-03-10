@@ -3,13 +3,13 @@
 import { useState, useCallback } from 'react'
 
 interface Answer {
-  id: string
+  id?: string
   text: string
   correct: boolean
 }
 
 interface Question {
-  id: string
+  id?: string
   question: string
   answers: Answer[]
   explanation?: string | null
@@ -36,11 +36,11 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
   const pct = Math.round((score / questions.length) * 100)
 
   const handleAnswer = useCallback(
-    (answerId: string) => {
+    (answerIdx: number) => {
       if (revealed) return
-      setSelected(answerId)
+      setSelected(String(answerIdx))
       setRevealed(true)
-      const answer = q.answers.find((a) => a.id === answerId)
+      const answer = q.answers[answerIdx]
       const newResults = [...results]
       newResults[current] = answer?.correct ? 'correct' : 'incorrect'
       setResults(newResults)
@@ -102,7 +102,7 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
         {/* Result summary */}
         <div className="mt-8 text-left space-y-2">
           {questions.map((q, i) => (
-            <div key={q.id} className={`flex items-start gap-3 p-3 rounded-lg text-sm ${results[i] === 'correct' ? 'bg-green-50' : 'bg-red-50'}`}>
+            <div key={q.id ?? i} className={`flex items-start gap-3 p-3 rounded-lg text-sm ${results[i] === 'correct' ? 'bg-green-50' : 'bg-red-50'}`}>
               <span className={`font-bold mt-0.5 ${results[i] === 'correct' ? 'text-green-600' : 'text-red-500'}`}>
                 {results[i] === 'correct' ? '✓' : '✗'}
               </span>
@@ -135,12 +135,12 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
         <h2 className="text-xl font-bold text-brand-navy mb-6 leading-snug">{q.question}</h2>
 
         <div className="space-y-3 mb-6">
-          {q.answers.map((answer) => {
+          {q.answers.map((answer, idx) => {
             let style = 'border-gray-200 bg-white hover:border-brand-yellow hover:bg-yellow-50 cursor-pointer'
             if (revealed) {
               if (answer.correct) {
                 style = 'border-green-500 bg-green-50 cursor-default'
-              } else if (selected === answer.id) {
+              } else if (selected === String(idx)) {
                 style = 'border-red-400 bg-red-50 cursor-default'
               } else {
                 style = 'border-gray-200 bg-gray-50 cursor-default opacity-60'
@@ -149,14 +149,14 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
 
             return (
               <button
-                key={answer.id}
-                onClick={() => handleAnswer(answer.id)}
+                key={answer.id ?? idx}
+                onClick={() => handleAnswer(idx)}
                 disabled={revealed}
                 className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-150 font-medium text-gray-800 ${style}`}
               >
                 <span className="flex items-center gap-3">
                   {revealed && answer.correct && <span className="text-green-600 font-bold">✓</span>}
-                  {revealed && selected === answer.id && !answer.correct && (
+                  {revealed && selected === String(idx) && !answer.correct && (
                     <span className="text-red-500 font-bold">✗</span>
                   )}
                   {answer.text}

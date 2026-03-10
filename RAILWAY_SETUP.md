@@ -17,8 +17,8 @@
 
 ## 4. Deploy
 - Push to GitHub; Railway auto-deploys
-- First load may take ~30s while tables are created
-- Then visit `/admin` to create your first user
+- First load may take ~30s: init creates tables, seed adds the CDL General Knowledge test
+- Visit `/practice-tests` to take the test, `/admin` to create your first user
 
 ## 5. If "relation articles does not exist" persists
 - **Start command:** Must be `npx tsx scripts/init-db.ts && npm start`. Check App **Settings** → Deploy → Start Command. Remove any custom override so Railway uses railway.json.

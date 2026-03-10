@@ -56,7 +56,7 @@ export default async function HomePage() {
             <Link href="/practice-tests" className="btn-primary text-lg px-8 py-4">
               Start a Practice Test
             </Link>
-            <Link href="/guides" className="btn-secondary text-lg px-8 py-4 !text-white !border-white hover:!bg-brand-navyLight">
+            <Link href="/guides" className="inline-flex items-center justify-center text-lg px-8 py-4 rounded-lg font-semibold bg-transparent text-white border-2 border-white hover:bg-white hover:text-brand-navy transition-colors duration-200">
               Browse Career Guides
             </Link>
           </div>

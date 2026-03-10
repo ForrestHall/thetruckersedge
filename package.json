@@ -8,6 +8,7 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "migrate": "echo DB init handled by onInit",
+    "seed": "npx tsx scripts/seed-cdl-tests.ts",
     "generate:types": "payload generate:types",
     "payload": "payload"
   },
