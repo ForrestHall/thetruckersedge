@@ -1,0 +1,65 @@
+:root {
+  --gutter-h: calc((20 / 13) * 1rem * 3);
+  --nav-width: 280px;
+}
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gutter-h);
+}
+
+.collection-list__wrap,
+.global-edit {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.field-type {
+  margin-bottom: calc((20 / 13) * 1rem);
+}
+
+.field-type .field-label,
+label {
+  font-weight: 600;
+  margin-bottom: 0.4em;
+}
+
+.field-type input,
+.field-type textarea,
+.field-type select,
+.field-type .rich-text-lexical {
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-m);
+  background: var(--theme-input-bg);
+}
+
+.field-type input:focus,
+.field-type textarea:focus,
+.field-type select:focus {
+  border-color: var(--theme-elevation-400);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--theme-elevation-100);
+}
+
+.field-type textarea {
+  min-height: 120px;
+}
+
+.field-type .field-description {
+  opacity: 0.7;
+  font-size: 0.85em;
+  margin-top: 0.3em;
+}
+
+.upload__wrapper {
+  border: 2px dashed var(--theme-elevation-200);
+  border-radius: var(--style-radius-m);
+  padding: calc((20 / 13) * 1rem * 2);
+  text-align: center;
+  transition: border-color 150ms;
+}
+
+.upload__wrapper:hover {
+  border-color: var(--theme-elevation-400);
+}
