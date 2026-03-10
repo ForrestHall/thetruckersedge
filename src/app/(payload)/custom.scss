@@ -1,65 +1,45 @@
-:root {
-  --gutter-h: calc((20 / 13) * 1rem * 3);
-  --nav-width: 280px;
-}
+/* Admin panel refinements — no :root overrides to avoid breaking Payload layout */
 
 .dashboard {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--gutter-h);
 }
 
-.collection-list__wrap,
-.global-edit {
+.collection-list__wrap {
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* Field visibility */
 .field-type {
-  margin-bottom: calc((20 / 13) * 1rem);
+  margin-bottom: var(--base);
 }
 
-.field-type .field-label,
-label {
-  font-weight: 600;
-  margin-bottom: 0.4em;
-}
-
-.field-type input,
+.field-type input:not([type='checkbox']):not([type='radio']),
 .field-type textarea,
-.field-type select,
-.field-type .rich-text-lexical {
+.field-type select {
   border: 1px solid var(--theme-elevation-150);
-  border-radius: var(--style-radius-m);
-  background: var(--theme-input-bg);
+  border-radius: var(--style-radius-s);
 }
 
-.field-type input:focus,
+.field-type input:focus:not([type='checkbox']):not([type='radio']),
 .field-type textarea:focus,
 .field-type select:focus {
   border-color: var(--theme-elevation-400);
-  outline: none;
   box-shadow: 0 0 0 2px var(--theme-elevation-100);
 }
 
 .field-type textarea {
-  min-height: 120px;
+  min-height: 100px;
 }
 
-.field-type .field-description {
-  opacity: 0.7;
-  font-size: 0.85em;
-  margin-top: 0.3em;
-}
-
-.upload__wrapper {
+/* Upload dropzone */
+.file-field__upload {
   border: 2px dashed var(--theme-elevation-200);
   border-radius: var(--style-radius-m);
-  padding: calc((20 / 13) * 1rem * 2);
-  text-align: center;
+  padding: var(--base);
   transition: border-color 150ms;
 }
-
-.upload__wrapper:hover {
+.file-field__upload:hover {
   border-color: var(--theme-elevation-400);
 }
