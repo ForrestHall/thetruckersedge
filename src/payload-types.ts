@@ -242,6 +242,9 @@ export interface Post {
    * Short description for listing pages and search (150–160 chars).
    */
   excerpt: string;
+  /**
+   * Main image for the post. Shown in listings and social previews.
+   */
   featuredImage?: (number | null) | Media;
   /**
    * Who wrote this post.
