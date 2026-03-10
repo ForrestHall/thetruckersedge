@@ -6,8 +6,9 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/(frontend)/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  important: '.frontend-app',
   corePlugins: {
-    preflight: false, // Preflight resets conflict with Payload admin
+    preflight: false,
   },
   theme: {
     extend: {
