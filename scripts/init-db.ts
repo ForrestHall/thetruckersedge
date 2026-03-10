@@ -2,7 +2,7 @@
  * Run before npm start on first deploy. Triggers Payload schema push (creates tables).
  * Uses NODE_ENV=development so pushDevSchema runs.
  */
-process.env.NODE_ENV = 'development'
+;(process.env as Record<string, string | undefined>).NODE_ENV = 'development'
 
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
