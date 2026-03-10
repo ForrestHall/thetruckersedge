@@ -28,10 +28,9 @@ export default buildConfig({
   editor: lexicalEditor({}),
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL?.includes('supabase')
-        ? `${process.env.DATABASE_URL}${process.env.DATABASE_URL?.includes('?') ? '&' : '?'}sslmode=require`
-        : process.env.DATABASE_URL,
+      connectionString: process.env.DATABASE_URL,
     },
+    push: true,
   }),
   secret: process.env.PAYLOAD_SECRET || 'change-me-in-production',
   typescript: {
@@ -49,11 +48,7 @@ export default buildConfig({
 
     try {
       const { Pool } = await import('pg')
-      const connStr = process.env.DATABASE_URL
-      const url = connStr?.includes('supabase')
-        ? `${connStr}${connStr?.includes('?') ? '&' : '?'}sslmode=require`
-        : connStr
-      const pool = new Pool({ connectionString: url })
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL })
       const result = await pool.query(`SELECT to_regclass('public.users') AS tbl`)
       await pool.end()
       const tableExists = result?.rows?.[0]?.tbl !== null
