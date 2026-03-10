@@ -5,17 +5,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @layer base {
-  /* Minimal base—preflight disabled to avoid Payload admin conflicts */
-  *, *::before, *::after {
+  /* Scoped to .frontend-app so admin panel is never affected */
+  .frontend-app {
+    @apply text-gray-800;
+  }
+  .frontend-app *,
+  .frontend-app *::before,
+  .frontend-app *::after {
     box-sizing: border-box;
   }
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    @apply text-gray-800 bg-white m-0;
-  }
-  h1, h2, h3, h4, h5, h6 {
+  .frontend-app h1,
+  .frontend-app h2,
+  .frontend-app h3,
+  .frontend-app h4,
+  .frontend-app h5,
+  .frontend-app h6 {
     @apply font-heading font-bold;
   }
 }
