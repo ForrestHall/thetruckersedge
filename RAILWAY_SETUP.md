@@ -10,6 +10,7 @@
   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (reference the Postgres plugin)
   - `PAYLOAD_SECRET` = random 32+ char string from https://generate-secret.vercel.app/32
   - `NEXT_PUBLIC_SERVER_URL` = `https://thetruckersedge.com` (or your Railway URL)
+- **Do NOT add `NODE_ENV`** — it breaks the build. The start command sets it for runtime.
 
 ## 3. Start Command
 - Use default from `railway.json`: `NODE_ENV=development npm start`
