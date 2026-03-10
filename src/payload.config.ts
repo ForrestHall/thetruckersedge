@@ -7,6 +7,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Articles } from './collections/Articles'
+import { Posts } from './collections/Posts'
 import { PracticeTests } from './collections/PracticeTests'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
@@ -21,7 +22,7 @@ export default buildConfig({
       titleSuffix: '— The Truckers Edge',
     },
   },
-  collections: [Articles, PracticeTests, Categories, Media, Users],
+  collections: [Articles, Posts, PracticeTests, Categories, Media, Users],
   editor: lexicalEditor({}),
   db: postgresAdapter({
     pool: {

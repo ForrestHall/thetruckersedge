@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     articles: Article;
+    posts: Post;
     'practice-tests': PracticeTest;
     categories: Category;
     media: Media;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     'practice-tests': PracticeTestsSelect<false> | PracticeTestsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -124,7 +126,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Blog posts and career guides for truckers.
+ * Career guides and CDL-by-state content.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
@@ -142,6 +144,21 @@ export interface Article {
   excerpt: string;
   featuredImage?: (number | null) | Media;
   category: number | Category;
+  /**
+   * CDL endorsements this guide relates to. Used to show related practice tests and vice versa.
+   */
+  relatedEndorsements?:
+    | (
+        | 'general-knowledge'
+        | 'air-brakes'
+        | 'hazmat'
+        | 'combination'
+        | 'doubles-triples'
+        | 'passenger'
+        | 'school-bus'
+        | 'tank'
+      )[]
+    | null;
   content: {
     root: {
       type: string;
@@ -209,6 +226,85 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Blog posts — news, tips, and updates for truckers.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * URL slug (e.g. "best-truck-stops-2026")
+   */
+  slug: string;
+  /**
+   * Short description for listing pages and search (150–160 chars).
+   */
+  excerpt: string;
+  featuredImage?: (number | null) | Media;
+  /**
+   * Who wrote this post.
+   */
+  author?: (number | null) | User;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  seo?: {
+    /**
+     * Overrides the page title in search results (60 chars max).
+     */
+    metaTitle?: string | null;
+    /**
+     * Shown under the link in Google results (155 chars max).
+     */
+    metaDescription?: string | null;
+  };
+  publishedAt?: string | null;
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
  * CDL practice tests grouped by endorsement type.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -257,32 +353,6 @@ export interface PracticeTest {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -308,6 +378,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'practice-tests';
@@ -377,6 +451,30 @@ export interface ArticlesSelect<T extends boolean = true> {
   excerpt?: T;
   featuredImage?: T;
   category?: T;
+  relatedEndorsements?: T;
+  content?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  publishedAt?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  featuredImage?: T;
+  author?: T;
   content?: T;
   seo?:
     | T

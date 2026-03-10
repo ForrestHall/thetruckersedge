@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
-export const Articles: CollectionConfig = {
-  slug: 'articles',
+export const Posts: CollectionConfig = {
+  slug: 'posts',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'category', 'status', 'publishedAt'],
-    description: 'Career guides and CDL-by-state content.',
+    defaultColumns: ['title', 'author', 'status', 'publishedAt'],
+    description: 'Blog posts — news, tips, and updates for truckers.',
     group: 'Content',
   },
   versions: {
@@ -23,7 +23,7 @@ export const Articles: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'URL slug (e.g. "how-to-get-cdl-georgia")',
+        description: 'URL slug (e.g. "best-truck-stops-2026")',
       },
     },
     {
@@ -31,7 +31,7 @@ export const Articles: CollectionConfig = {
       type: 'textarea',
       required: true,
       admin: {
-        description: 'Short description shown on listing pages and in Google search results (150–160 chars).',
+        description: 'Short description for listing pages and search (150–160 chars).',
       },
     },
     {
@@ -40,28 +40,12 @@ export const Articles: CollectionConfig = {
       relationTo: 'media',
     },
     {
-      name: 'category',
+      name: 'author',
       type: 'relationship',
-      relationTo: 'categories',
-      required: true,
-    },
-    {
-      name: 'relatedEndorsements',
-      type: 'select',
-      hasMany: true,
+      relationTo: 'users',
       admin: {
-        description: 'CDL endorsements this guide relates to. Used to show related practice tests and vice versa.',
+        description: 'Who wrote this post.',
       },
-      options: [
-        { label: 'General Knowledge', value: 'general-knowledge' },
-        { label: 'Air Brakes', value: 'air-brakes' },
-        { label: 'HazMat', value: 'hazmat' },
-        { label: 'Combination Vehicles', value: 'combination' },
-        { label: 'Doubles & Triples', value: 'doubles-triples' },
-        { label: 'Passenger Transport', value: 'passenger' },
-        { label: 'School Bus', value: 'school-bus' },
-        { label: 'Tank Vehicles', value: 'tank' },
-      ],
     },
     {
       name: 'content',

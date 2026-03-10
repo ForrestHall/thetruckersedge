@@ -18,6 +18,9 @@ const links = {
     { href: '/guides/otr-vs-local-trucking', label: 'OTR vs Local Trucking' },
     { href: '/guides/how-to-become-owner-operator', label: 'Become an Owner-Operator' },
   ],
+  'Blog': [
+    { href: '/blog', label: 'All Posts' },
+  ],
   'Free Tools': [
     { href: '/tools', label: 'All Tools' },
     { href: '/tools/ifta-calculator', label: 'IFTA Calculator' },
