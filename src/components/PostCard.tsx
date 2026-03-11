@@ -9,7 +9,7 @@ interface PostCardProps {
     excerpt?: string | null
     publishedAt?: string | null
     author?: { name?: string } | string | number | null
-    featuredImage?: { url?: string | null } | number | null
+    featuredImage?: { url?: string | null; alt?: string } | number | null
   }
 }
 
