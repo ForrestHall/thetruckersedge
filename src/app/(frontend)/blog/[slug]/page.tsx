@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { HtmlContent } from '@/components/HtmlContent'
 import { RichText } from '@/components/RichText'
+import { getMediaUrl } from '@/lib/media'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -70,15 +71,19 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </div>
 
-      {post.featuredImage && typeof post.featuredImage === 'object' && post.featuredImage?.url && (
-        <div className="aspect-video overflow-hidden rounded-lg mb-8">
-          <img
-            src={post.featuredImage.url}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+      {(() => {
+        const media = post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage : null
+        const imgUrl = media?.url ? getMediaUrl(media.url) : null
+        return imgUrl ? (
+          <div className="aspect-video overflow-hidden rounded-lg mb-8">
+            <img
+              src={imgUrl}
+              alt={media?.alt ?? ''}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : null
+      })()}
 
       <div className="prose-truckers">
         {typeof post.content === 'string' && !(post.content as string).trim().startsWith('{') ? (

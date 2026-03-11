@@ -16,7 +16,7 @@ export function Header() {
   return (
     <header className="bg-brand-navy text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2 font-extrabold text-xl">
+        <Link href="/" className="flex items-center gap-2 font-extrabold text-xl no-underline hover:no-underline">
           <span className="text-brand-yellow">🚛</span>
           <span>
             The Truckers<span className="text-brand-yellow">Edge</span>
@@ -29,12 +29,12 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-300 hover:text-white font-medium transition-colors"
+              className="text-gray-300 hover:text-white font-medium transition-colors no-underline hover:no-underline"
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/practice-tests" className="btn-primary !px-4 !py-2 text-sm">
+          <Link href="/practice-tests" className="btn-primary !px-4 !py-2 text-sm no-underline hover:no-underline">
             Start a Free Test
           </Link>
         </nav>
@@ -62,13 +62,13 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-200 hover:text-white font-medium py-2"
+              className="text-gray-200 hover:text-white font-medium py-2 no-underline hover:no-underline"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/practice-tests" className="btn-primary text-center" onClick={() => setMobileOpen(false)}>
+          <Link href="/practice-tests" className="btn-primary text-center no-underline hover:no-underline" onClick={() => setMobileOpen(false)}>
             Start a Free Test
           </Link>
         </div>

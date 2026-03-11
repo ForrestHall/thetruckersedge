@@ -113,6 +113,12 @@
   .prose-truckers a:hover {
     color: #d4911e;
   }
+  .frontend-app header a {
+    text-decoration: none;
+  }
+  .frontend-app header a:hover {
+    text-decoration: none;
+  }
   .prose-truckers strong {
     font-weight: 600;
     color: #111827;
