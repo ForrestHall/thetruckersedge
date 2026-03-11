@@ -1,5 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+}
+
 export const Posts: CollectionConfig = {
   slug: 'posts',
   admin: {
@@ -11,6 +20,16 @@ export const Posts: CollectionConfig = {
   versions: {
     drafts: true,
   },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        if (data.title && (!data.slug || data.slug.trim() === '')) {
+          data.slug = slugify(data.title)
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'title',
@@ -20,10 +39,9 @@ export const Posts: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
-      required: true,
       unique: true,
       admin: {
-        description: 'URL slug (e.g. "best-truck-stops-2026")',
+        description: 'Auto-generated from title. Leave blank to generate from title.',
       },
     },
     {
@@ -55,8 +73,12 @@ export const Posts: CollectionConfig = {
     },
     {
       name: 'content',
-      type: 'richText',
+      type: 'code',
       required: true,
+      admin: {
+        language: 'html',
+        description: 'Paste or write HTML for the post body.',
+      },
     },
     {
       name: 'seo',

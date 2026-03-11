@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { HtmlContent } from '@/components/HtmlContent'
 import { RichText } from '@/components/RichText'
 
 interface Props {
@@ -80,7 +81,11 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       <div className="prose-truckers">
-        <RichText content={post.content} />
+        {typeof post.content === 'string' && !post.content.trim().startsWith('{') ? (
+          <HtmlContent html={post.content} />
+        ) : (
+          <RichText content={post.content} />
+        )}
       </div>
 
       <div className="mt-16 text-center">
