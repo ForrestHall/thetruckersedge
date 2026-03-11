@@ -17,11 +17,18 @@
 @layer tailwind-base {
   .frontend-app {
     color: #1f2937;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
   .frontend-app *,
   .frontend-app *::before,
   .frontend-app *::after {
     box-sizing: border-box;
+  }
+  .frontend-app a {
+    text-decoration: none;
+  }
+  .frontend-app a:hover {
+    text-decoration: none;
   }
   .frontend-app h1,
   .frontend-app h2,
@@ -112,12 +119,6 @@
   }
   .prose-truckers a:hover {
     color: #d4911e;
-  }
-  .frontend-app header a {
-    text-decoration: none;
-  }
-  .frontend-app header a:hover {
-    text-decoration: none;
   }
   .prose-truckers strong {
     font-weight: 600;
