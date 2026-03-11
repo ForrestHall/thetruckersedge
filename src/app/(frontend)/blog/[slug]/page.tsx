@@ -81,8 +81,8 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       <div className="prose-truckers">
-        {typeof post.content === 'string' && !post.content.trim().startsWith('{') ? (
-          <HtmlContent html={post.content} />
+        {typeof post.content === 'string' && !(post.content as string).trim().startsWith('{') ? (
+          <HtmlContent html={post.content as string} />
         ) : (
           <RichText content={post.content} />
         )}
