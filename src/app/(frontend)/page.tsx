@@ -31,6 +31,12 @@ const tools = [
     title: 'Per Diem Calculator',
     description: 'Find out how much you can deduct as a truck driver per day on the road.',
   },
+  {
+    href: '/tools/service-intervals',
+    icon: '🔧',
+    title: 'Service Intervals',
+    description: 'Look up maintenance intervals for your truck or engine by make, model, or year.',
+  },
 ]
 
 export default async function HomePage() {

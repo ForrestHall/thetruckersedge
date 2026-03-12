@@ -11,6 +11,7 @@ import { Posts } from './collections/Posts'
 import { PracticeTests } from './collections/PracticeTests'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
+import { ServiceIntervals } from './collections/ServiceIntervals'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +24,7 @@ export default buildConfig({
       titleSuffix: '— The Truckers Edge',
     },
   },
-  collections: [Articles, Posts, PracticeTests, Categories, Media, Users],
+  collections: [Articles, Posts, PracticeTests, Categories, Media, ServiceIntervals, Users],
   editor: lexicalEditor({}),
   db: postgresAdapter({
     pool: {

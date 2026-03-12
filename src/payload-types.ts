@@ -72,6 +72,7 @@ export interface Config {
     'practice-tests': PracticeTest;
     categories: Category;
     media: Media;
+    'service-intervals': ServiceInterval;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     'practice-tests': PracticeTestsSelect<false> | PracticeTestsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'service-intervals': ServiceIntervalsSelect<false> | ServiceIntervalsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -235,9 +237,9 @@ export interface Post {
   id: number;
   title: string;
   /**
-   * URL slug (e.g. "best-truck-stops-2026")
+   * Auto-generated from title. Leave blank to generate from title.
    */
-  slug: string;
+  slug?: string | null;
   /**
    * Short description for listing pages and search (150–160 chars).
    */
@@ -250,21 +252,10 @@ export interface Post {
    * Who wrote this post.
    */
   author?: (number | null) | User;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+  /**
+   * Paste or write HTML for the post body.
+   */
+  content: string;
   seo?: {
     /**
      * Overrides the page title in search results (60 chars max).
@@ -274,6 +265,18 @@ export interface Post {
      * Shown under the link in Google results (155 chars max).
      */
     metaDescription?: string | null;
+    /**
+     * Paste JSON-LD schema markup (e.g. Article, FAQPage). This will be injected into the page as a <script type="application/ld+json"> tag.
+     */
+    structuredData?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   publishedAt?: string | null;
   status: 'draft' | 'published';
@@ -355,6 +358,67 @@ export interface PracticeTest {
   createdAt: string;
 }
 /**
+ * Truck and engine service interval guidelines. One document per PDF or source.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-intervals".
+ */
+export interface ServiceInterval {
+  id: number;
+  /**
+   * Display name, e.g. "Volvo VNL 2022+", "Cummins X15 Efficiency", "PACCAR MX-13"
+   */
+  name: string;
+  type: 'engine' | 'truck';
+  /**
+   * Manufacturer: Volvo, Cummins, PACCAR, Detroit, Peterbilt, etc.
+   */
+  make: string;
+  /**
+   * Engine or truck model: X15, MX-13, VNL, VNR, T680, DD13, DD15
+   */
+  model?: string | null;
+  /**
+   * Year applicability: "2017–2020", "2021 and newer", "Model year 2011+", "Gen 5"
+   */
+  yearRange?: string | null;
+  /**
+   * EPA level, oil spec, duty definitions, or other context
+   */
+  applicability?: string | null;
+  /**
+   * Attach the source PDF when available
+   */
+  sourcePdf?: (number | null) | Media;
+  /**
+   * URL for web-only sources (e.g. DTNA Tech Lit) when no PDF
+   */
+  sourceUrl?: string | null;
+  intervals: {
+    section: 'engine' | 'coolant' | 'exhaust' | 'transmission' | 'chassis' | 'miscellaneous' | 'other';
+    /**
+     * e.g. "Engine oil, filters, fuel filters"
+     */
+    service: string;
+    /**
+     * e.g. "60,000 / 45,000 / 35,000 mi" or "40,000 miles"
+     */
+    interval: string;
+    /**
+     * e.g. "Normal / Heavy / Severe" — explains interval columns
+     */
+    dutyNote?: string | null;
+    notes?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Only published documents appear in the search tool
+   */
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -397,6 +461,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'service-intervals';
+        value: number | ServiceInterval;
       } | null)
     | ({
         relationTo: 'users';
@@ -484,6 +552,7 @@ export interface PostsSelect<T extends boolean = true> {
     | {
         metaTitle?: T;
         metaDescription?: T;
+        structuredData?: T;
       };
   publishedAt?: T;
   status?: T;
@@ -548,6 +617,33 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-intervals_select".
+ */
+export interface ServiceIntervalsSelect<T extends boolean = true> {
+  name?: T;
+  type?: T;
+  make?: T;
+  model?: T;
+  yearRange?: T;
+  applicability?: T;
+  sourcePdf?: T;
+  sourceUrl?: T;
+  intervals?:
+    | T
+    | {
+        section?: T;
+        service?: T;
+        interval?: T;
+        dutyNote?: T;
+        notes?: T;
+        id?: T;
+      };
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -24,6 +24,14 @@ const tools = [
       'Find out how much you can deduct for meals and incidentals based on your days on the road. Saves most drivers $3,000–$7,000/year in taxes.',
     tags: ['Tax Savings', 'All Drivers'],
   },
+  {
+    href: '/tools/service-intervals',
+    icon: '🔧',
+    title: 'Truck Service Intervals',
+    description:
+      'Look up maintenance intervals for your truck or engine by make, model, or year. Volvo, Cummins, Detroit, PACCAR, and more.',
+    tags: ['Maintenance', 'All Drivers'],
+  },
 ]
 
 export default function ToolsPage() {
