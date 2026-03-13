@@ -9,6 +9,9 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: path.resolve(dirname, '../../public/media'),
   },
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: 'alt',

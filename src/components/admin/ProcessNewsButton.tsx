@@ -52,6 +52,12 @@ export function ProcessNewsButton() {
           )}
         </p>
       )}
+      <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
+        Logout not working?{' '}
+        <a href="/api/logout" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+          Force logout
+        </a>
+      </p>
     </div>
   )
 }
