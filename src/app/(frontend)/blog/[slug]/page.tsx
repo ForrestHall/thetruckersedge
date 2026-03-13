@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { HtmlContent } from '@/components/HtmlContent'
 import { RichText } from '@/components/RichText'
-import { getMediaUrl } from '@/lib/media'
+import { getMediaUrl, getBaseUrl } from '@/lib/media'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -19,13 +19,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     collection: 'posts',
     where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
+    depth: 2,
   })
   const post = docs[0]
   if (!post) return {}
 
+  const title = post.seo?.metaTitle || post.title
+  const description = post.seo?.metaDescription || post.excerpt || undefined
+  const url = `${getBaseUrl()}/blog/${slug}`
+  const media = post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage : null
+  const imageUrl = media?.url ? getMediaUrl(media.url) : null
+
   return {
-    title: post.seo?.metaTitle || post.title,
-    description: post.seo?.metaDescription || post.excerpt,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description: description ?? undefined,
+      url,
+      type: 'article',
+      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      authors: typeof post.author === 'object' && post.author && 'name' in post.author && post.author.name
+        ? [post.author.name as string]
+        : undefined,
+      images: imageUrl ? [{ url: imageUrl, alt: media?.alt || post.title }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: description ?? undefined,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
   }
 }
 
@@ -44,9 +69,38 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound()
 
   const author = typeof post.author === 'object' && post.author !== null ? post.author : null
+  const media = post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage : null
+  const imageUrl = media?.url ? getMediaUrl(media.url) : null
+
+  const jsonLd =
+    post.seo?.structuredData && typeof post.seo.structuredData === 'object'
+      ? post.seo.structuredData
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: post.title,
+          description: post.excerpt || post.seo?.metaDescription,
+          image: imageUrl,
+          datePublished: post.publishedAt,
+          dateModified: post.updatedAt || post.publishedAt,
+          author:
+            author && typeof author === 'object' && 'name' in author && author.name
+              ? { '@type': 'Person', name: author.name }
+              : undefined,
+          publisher: {
+            '@type': 'Organization',
+            name: 'The Truckers Edge',
+            logo: { '@type': 'ImageObject', url: `${getBaseUrl()}/images/og-default.png` },
+          },
+        }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
       <div className="mb-8">
         <a href="/blog" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
           ← All Posts
@@ -98,6 +152,7 @@ export default async function BlogPostPage({ params }: Props) {
           ← Back to Blog
         </a>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

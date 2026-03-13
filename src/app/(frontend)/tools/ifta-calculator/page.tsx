@@ -1,10 +1,19 @@
 import type { Metadata } from 'next'
 import { IFTACalculatorClient } from '@/components/IFTACalculatorClient'
+import { getBaseUrl } from '@/lib/media'
 
 export const metadata: Metadata = {
   title: 'IFTA Fuel Tax Calculator — Free Quarterly Filing Tool',
   description:
     'Calculate your IFTA fuel tax report for free. Enter miles driven by state and fuel purchased to get your net tax owed or credit per jurisdiction.',
+  alternates: { canonical: `${getBaseUrl()}/tools/ifta-calculator` },
+  openGraph: {
+    title: 'IFTA Fuel Tax Calculator — Free Quarterly Filing Tool',
+    description: 'Calculate your IFTA fuel tax report for free. Enter miles by state and fuel purchases for net tax owed or credit.',
+    url: `${getBaseUrl()}/tools/ifta-calculator`,
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'IFTA Fuel Tax Calculator' },
 }
 
 export default function IFTACalculatorPage() {

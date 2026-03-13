@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { PerDiemCalculatorClient } from '@/components/PerDiemCalculatorClient'
+import { getBaseUrl } from '@/lib/media'
 
 export const metadata: Metadata = {
   title: 'Truck Driver Per Diem Calculator — 2026 Tax Deduction',

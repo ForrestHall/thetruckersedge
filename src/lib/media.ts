@@ -1,3 +1,13 @@
+const baseUrl = () =>
+  process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, '') || 'http://localhost:3000'
+
+/**
+ * Returns the site base URL for absolute URLs (canonical, OG, etc.)
+ */
+export function getBaseUrl(): string {
+  return baseUrl()
+}
+
 /**
  * Resolves a media URL to an absolute URL.
  * Payload may return relative paths (e.g. /media/xyz.jpg) or full URLs.

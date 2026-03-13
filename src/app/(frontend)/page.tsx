@@ -3,8 +3,19 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { ArticleCard } from '@/components/ArticleCard'
 import { PostCard } from '@/components/PostCard'
+import { getBaseUrl } from '@/lib/media'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata = {
+  openGraph: {
+    url: process.env.NEXT_PUBLIC_SERVER_URL || 'https://thetruckersedge.com',
+    type: 'website' as const,
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_SERVER_URL || 'https://thetruckersedge.com',
+  },
+}
 
 const tools = [
   {

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PracticeTestClient } from '@/components/PracticeTestClient'
+import { getBaseUrl } from '@/lib/media'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -21,9 +22,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const test = docs[0]
   if (!test) return {}
 
+  const title = test.title
+  const description = test.description || `Free CDL ${test.title}. ${test.questionCount || 0} questions with instant feedback and explanations.`
+  const url = `${getBaseUrl()}/practice-tests/${slug}`
+
   return {
-    title: test.title,
-    description: test.description || `Free CDL ${test.title}. ${test.questionCount} questions with instant feedback and explanations.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   }
 }
 

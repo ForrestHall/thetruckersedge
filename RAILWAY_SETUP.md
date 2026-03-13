@@ -13,8 +13,11 @@
   - `NEXT_PUBLIC_SERVER_URL` = `https://thetruckersedge.com` (or your Railway URL)
 ## 3. Start Command
 - Use default from `railway.json`: `npx tsx scripts/init-db.ts && npm start`
-- The init script runs first, creates tables with NODE_ENV=development, then the app starts
-- Do NOT override — the init step must run before the app
+- The init step must run before the app
+
+## 3b. Seed News Feeds (one-time)
+- With Railway CLI: `railway run npx tsx scripts/seed-news-feeds.ts` (runs against your linked project’s DB)
+- Or add `&& npx tsx scripts/seed-news-feeds.ts` to the start command for one deploy, then remove it
 
 ## 4. Deploy
 - Push to GitHub; Railway auto-deploys

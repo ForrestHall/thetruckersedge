@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { RichText } from '@/components/RichText'
+import { getMediaUrl, getBaseUrl } from '@/lib/media'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -17,13 +18,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     collection: 'articles',
     where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
+    depth: 2,
   })
   const article = docs[0]
   if (!article) return {}
 
+  const title = article.seo?.metaTitle || article.title
+  const description = article.seo?.metaDescription || article.excerpt || undefined
+  const url = `${getBaseUrl()}/guides/${slug}`
+  const media = article.featuredImage && typeof article.featuredImage === 'object' ? article.featuredImage : null
+  const imageUrl = media?.url ? getMediaUrl(media.url) : null
+
   return {
-    title: article.seo?.metaTitle || article.title,
-    description: article.seo?.metaDescription || article.excerpt,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description: description ?? undefined,
+      url,
+      type: 'article',
+      publishedTime: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+      images: imageUrl ? [{ url: imageUrl, alt: media?.alt || article.title }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: description ?? undefined,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
   }
 }
 
@@ -35,13 +58,28 @@ export default async function ArticlePage({ params }: Props) {
     collection: 'articles',
     where: { slug: { equals: slug }, status: { equals: 'published' } },
     limit: 1,
+    depth: 2,
   })
 
   const article = docs[0]
   if (!article) notFound()
 
+  const baseUrl = getBaseUrl()
+  const url = `${baseUrl}/guides/${slug}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.seo?.metaDescription || article.excerpt,
+    datePublished: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+    url,
+    publisher: { '@type': 'Organization', name: 'The Truckers Edge', url: baseUrl },
+  }
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <div className="max-w-3xl mx-auto px-4 py-16">
       <div className="mb-8">
         <div className="text-brand-yellow font-semibold text-sm mb-3 uppercase tracking-wide">
           Career Guide
@@ -76,5 +114,6 @@ export default async function ArticlePage({ params }: Props) {
         </a>
       </div>
     </div>
+    </>
   )
 }
