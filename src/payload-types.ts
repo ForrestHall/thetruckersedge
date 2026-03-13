@@ -75,6 +75,7 @@ export interface Config {
     'service-intervals': ServiceInterval;
     'feed-sources': FeedSource;
     'news-links': NewsLink;
+    'processed-news-items': ProcessedNewsItem;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -91,6 +92,7 @@ export interface Config {
     'service-intervals': ServiceIntervalsSelect<false> | ServiceIntervalsSelect<true>;
     'feed-sources': FeedSourcesSelect<false> | FeedSourcesSelect<true>;
     'news-links': NewsLinksSelect<false> | NewsLinksSelect<true>;
+    'processed-news-items': ProcessedNewsItemsSelect<false> | ProcessedNewsItemsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -486,6 +488,44 @@ export interface NewsLink {
   createdAt: string;
 }
 /**
+ * AI-processed RSS items. Override headline or hide from the news page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "processed-news-items".
+ */
+export interface ProcessedNewsItem {
+  id: number;
+  /**
+   * Unique URL (dedup key)
+   */
+  url: string;
+  originalTitle: string;
+  /**
+   * AI-generated catchy headline
+   */
+  rewrittenTitle?: string | null;
+  /**
+   * AI score 1-10 for viral potential
+   */
+  viralScore?: number | null;
+  /**
+   * Override: when set, displayed instead of AI rewrite
+   */
+  headlineOverride?: string | null;
+  /**
+   * Hide this item from the news page
+   */
+  hidden?: boolean | null;
+  source: string;
+  publishedAt?: string | null;
+  /**
+   * When AI processed this item
+   */
+  processedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -540,6 +580,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'news-links';
         value: number | NewsLink;
+      } | null)
+    | ({
+        relationTo: 'processed-news-items';
+        value: number | ProcessedNewsItem;
       } | null)
     | ({
         relationTo: 'users';
@@ -744,6 +788,23 @@ export interface NewsLinksSelect<T extends boolean = true> {
   category?: T;
   publishedAt?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "processed-news-items_select".
+ */
+export interface ProcessedNewsItemsSelect<T extends boolean = true> {
+  url?: T;
+  originalTitle?: T;
+  rewrittenTitle?: T;
+  viralScore?: T;
+  headlineOverride?: T;
+  hidden?: T;
+  source?: T;
+  publishedAt?: T;
+  processedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

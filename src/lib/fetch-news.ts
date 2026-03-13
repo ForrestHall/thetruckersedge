@@ -11,6 +11,7 @@ export interface NewsItem {
   publishedAt: Date
   type: 'rss' | 'post' | 'link'
   category?: string
+  viralScore?: number
 }
 
 const parser = new Parser()
@@ -49,11 +50,12 @@ async function fetchRssFeed(
 async function fetchAllNewsUncached(): Promise<NewsItem[]> {
   const payload = await getPayload({ config })
 
-  const [feedSourcesRes, postsRes, newsLinksRes] = await Promise.all([
+  const [processedRes, postsRes, newsLinksRes, feedSourcesRes] = await Promise.all([
     payload.find({
-      collection: 'feed-sources',
-      where: { enabled: { equals: true } },
-      limit: 100,
+      collection: 'processed-news-items',
+      where: { hidden: { not_equals: true } },
+      sort: '-viralScore',
+      limit: 200,
     }),
     payload.find({
       collection: 'posts',
@@ -67,7 +69,56 @@ async function fetchAllNewsUncached(): Promise<NewsItem[]> {
       sort: '-publishedAt',
       limit: 50,
     }),
+    payload.find({
+      collection: 'feed-sources',
+      where: { enabled: { equals: true } },
+      limit: 100,
+    }),
   ])
+
+  const processedItems: NewsItem[] = processedRes.docs.map((doc) => ({
+    id: `processed-${doc.id}`,
+    title: doc.headlineOverride || doc.rewrittenTitle || doc.originalTitle,
+    url: doc.url,
+    source: doc.source,
+    publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : new Date(),
+    type: 'rss' as const,
+    viralScore: doc.viralScore ?? 0,
+  }))
+
+  if (processedItems.length > 0) {
+    const postItems: NewsItem[] = postsRes.docs.map((post) => ({
+      id: `post-${post.id}`,
+      title: post.title,
+      url: `/blog/${post.slug || post.id}`,
+      source: 'The Truckers Edge',
+      publishedAt: post.publishedAt ? new Date(post.publishedAt) : new Date(),
+      type: 'post',
+    }))
+
+    const linkItems: NewsItem[] = newsLinksRes.docs.map((link) => ({
+      id: `link-${link.id}`,
+      title: link.title,
+      url: link.url.startsWith('http') || link.url.startsWith('/') ? link.url : `/${link.url}`,
+      source: link.source || 'Curated',
+      publishedAt: link.publishedAt ? new Date(link.publishedAt) : new Date(),
+      type: 'link',
+      category: link.category || undefined,
+    }))
+
+    const combined = [
+      ...processedItems,
+      ...postItems,
+      ...linkItems,
+    ].sort((a, b) => {
+      const scoreA = a.viralScore ?? 0
+      const scoreB = b.viralScore ?? 0
+      if (scoreB !== scoreA) return scoreB - scoreA
+      return b.publishedAt.getTime() - a.publishedAt.getTime()
+    })
+
+    return combined.slice(0, 150)
+  }
 
   const rssItems = await Promise.all(
     feedSourcesRes.docs.map((feed) =>

@@ -15,10 +15,12 @@
     "payload": "payload"
   },
   "dependencies": {
+    "@ai-sdk/xai": "^3.0.67",
     "@payloadcms/db-postgres": "^3.17.1",
     "@payloadcms/next": "^3.17.1",
     "@payloadcms/richtext-lexical": "^3.17.1",
     "@payloadcms/ui": "^3.17.1",
+    "ai": "^6.0.116",
     "graphql": "^16.9.0",
     "next": ">=15.4.11 <15.5.0",
     "payload": "^3.17.1",
@@ -26,7 +28,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rss-parser": "^3.13.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
