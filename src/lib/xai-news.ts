@@ -21,7 +21,12 @@ export async function scoreAndRewriteHeadline(
       prompt: `You are a trucking news editor. For this headline, return JSON only with no extra text:
 {"score": <1-10>, "rewritten": "<catchy headline max 70 chars>"}
 
-Score 1-10 for viral potential among truck drivers. Consider: regulatory impact, safety, pay/rates, controversy, driver-interest. 10 = highly viral.
+Score 1-10 for viral potential among truck drivers. BE STRICT. Most items should score 3-5. Reserve 7+ only for stories that would genuinely get truckers talking or sharing.
+
+Low (1-3): Routine corporate news, minor product updates, annual reports, generic "Company X announces...", press-release filler.
+Mid (4-6): Industry updates, equipment news, operational tips—useful but not highly engaging.
+High (7-10): Regulations affecting drivers (ELD, HOS, drug testing), pay/rates, safety incidents, driver shortage, controversy, funny slice-of-life stories (relatable trucker humor, road stories, lighthearted content drivers would share).
+
 Keep rewritten factual. No clickbait. Punchy for truckers.
 
 Headline: "${originalTitle}"

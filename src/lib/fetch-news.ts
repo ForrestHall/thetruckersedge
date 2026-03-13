@@ -117,7 +117,11 @@ async function fetchAllNewsUncached(): Promise<NewsItem[]> {
       return b.publishedAt.getTime() - a.publishedAt.getTime()
     })
 
-    return combined.slice(0, 150)
+    const leadCandidates = combined.filter((i) => (i.viralScore ?? 0) >= 7).slice(0, 2)
+    const lead = leadCandidates.length >= 2 ? leadCandidates : combined.slice(0, 2)
+    const leadIds = new Set(lead.map((l) => l.id))
+    const rest = combined.filter((i) => !leadIds.has(i.id))
+    return [...lead, ...rest].slice(0, 150)
   }
 
   const rssItems = await Promise.all(
