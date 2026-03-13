@@ -1,4 +1,5 @@
 import React from 'react'
+import { getMediaUrl } from '@/lib/media'
 
 interface RichTextNode {
   type?: string
@@ -58,11 +59,12 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
       )
     }
     case 'upload': {
-      if (node.value?.url) {
+      const uploadUrl = node.value?.url ? getMediaUrl(node.value.url) : null
+      if (uploadUrl) {
         return (
           <figure key={index} className="my-8">
             <img
-              src={node.value.url}
+              src={uploadUrl}
               alt={node.value.alt || ''}
               width={node.value.width}
               height={node.value.height}

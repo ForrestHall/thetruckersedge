@@ -21,3 +21,18 @@ export function getMediaUrl(url: string | undefined | null): string | null {
 
   return url.startsWith('/') ? `${base.replace(/\/$/, '')}${url}` : `${base.replace(/\/$/, '')}/${url}`
 }
+
+/**
+ * Rewrites img src attributes in HTML so localhost/relative URLs use NEXT_PUBLIC_SERVER_URL.
+ * Use for HTML content (e.g. from HtmlContent) that may contain embedded media.
+ */
+export function processHtmlMediaUrls(html: string): string {
+  if (!html || typeof html !== 'string') return html
+  return html.replace(
+    /(<img[^>]+src=)(["'])([^"']+)\2/gi,
+    (_, before, quote, src) => {
+      const resolved = getMediaUrl(src)
+      return `${before}${quote}${resolved ?? src}${quote}`
+    }
+  )
+}
