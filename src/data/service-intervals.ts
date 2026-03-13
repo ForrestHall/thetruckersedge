@@ -32,8 +32,8 @@ export interface MaintenancePhase {
 export const MAINTENANCE_PHASES: MaintenancePhase[] = [
   {
     id: 'engine-lubes',
-    title: "Phase 1: The Engine & Lubes (The \"Heart\")",
-    subtitle: 'These are your bread-and-butter maintenance items. Missing these is the #1 reason warranty claims are denied.',
+    title: 'Phase 1: Engine & Lubes (The Heart)',
+    subtitle: 'Bread-and-butter maintenance items. Missing these is the #1 reason warranty claims are denied.',
     items: [
       { component: 'Engine Oil & Filters', interval: '50k – 75k miles', expertNote: 'Use Oil Analysis to spot bearing wear early.' },
       { component: 'Primary/Secondary Fuel Filters', interval: 'Every Oil Change', expertNote: 'Modern injectors (HPCR) fail instantly with water/dirt.' },
@@ -44,7 +44,7 @@ export const MAINTENANCE_PHASES: MaintenancePhase[] = [
   },
   {
     id: 'aftertreatment',
-    title: 'Phase 2: Aftertreatment & Emissions (The "Lungs")',
+    title: 'Phase 2: Aftertreatment & Emissions (The Lungs)',
     subtitle: 'This system is responsible for 70% of modern truck breakdowns.',
     items: [
       { component: 'DEF Pump Filter', interval: 'Every 200,000 miles', expertNote: 'If this clogs, the truck goes into "derate" (limp mode).' },
@@ -54,7 +54,7 @@ export const MAINTENANCE_PHASES: MaintenancePhase[] = [
   },
   {
     id: 'drivetrain',
-    title: 'Phase 3: Drivetrain & Chassis (The "Bones")',
+    title: 'Phase 3: Drivetrain & Chassis (The Bones)',
     subtitle: '',
     items: [
       { component: 'Transmission Fluid (AMT/Manual)', interval: 'Every 500,000 miles', expertNote: 'Modern synthetics last a long time, but heat cycles eventually break them down.' },

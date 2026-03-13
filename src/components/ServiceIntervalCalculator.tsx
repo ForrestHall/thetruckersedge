@@ -233,7 +233,7 @@ export function ServiceIntervalCalculator() {
             <h2 className="text-2xl font-bold text-brand-navy">General Maintenance Guide</h2>
             {MAINTENANCE_PHASES.map((phase) => (
               <div key={phase.id} className="card p-6">
-                <h3 className="text-lg font-bold text-brand-navy mb-1">{phase.title}</h3>
+                <h3 className="text-lg font-bold text-brand-navy mb-2">{phase.title}</h3>
                 {phase.subtitle && (
                   <p className="text-sm text-gray-600 mb-4">{phase.subtitle}</p>
                 )}

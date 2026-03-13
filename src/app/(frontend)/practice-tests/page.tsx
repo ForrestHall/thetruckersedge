@@ -15,7 +15,7 @@ const endorsementColors: Record<string, string> = {
   'general-knowledge': 'bg-blue-50 text-blue-700 border-blue-200',
   'air-brakes': 'bg-orange-50 text-orange-700 border-orange-200',
   hazmat: 'bg-red-50 text-red-700 border-red-200',
-  combination: 'bg-purple-50 text-purple-700 border-purple-200',
+  combination: 'bg-amber-50 text-amber-800 border-amber-200',
   'doubles-triples': 'bg-green-50 text-green-700 border-green-200',
   passenger: 'bg-teal-50 text-teal-700 border-teal-200',
   'school-bus': 'bg-yellow-50 text-yellow-700 border-yellow-200',
