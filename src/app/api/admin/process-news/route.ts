@@ -61,7 +61,12 @@ export async function GET(request: NextRequest) {
   }
   try {
     const result = await runProcessNewsJob()
-    return NextResponse.redirect(adminUrl(request, { processed: String(result.processed) }))
+    const params: Record<string, string> = { processed: String(result.processed) }
+    if (result.error) params.error = result.error
+    if (result.feedsChecked !== undefined) params.feeds = String(result.feedsChecked)
+    if (result.itemsFetched !== undefined) params.fetched = String(result.itemsFetched)
+    if (result.itemsNew !== undefined) params.new = String(result.itemsNew)
+    return NextResponse.redirect(adminUrl(request, params))
   } catch (err) {
     console.error('[admin/process-news] Error:', err)
     return NextResponse.redirect(adminUrl(request, { error: err instanceof Error ? err.message : 'Job failed' }))

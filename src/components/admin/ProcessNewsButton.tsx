@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 export function ProcessNewsButton() {
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{
     processed?: number
@@ -12,6 +14,23 @@ export function ProcessNewsButton() {
     itemsNew?: number
     itemsSkipped?: number
   } | null>(null)
+
+  useEffect(() => {
+    const p = searchParams.get('processed')
+    const err = searchParams.get('error')
+    const feeds = searchParams.get('feeds')
+    const fetched = searchParams.get('fetched')
+    const newCount = searchParams.get('new')
+    if (p !== null) {
+      setResult({
+        processed: parseInt(p, 10),
+        error: err ?? undefined,
+        feedsChecked: feeds != null ? parseInt(feeds, 10) : undefined,
+        itemsFetched: fetched != null ? parseInt(fetched, 10) : undefined,
+        itemsNew: newCount != null ? parseInt(newCount, 10) : undefined,
+      })
+    }
+  }, [searchParams])
 
   async function handleClick() {
     setLoading(true)
