@@ -68,8 +68,8 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
 
   if (finished) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-        <div className={`text-6xl font-extrabold mb-2 ${pct >= 80 ? 'text-green-600' : pct >= 60 ? 'text-yellow-500' : 'text-red-500'}`}>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-8 text-center">
+        <div className={`text-5xl sm:text-6xl font-extrabold mb-2 ${pct >= 80 ? 'text-green-600' : pct >= 60 ? 'text-yellow-500' : 'text-red-500'}`}>
           {pct}%
         </div>
         <p className="text-xl font-bold text-brand-navy mb-1">
@@ -132,7 +132,7 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
 
       {/* Question card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
-        <h2 className="text-xl font-bold text-brand-navy mb-6 leading-snug">{q.question}</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-brand-navy mb-6 leading-snug">{q.question}</h2>
 
         <div className="space-y-3 mb-6">
           {q.answers.map((answer, idx) => {
@@ -152,7 +152,7 @@ export function PracticeTestClient({ questions, testTitle }: Props) {
                 key={answer.id ?? idx}
                 onClick={() => handleAnswer(idx)}
                 disabled={revealed}
-                className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-150 font-medium text-gray-800 ${style}`}
+                className={`w-full text-left px-4 sm:px-5 py-3 sm:py-4 rounded-xl border-2 transition-all duration-150 font-medium text-gray-800 text-sm sm:text-base ${style}`}
               >
                 <span className="flex items-center gap-3">
                   {revealed && answer.correct && <span className="text-green-600 font-bold">✓</span>}

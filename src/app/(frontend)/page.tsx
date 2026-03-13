@@ -61,17 +61,17 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand-navy text-white py-20 px-4">
+      <section className="bg-brand-navy text-white py-12 sm:py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-block bg-brand-yellow text-brand-navy text-sm font-semibold px-3 py-1 rounded-full mb-6">
             Free CDL Resources for Every Driver
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
             Your Edge on the Road
             <br />
             <span className="text-brand-yellow">Starts Here</span>
           </h1>
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-gray-300 mb-8 sm:mb-10 max-w-2xl mx-auto">
             Free CDL practice tests, honest career guides, and tools built for truckers — by someone who&apos;s been there.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -104,10 +104,10 @@ export default async function HomePage() {
 
       {/* Career Guides */}
       {recentArticles.length > 0 && (
-        <section className="py-16 px-4 bg-brand-gray">
+        <section className="py-10 sm:py-16 px-4 bg-brand-gray">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-3xl font-bold text-brand-navy">Career Guides</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy">Career Guides</h2>
               <Link href="/guides" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
                 View all →
               </Link>
@@ -122,9 +122,9 @@ export default async function HomePage() {
       )}
 
       {/* Tools section */}
-      <section className="py-16 px-4">
+      <section className="py-10 sm:py-16 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-brand-navy mb-3 text-center">Free Trucking Tools</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy mb-3 text-center">Free Trucking Tools</h2>
           <p className="text-gray-500 text-center mb-10">Everything you need to pass your CDL and run a smarter operation.</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {tools.map((tool) => (
@@ -142,8 +142,8 @@ export default async function HomePage() {
       {/* Blog */}
       <section className="py-16 px-4 bg-brand-gray">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-3xl font-bold text-brand-navy">From the Blog</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy">From the Blog</h2>
             <Link href="/blog" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
               View all posts →
             </Link>
@@ -166,9 +166,9 @@ export default async function HomePage() {
       </section>
 
       {/* Email capture */}
-      <section className="py-16 px-4 bg-brand-navy text-white">
+      <section className="py-10 sm:py-16 px-4 bg-brand-navy text-white">
         <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-3">Get the Free CDL Study Checklist</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">Get the Free CDL Study Checklist</h2>
           <p className="text-gray-300 mb-8">
             A one-page PDF covering every topic tested on the General Knowledge exam. Enter your email and we&apos;ll send it straight to your inbox.
           </p>

@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 
 export default function IFTACalculatorPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="mb-10">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <div className="mb-8 sm:mb-10">
         <a href="/tools" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
           ← All Tools
         </a>
-        <h1 className="text-3xl font-extrabold text-brand-navy mt-3 mb-3">IFTA Fuel Tax Calculator</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-navy mt-3 mb-3">IFTA Fuel Tax Calculator</h1>
         <p className="text-gray-500 text-lg max-w-2xl">
           Enter your total miles driven and fuel purchased per state for the quarter. We&apos;ll calculate your net IFTA tax owed or credit for each jurisdiction.
         </p>

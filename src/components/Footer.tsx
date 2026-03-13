@@ -30,9 +30,9 @@ const links = {
 
 export function Footer() {
   return (
-    <footer className="bg-brand-navy text-gray-300 pt-16 pb-8 px-4">
+    <footer className="bg-brand-navy text-gray-300 pt-10 sm:pt-16 pb-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
           <div>
             <Link href="/" className="text-xl font-extrabold text-white">
               The Truckers<span className="text-brand-yellow">Edge</span>

@@ -52,9 +52,9 @@ export default async function GuidesPage() {
   const careerArticles = careerArticlesRes.docs
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-4">Trucking Career Guides</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16">
+      <div className="mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Trucking Career Guides</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Straight-talk guides on getting your CDL in every state, picking the right company, going owner-operator, and everything in between.
         </p>

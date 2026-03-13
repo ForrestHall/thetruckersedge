@@ -24,9 +24,9 @@ export default async function BlogPage() {
   })
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-4">Blog</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16">
+      <div className="mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Blog</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Trucking news, driving tips, and updates for CDL holders. Stay informed on the latest in the trucking industry.
         </p>

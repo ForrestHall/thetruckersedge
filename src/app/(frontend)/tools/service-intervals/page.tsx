@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 
 export default function ServiceIntervalsPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="mb-10">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <div className="mb-8 sm:mb-10">
         <Link href="/tools" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
           ← All Tools
         </Link>
-        <h1 className="text-3xl font-extrabold text-brand-navy mt-3 mb-3">Truck Service Intervals</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-navy mt-3 mb-3">Truck Service Intervals</h1>
         <p className="text-gray-500 text-lg max-w-2xl">
           Look up maintenance intervals for your truck or engine by platform. Select your engine (Detroit, Cummins,
           PACCAR, Volvo/Mack) and adjust for severe service or idle time.

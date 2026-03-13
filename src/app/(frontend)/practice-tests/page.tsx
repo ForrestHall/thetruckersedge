@@ -44,9 +44,9 @@ export default async function PracticeTestsPage() {
   })
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-4">Free CDL Practice Tests</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16">
+      <div className="mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Free CDL Practice Tests</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Every question is based on the official CDL knowledge test. Answer questions, get instant feedback, and see explanations for every answer.
         </p>

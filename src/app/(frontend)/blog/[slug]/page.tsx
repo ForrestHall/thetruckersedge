@@ -46,14 +46,14 @@ export default async function BlogPostPage({ params }: Props) {
   const author = typeof post.author === 'object' && post.author !== null ? post.author : null
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16">
+    <div className="max-w-3xl mx-auto px-4 py-10 sm:py-16">
       <div className="mb-8">
         <a href="/blog" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
           ← All Posts
         </a>
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-4 leading-tight">{post.title}</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-navy mb-4 leading-tight">{post.title}</h1>
         {post.excerpt && (
-          <p className="text-xl text-gray-500 leading-relaxed">{post.excerpt}</p>
+          <p className="text-base sm:text-xl text-gray-500 leading-relaxed">{post.excerpt}</p>
         )}
         <div className="flex items-center gap-4 mt-4 text-sm text-gray-400">
           {post.publishedAt && (

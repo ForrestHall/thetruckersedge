@@ -3,6 +3,12 @@ import type { Metadata } from 'next'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 export const metadata: Metadata = {
   title: {
     default: 'The Truckers Edge — CDL Test Prep & Trucking Career Guides',
@@ -18,9 +24,9 @@ export const metadata: Metadata = {
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="frontend-app min-h-screen flex flex-col">
+    <div className="frontend-app min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 min-w-0 w-full">{children}</main>
       <Footer />
     </div>
   )

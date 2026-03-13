@@ -16,10 +16,10 @@ export function Header() {
 
   return (
     <header className="bg-brand-navy text-white sticky top-0 z-50 shadow-md">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2 font-extrabold text-xl no-underline hover:no-underline">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14 sm:h-16 gap-2">
+        <Link href="/" className="flex items-center gap-2 font-extrabold text-base sm:text-xl no-underline hover:no-underline shrink-0 min-w-0">
           <span className="text-brand-yellow">🚛</span>
-          <span>
+          <span className="truncate">
             The Truckers<span className="text-brand-yellow">Edge</span>
           </span>
         </Link>
@@ -42,7 +42,7 @@ export function Header() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded text-gray-300 hover:text-white"
+          className="md:hidden p-2.5 -mr-1 rounded-lg text-gray-300 hover:text-white active:bg-white/10 min-w-[44px] min-h-[44px] flex items-center justify-center"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >

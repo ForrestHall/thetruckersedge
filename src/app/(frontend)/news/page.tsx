@@ -16,9 +16,9 @@ export default async function NewsPage() {
   const restItems = items.slice(2)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="mb-10">
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-2">Truckers News</h1>
+    <div className="max-w-6xl mx-auto px-4 py-10 sm:py-12">
+      <div className="mb-8 sm:mb-10">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-2">Truckers News</h1>
         <p className="text-gray-500">
           Industry news, regulations, and updates — aggregated for truckers.
         </p>
@@ -52,7 +52,7 @@ export default async function NewsPage() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-12 gap-y-6">
             {restItems.map((item) => (
               <div key={item.id} className="border-l-2 border-brand-yellow pl-3">
                 <a

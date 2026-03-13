@@ -36,9 +36,9 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold text-brand-navy mb-4">Free Trucking Tools</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10 sm:py-16">
+      <div className="mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Free Trucking Tools</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Calculators and tools to help you run smarter — whether you&apos;re a company driver or running your own rig.
         </p>
@@ -46,7 +46,7 @@ export default function ToolsPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {tools.map((tool) => (
-          <Link key={tool.href} href={tool.href} className="card p-8 flex flex-col gap-4">
+          <Link key={tool.href} href={tool.href} className="card p-6 sm:p-8 flex flex-col gap-4">
             <div className="text-5xl">{tool.icon}</div>
             <div>
               <h2 className="text-xl font-bold text-brand-navy mb-2">{tool.title}</h2>

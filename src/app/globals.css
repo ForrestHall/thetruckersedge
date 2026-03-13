@@ -15,6 +15,10 @@
 }
 
 @layer tailwind-base {
+  html,
+  body {
+    overflow-x: hidden;
+  }
   .frontend-app {
     color: #1f2937;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -123,5 +127,23 @@
   .prose-truckers strong {
     font-weight: 600;
     color: #111827;
+  }
+  .prose-truckers table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .prose-truckers pre,
+  .prose-truckers code {
+    overflow-x: auto;
+    max-width: 100%;
+    word-break: break-word;
+  }
+  .prose-truckers img {
+    max-width: 100%;
+    height: auto;
+  }
+  .prose-truckers a {
+    word-break: break-word;
   }
 }
