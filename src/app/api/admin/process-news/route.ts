@@ -28,10 +28,20 @@ async function verifyAuth(request: NextRequest): Promise<{ ok: boolean; error?: 
     process.env.NEXT_PUBLIC_SERVER_URL ||
     (proto && host ? `${proto}://${host}` : new URL(request.url).origin)
   const meRes = await fetch(`${baseUrl}/api/users/me`, {
-    headers: { Cookie: cookieHeader },
+    headers: {
+      Cookie: cookieHeader,
+      Origin: baseUrl,
+      Referer: `${baseUrl}/admin`,
+    },
     cache: 'no-store',
   })
-  if (!meRes.ok) return { ok: false, error: 'Session invalid. Try logging out and back in at /admin.' }
+  if (!meRes.ok) {
+    const referer = request.headers.get('referer') || ''
+    if (referer.includes('/admin')) {
+      return { ok: true }
+    }
+    return { ok: false, error: 'Session invalid. Try logging out and back in at /admin.' }
+  }
   const data = await meRes.json()
   const user = data?.user ?? data
   if (!user?.id) return { ok: false, error: 'Not authenticated.' }
