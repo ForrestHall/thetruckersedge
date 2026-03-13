@@ -15,6 +15,7 @@ import { ServiceIntervals } from './collections/ServiceIntervals'
 import { FeedSources } from './collections/FeedSources'
 import { NewsLinks } from './collections/NewsLinks'
 import { ProcessedNewsItems } from './collections/ProcessedNewsItems'
+import { runProcessNewsJob } from './lib/process-news-job'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,6 +31,27 @@ export default buildConfig({
       beforeDashboard: ['/src/components/admin/ProcessNewsButton#ProcessNewsButton'],
     },
   },
+  endpoints: [
+    {
+      path: '/process-news',
+      method: 'post',
+      handler: async (req) => {
+        if (!req.user) {
+          return Response.json({ error: 'Not authenticated. Log in at /admin.' }, { status: 401 })
+        }
+        try {
+          const result = await runProcessNewsJob()
+          return Response.json({ processed: result.processed, error: result.error })
+        } catch (err) {
+          console.error('[process-news] Error:', err)
+          return Response.json(
+            { error: err instanceof Error ? err.message : 'Unknown error' },
+            { status: 500 }
+          )
+        }
+      },
+    },
+  ],
   collections: [Articles, Posts, PracticeTests, Categories, Media, ServiceIntervals, FeedSources, NewsLinks, ProcessedNewsItems, Users],
   editor: lexicalEditor({}),
   db: postgresAdapter({

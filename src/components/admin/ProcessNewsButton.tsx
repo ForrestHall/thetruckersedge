@@ -10,7 +10,7 @@ export function ProcessNewsButton() {
     setLoading(true)
     setResult(null)
     try {
-      const res = await fetch('/api/admin/process-news', {
+      const res = await fetch('/api/process-news', {
         method: 'POST',
         credentials: 'include',
       })
