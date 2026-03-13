@@ -4,7 +4,14 @@ import { useState } from 'react'
 
 export function ProcessNewsButton() {
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{ processed?: number; error?: string } | null>(null)
+  const [result, setResult] = useState<{
+    processed?: number
+    error?: string
+    feedsChecked?: number
+    itemsFetched?: number
+    itemsNew?: number
+    itemsSkipped?: number
+  } | null>(null)
 
   async function handleClick() {
     setLoading(true)
@@ -46,13 +53,29 @@ export function ProcessNewsButton() {
         {loading ? 'Processing…' : 'Process News Now'}
       </button>
       {result && (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
           {result.error ? (
-            <span className="text-red-600 dark:text-red-400">Error: {result.error}</span>
+            <p className="text-red-600 dark:text-red-400">Error: {result.error}</p>
           ) : (
-            <span>Processed {result.processed ?? 0} items.</span>
+            <>
+              <p>Processed {result.processed ?? 0} items.</p>
+              {(result.feedsChecked !== undefined || result.itemsFetched !== undefined) && (
+                <p className="text-xs text-zinc-500">
+                  {result.feedsChecked} feeds → {result.itemsFetched} fetched → {result.itemsNew ?? result.processed} new
+                  {result.itemsSkipped ? ` (${result.itemsSkipped} xAI skipped)` : ''}
+                  {result.feedsChecked === 0 && (
+                    <span className="block mt-1 text-amber-600 dark:text-amber-400">
+                      Run <code className="bg-zinc-200 dark:bg-zinc-700 px-1 rounded">npm run seed:news-feeds</code> to add RSS sources.
+                    </span>
+                  )}
+                  {result.itemsFetched !== undefined && result.itemsFetched > 0 && result.itemsNew === 0 && (
+                    <span className="block mt-1 text-zinc-500">All items already processed.</span>
+                  )}
+                </p>
+              )}
+            </>
           )}
-        </p>
+        </div>
       )}
       <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1 space-x-2">
         <span>

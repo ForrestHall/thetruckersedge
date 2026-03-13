@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await runProcessNewsJob()
-    return NextResponse.json({ processed: result.processed, error: result.error })
+    return NextResponse.json(result)
   } catch (err) {
     console.error('[admin/process-news] Error:', err)
     return NextResponse.json(

@@ -41,7 +41,14 @@ async function fetchRssItems(
   }
 }
 
-export async function runProcessNewsJob(): Promise<{ processed: number; error?: string }> {
+export async function runProcessNewsJob(): Promise<{
+  processed: number
+  error?: string
+  feedsChecked?: number
+  itemsFetched?: number
+  itemsNew?: number
+  itemsSkipped?: number
+}> {
   if (!process.env.XAI_API_KEY) {
     return { processed: 0, error: 'XAI_API_KEY not set' }
   }
@@ -72,10 +79,14 @@ export async function runProcessNewsJob(): Promise<{ processed: number; error?: 
     .slice(0, BATCH_LIMIT)
 
   let processed = 0
+  let skipped = 0
   for (const item of newItems) {
     try {
       const result = await scoreAndRewriteHeadline(item.title, item.source)
-      if (!result) continue
+      if (!result) {
+        skipped++
+        continue
+      }
 
       await payload.create({
         collection: 'processed-news-items',
@@ -110,5 +121,11 @@ export async function runProcessNewsJob(): Promise<{ processed: number; error?: 
     })
   }
 
-  return { processed }
+  return {
+    processed,
+    feedsChecked: feedSources.length,
+    itemsFetched: allRssItems.length,
+    itemsNew: newItems.length,
+    itemsSkipped: skipped,
+  }
 }
