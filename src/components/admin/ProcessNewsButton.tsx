@@ -10,9 +10,11 @@ export function ProcessNewsButton() {
     setLoading(true)
     setResult(null)
     try {
-      const res = await fetch('/api/process-news', {
+      const url = typeof window !== 'undefined' ? `${window.location.origin}/api/admin/process-news` : '/api/admin/process-news'
+      const res = await fetch(url, {
         method: 'POST',
         credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       })
       const data = await res.json()
       if (!res.ok) {
@@ -52,8 +54,15 @@ export function ProcessNewsButton() {
           )}
         </p>
       )}
-      <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-        Logout not working?{' '}
+      <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1 space-x-2">
+        <span>
+          Button fails?{' '}
+          <a href="/api/admin/process-news" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+            Try this link
+          </a>
+          {' '}(runs job, then redirects back)
+        </span>
+        <span>·</span>
         <a href="/api/logout" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
           Force logout
         </a>
