@@ -26,6 +26,9 @@ export default buildConfig({
     meta: {
       titleSuffix: '— The Truckers Edge',
     },
+    components: {
+      beforeDashboard: ['/src/components/admin/ProcessNewsButton#ProcessNewsButton'],
+    },
   },
   collections: [Articles, Posts, PracticeTests, Categories, Media, ServiceIntervals, FeedSources, NewsLinks, ProcessedNewsItems, Users],
   editor: lexicalEditor({}),
