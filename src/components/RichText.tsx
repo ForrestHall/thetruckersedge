@@ -59,20 +59,21 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
       )
     }
     case 'upload': {
-      const uploadUrl = node.value?.url ? getMediaUrl(node.value.url) : null
-      if (uploadUrl) {
+      const v = node.value
+      const uploadUrl = v?.url ? getMediaUrl(v.url) : null
+      if (uploadUrl && v) {
         return (
           <figure key={index} className="my-8">
             <img
               src={uploadUrl}
-              alt={node.value.alt || ''}
-              width={node.value.width}
-              height={node.value.height}
+              alt={v.alt || ''}
+              width={v.width}
+              height={v.height}
               className="w-full max-w-full rounded-lg object-contain bg-gray-50"
             />
-            {node.value.caption && (
+            {v.caption && (
               <figcaption className="mt-2 text-sm text-gray-500 text-center">
-                {node.value.caption}
+                {v.caption}
               </figcaption>
             )}
           </figure>
