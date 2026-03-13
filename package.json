@@ -9,6 +9,7 @@
     "start": "next start",
     "migrate": "echo DB init handled by onInit",
     "seed": "npx tsx scripts/seed-cdl-tests.ts",
+    "seed:news-feeds": "npx tsx scripts/seed-news-feeds.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",
     "payload": "payload"
@@ -24,16 +25,17 @@
     "pg": "^8.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "rss-parser": "^3.13.0",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
-    "tsx": "^4.19.2",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
   "engines": {

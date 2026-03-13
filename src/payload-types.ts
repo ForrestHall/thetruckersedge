@@ -73,6 +73,8 @@ export interface Config {
     categories: Category;
     media: Media;
     'service-intervals': ServiceInterval;
+    'feed-sources': FeedSource;
+    'news-links': NewsLink;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +89,8 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'service-intervals': ServiceIntervalsSelect<false> | ServiceIntervalsSelect<true>;
+    'feed-sources': FeedSourcesSelect<false> | FeedSourcesSelect<true>;
+    'news-links': NewsLinksSelect<false> | NewsLinksSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -419,6 +423,69 @@ export interface ServiceInterval {
   createdAt: string;
 }
 /**
+ * RSS feeds for the Truckers News page. Add or disable sources here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feed-sources".
+ */
+export interface FeedSource {
+  id: number;
+  /**
+   * Display name, e.g. "Fleet Owner", "FMCSA"
+   */
+  name: string;
+  /**
+   * Full RSS or Atom feed URL
+   */
+  feedUrl: string;
+  /**
+   * Optional category for grouping
+   */
+  category?: ('regulations' | 'freight' | 'equipment' | 'safety' | 'technology' | 'general') | null;
+  /**
+   * Uncheck to stop fetching this feed without deleting it
+   */
+  enabled?: boolean | null;
+  /**
+   * Order in admin list (lower = first)
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manually curated links for the Truckers News page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-links".
+ */
+export interface NewsLink {
+  id: number;
+  /**
+   * Headline text (shown as link)
+   */
+  title: string;
+  /**
+   * Full URL (external) or path (e.g. /blog/my-post)
+   */
+  url: string;
+  /**
+   * Source label, e.g. "The Truckers Edge"
+   */
+  source?: string | null;
+  /**
+   * Optional category for grouping
+   */
+  category?: ('regulations' | 'freight' | 'equipment' | 'safety' | 'technology' | 'general') | null;
+  /**
+   * Used for sorting (most recent first)
+   */
+  publishedAt?: string | null;
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -465,6 +532,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'service-intervals';
         value: number | ServiceInterval;
+      } | null)
+    | ({
+        relationTo: 'feed-sources';
+        value: number | FeedSource;
+      } | null)
+    | ({
+        relationTo: 'news-links';
+        value: number | NewsLink;
       } | null)
     | ({
         relationTo: 'users';
@@ -641,6 +716,33 @@ export interface ServiceIntervalsSelect<T extends boolean = true> {
         notes?: T;
         id?: T;
       };
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feed-sources_select".
+ */
+export interface FeedSourcesSelect<T extends boolean = true> {
+  name?: T;
+  feedUrl?: T;
+  category?: T;
+  enabled?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-links_select".
+ */
+export interface NewsLinksSelect<T extends boolean = true> {
+  title?: T;
+  url?: T;
+  source?: T;
+  category?: T;
+  publishedAt?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;
