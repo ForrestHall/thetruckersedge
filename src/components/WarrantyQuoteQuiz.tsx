@@ -27,7 +27,10 @@ const USAGE_OPTIONS = [
 ] as const
 
 const INPUT_CLASS =
-  'w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-brand-navy'
+  'block w-full min-w-0 max-w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-brand-navy'
+
+/** Explicit column layout — preflight is off; avoids forms collapsing into a single row in nested flex contexts */
+const FORM_CLASS = 'card flex w-full min-w-0 max-w-full flex-col gap-6 p-6 sm:p-8'
 
 export interface WarrantyQuoteData {
   vehicle: { make: string; model?: string; year: number; truckClass: number }
@@ -141,7 +144,7 @@ export function WarrantyQuoteQuiz() {
     step === 'vehicle' ? 25 : step === 'usage' ? 50 : step === 'contact' ? 75 : 100
 
   return (
-    <div className="space-y-8">
+    <div className="flex w-full min-w-0 flex-col space-y-8">
       <div>
         <div className="flex justify-between text-sm text-gray-500 mb-1">
           <span>Step {step === 'vehicle' ? 1 : step === 'usage' ? 2 : 3} of 3</span>
@@ -156,10 +159,10 @@ export function WarrantyQuoteQuiz() {
       </div>
 
       {step === 'vehicle' && (
-        <form onSubmit={handleVehicleNext} className="card p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleVehicleNext} className={FORM_CLASS}>
           <h2 className="text-xl font-bold text-brand-navy">Tell us about your truck</h2>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="make" className="block text-sm font-semibold text-brand-navy mb-2">
               Make
             </label>
@@ -179,7 +182,7 @@ export function WarrantyQuoteQuiz() {
             </select>
           </div>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="model" className="block text-sm font-semibold text-brand-navy mb-2">
               Model <span className="text-gray-400 font-normal">(optional)</span>
             </label>
@@ -193,8 +196,8 @@ export function WarrantyQuoteQuiz() {
             />
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div>
+          <div className="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="min-w-0">
               <label htmlFor="year" className="block text-sm font-semibold text-brand-navy mb-2">
                 Year
               </label>
@@ -213,7 +216,7 @@ export function WarrantyQuoteQuiz() {
                 ))}
               </select>
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="class" className="block text-sm font-semibold text-brand-navy mb-2">
                 Truck Class
               </label>
@@ -241,10 +244,10 @@ export function WarrantyQuoteQuiz() {
       )}
 
       {step === 'usage' && (
-        <form onSubmit={handleUsageNext} className="card p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleUsageNext} className={FORM_CLASS}>
           <h2 className="text-xl font-bold text-brand-navy">How do you use your truck?</h2>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="mileage" className="block text-sm font-semibold text-brand-navy mb-2">
               Current Mileage (odometer)
             </label>
@@ -260,7 +263,7 @@ export function WarrantyQuoteQuiz() {
             />
           </div>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="usageType" className="block text-sm font-semibold text-brand-navy mb-2">
               Usage Type
             </label>
@@ -280,15 +283,15 @@ export function WarrantyQuoteQuiz() {
             </select>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <button
               type="button"
               onClick={() => setStep('vehicle')}
-              className="btn-secondary px-6 py-3"
+              className="btn-secondary w-full shrink-0 px-6 py-3 sm:w-auto"
             >
               Back
             </button>
-            <button type="submit" className="btn-primary px-8 py-3">
+            <button type="submit" className="btn-primary w-full shrink-0 px-8 py-3 sm:w-auto">
               Continue
             </button>
           </div>
@@ -296,7 +299,7 @@ export function WarrantyQuoteQuiz() {
       )}
 
       {step === 'contact' && (
-        <form onSubmit={handleSubmit} className="card p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className={FORM_CLASS}>
           <h2 className="text-xl font-bold text-brand-navy">Get your personalized quote</h2>
           <p className="text-gray-600 text-sm">
             We&apos;ll search top providers and email your quote. No spam.
@@ -308,8 +311,8 @@ export function WarrantyQuoteQuiz() {
             </div>
           )}
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div>
+          <div className="grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="min-w-0">
               <label htmlFor="firstName" className="block text-sm font-semibold text-brand-navy mb-2">
                 First Name
               </label>
@@ -322,7 +325,7 @@ export function WarrantyQuoteQuiz() {
                 required
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="lastName" className="block text-sm font-semibold text-brand-navy mb-2">
                 Last Name
               </label>
@@ -337,7 +340,7 @@ export function WarrantyQuoteQuiz() {
             </div>
           </div>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="email" className="block text-sm font-semibold text-brand-navy mb-2">
               Email
             </label>
@@ -351,7 +354,7 @@ export function WarrantyQuoteQuiz() {
             />
           </div>
 
-          <div>
+          <div className="w-full min-w-0">
             <label htmlFor="phone" className="block text-sm font-semibold text-brand-navy mb-2">
               Phone
             </label>
@@ -365,19 +368,19 @@ export function WarrantyQuoteQuiz() {
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <button
               type="button"
               onClick={() => setStep('usage')}
               disabled={submitting}
-              className="btn-secondary px-6 py-3"
+              className="btn-secondary w-full shrink-0 px-6 py-3 sm:w-auto"
             >
               Back
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="btn-primary px-8 py-3 disabled:opacity-70"
+              className="btn-primary w-full shrink-0 px-8 py-3 disabled:opacity-70 sm:w-auto"
             >
               {submitting ? 'Submitting...' : 'Get My Quote'}
             </button>
