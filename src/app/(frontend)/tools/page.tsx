@@ -9,6 +9,14 @@ export const metadata: Metadata = {
 
 const tools = [
   {
+    href: '/tools/warranty-quote',
+    icon: '🛡️',
+    title: 'Truck Warranty Quote',
+    description:
+      'Get a free warranty quote matched to your truck. Answer a few questions and we\'ll search top providers to find the best coverage for your rig.',
+    tags: ['Owner-Operator', 'Protection'],
+  },
+  {
     href: '/tools/ifta-calculator',
     icon: '⛽',
     title: 'IFTA Fuel Tax Calculator',

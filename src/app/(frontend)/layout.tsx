@@ -1,5 +1,6 @@
 import '../globals.css'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 
@@ -47,6 +48,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: baseUrl,
   },
+  other: {
+    'google-adsense-account': 'ca-pub-2842751396737382',
+  },
 }
 
 const organizationJsonLd = {
@@ -66,9 +70,16 @@ const websiteJsonLd = {
   publisher: { '@type': 'Organization', name: 'The Truckers Edge' },
 }
 
+const ADSENSE_CLIENT = 'ca-pub-2842751396737382'
+
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="frontend-app min-h-screen flex flex-col overflow-x-hidden">
+      <Script
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+        strategy="afterInteractive"
+        crossOrigin="anonymous"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
