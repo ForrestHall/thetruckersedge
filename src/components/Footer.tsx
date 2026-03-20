@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { LogoWordmark } from '@/components/LogoWordmark'
 
 const links = {
   'CDL Test Prep': [
@@ -34,9 +35,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
           <div>
-            <Link href="/" className="text-xl font-extrabold text-white">
-              The Truckers<span className="text-brand-yellow">Edge</span>
-            </Link>
+            <LogoWordmark variant="footer" />
             <p className="text-sm mt-3 leading-relaxed text-gray-400">
               Free CDL practice tests, career guides, and tools for drivers at every stage — from first license to running your own rig.
             </p>

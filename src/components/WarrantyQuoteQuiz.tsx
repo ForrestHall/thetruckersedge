@@ -106,7 +106,12 @@ export function WarrantyQuoteQuiz() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Something went wrong')
+        const base = data.error || 'Something went wrong'
+        const extra =
+          Array.isArray(data.resendDetails) && data.resendDetails.length
+            ? ` (${data.resendDetails.join(' · ')})`
+            : ''
+        throw new Error(base + extra)
       }
       setStep('success')
     } catch (err) {

@@ -10,6 +10,8 @@
     "migrate": "echo DB init handled by onInit",
     "seed": "npx tsx scripts/seed-cdl-tests.ts",
     "seed:news-feeds": "npx tsx scripts/seed-news-feeds.ts",
+    "seed:guides": "npx tsx scripts/seed-guides.ts",
+    "enrich:cdl-guides": "npx tsx scripts/enrich-state-cdl-guides.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",
     "payload": "payload"

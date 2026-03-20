@@ -64,6 +64,17 @@ export default async function ArticlePage({ params }: Props) {
   const article = docs[0]
   if (!article) notFound()
 
+  const categorySlug =
+    article.category && typeof article.category === 'object' && 'slug' in article.category
+      ? (article.category as { slug?: string }).slug
+      : undefined
+  const guideLabel =
+    categorySlug === 'cdl-by-state'
+      ? 'CDL by State'
+      : categorySlug === 'career-guides'
+        ? 'Career Guide'
+        : 'Guide'
+
   const baseUrl = getBaseUrl()
   const url = `${baseUrl}/guides/${slug}`
   const jsonLd = {
@@ -82,7 +93,7 @@ export default async function ArticlePage({ params }: Props) {
       <div className="max-w-3xl mx-auto px-4 py-16">
       <div className="mb-8">
         <div className="text-brand-yellow font-semibold text-sm mb-3 uppercase tracking-wide">
-          Career Guide
+          {guideLabel}
         </div>
         <h1 className="text-4xl font-extrabold text-brand-navy mb-4 leading-tight">{article.title}</h1>
         {article.excerpt && (

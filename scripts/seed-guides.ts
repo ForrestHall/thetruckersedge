@@ -6,61 +6,13 @@ process.env.NODE_ENV = 'development'
 
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
-
-function paragraph(text: string) {
-  return {
-    type: 'paragraph',
-    version: 1,
-    children: [{ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 }],
-  }
-}
-
-function heading(tag: 'h1' | 'h2' | 'h3' | 'h4', text: string) {
-  return {
-    type: 'heading',
-    tag,
-    version: 1,
-    children: [{ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 }],
-  }
-}
-
-function listItem(text: string) {
-  return {
-    type: 'listitem',
-    version: 1,
-    value: 1,
-    children: [
-      {
-        type: 'paragraph',
-        version: 1,
-        children: [{ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 }],
-      },
-    ],
-  }
-}
-
-function bulletList(items: string[]) {
-  return {
-    type: 'list',
-    listType: 'bullet',
-    version: 1,
-    tag: 'ul',
-    children: items.map((t) => listItem(t)),
-  }
-}
-
-function buildContent(blocks: object[]) {
-  return {
-    root: {
-      type: 'root',
-      version: 1,
-      children: blocks,
-      direction: 'ltr' as const,
-      format: '',
-      indent: 0,
-    },
-  }
-}
+import { buildStateCdlGuidePayload } from '../src/lib/cdl-state-guide-content'
+import {
+  buildContent,
+  bulletList,
+  heading,
+  paragraph,
+} from '../src/lib/lexical-blocks'
 
 const STATES = [
   { name: 'Alabama', slug: 'alabama' },
@@ -115,67 +67,15 @@ const STATES = [
   { name: 'Wyoming', slug: 'wyoming' },
 ]
 
-function createStateCdlGuide(stateName: string, slug: string) {
-  return {
-    slug: `how-to-get-cdl-${slug}`,
-    title: `How to Get Your CDL in ${stateName} (2026 Guide)`,
-    relatedEndorsements: ['general-knowledge', 'air-brakes'] as string[],
-    excerpt: `Step-by-step guide to obtaining your Commercial Driver's License in ${stateName}. Covers requirements, testing, and where to find quality training.`,
-    content: buildContent([
-      heading('h2', `${stateName} CDL Requirements`),
-      paragraph(
-        `To get a Commercial Driver's License in ${stateName}, you must be at least 18 years old for intrastate driving or 21 for interstate. You'll need a valid ${stateName} driver's license, pass a medical exam (DOT physical), and complete the required knowledge and skills tests.`
-      ),
-      heading('h2', 'CDL Knowledge Tests'),
-      paragraph(
-        `${stateName} requires you to pass the General Knowledge test at minimum. Depending on the type of vehicle you plan to drive, you may also need Air Brakes, Combination Vehicles, or endorsement-specific tests (HazMat, Passenger, etc.). Each test typically has 50 questions, and you must score at least 80% to pass.`
-      ),
-      heading('h2', 'Skills Test (Behind-the-Wheel)'),
-      paragraph(
-        'The skills test includes a pre-trip inspection, basic vehicle control (backing, turns), and an on-road driving portion. You must provide a vehicle that matches the class of CDL you\'re testing for. Many drivers choose to attend a CDL training school that provides the truck and helps prepare you for all three portions.'
-      ),
-      heading('h2', `CDL Training Schools in ${stateName}`),
-      paragraph(
-        `${stateName} has approved CDL training programs, including community colleges and private trucking schools. Some carriers offer paid training programs where they cover your tuition in exchange for a commitment to drive for them. Contact your state DMV or check their website for a list of approved programs.`
-      ),
-      heading('h2', 'Next Steps'),
-      paragraph(
-        'Start by studying for your General Knowledge test. Use our free practice tests to identify weak areas. Once you pass the written tests, schedule your skills test with an approved tester. Many new drivers find that 3–4 weeks of focused training is enough to pass the CDL exam on the first try.'
-      ),
-    ]),
-  }
+const georgiaBuilt = buildStateCdlGuidePayload('Georgia', 'georgia')
+if (!georgiaBuilt) {
+  throw new Error('[seed] Georgia CDL guide payload could not be built')
 }
 
 const GUIDES = [
   {
-    slug: 'how-to-get-cdl-georgia',
-    title: 'How to Get Your CDL in Georgia (2026 Guide)',
+    ...georgiaBuilt,
     category: 'state' as const,
-    relatedEndorsements: ['general-knowledge', 'air-brakes'] as string[],
-    excerpt:
-      'Step-by-step guide to obtaining your Commercial Driver\'s License in Georgia. Covers requirements, testing, and where to find quality training.',
-    content: buildContent([
-      heading('h2', 'Georgia CDL Requirements'),
-      paragraph(
-        'To get a Commercial Driver\'s License in Georgia, you must be at least 18 years old for intrastate driving or 21 for interstate. You\'ll need a valid Georgia driver\'s license, pass a medical exam (DOT physical), and complete the required knowledge and skills tests.'
-      ),
-      heading('h2', 'CDL Knowledge Tests'),
-      paragraph(
-        'Georgia requires you to pass the General Knowledge test at minimum. Depending on the type of vehicle you plan to drive, you may also need Air Brakes, Combination Vehicles, or endorsement-specific tests (HazMat, Passenger, etc.). Each test typically has 50 questions, and you must score at least 80% to pass.'
-      ),
-      heading('h2', 'Skills Test (Behind-the-Wheel)'),
-      paragraph(
-        'The skills test includes a pre-trip inspection, basic vehicle control (backing, turns), and an on-road driving portion. You must provide a vehicle that matches the class of CDL you\'re testing for. Many drivers choose to attend a CDL training school that provides the truck and helps prepare you for all three portions.'
-      ),
-      heading('h2', 'CDL Training Schools in Georgia'),
-      paragraph(
-        'Georgia has several approved CDL training programs, including community colleges and private trucking schools. Some carriers offer paid training programs where they cover your tuition in exchange for a commitment to drive for them. Research programs carefully — look for job placement rates and graduate reviews.'
-      ),
-      heading('h2', 'Next Steps'),
-      paragraph(
-        'Start by studying for your General Knowledge test. Use practice tests to identify weak areas, then hit the books. Once you pass the written tests, schedule your skills test. Many new drivers find that 3–4 weeks of focused training is enough to pass the CDL exam on the first try.'
-      ),
-    ]),
   },
   {
     slug: 'otr-vs-local-trucking',
@@ -334,36 +234,40 @@ async function main() {
       console.log(`[seed] Article "${guide.title}" created.`)
     }
 
-    // Seed CDL guides for the other 49 states (Georgia already in GUIDES) (Georgia uses custom GUIDES entry above)
+    // Seed CDL guides for the other 49 states (Georgia already in GUIDES)
     for (const state of STATES) {
-      if (state.slug === 'georgia') continue // Georgia has custom content in GUIDES
-      const guide = createStateCdlGuide(state.name, state.slug)
+      if (state.slug === 'georgia') continue
+      const built = buildStateCdlGuidePayload(state.name, state.slug)
+      if (!built) {
+        console.warn(`[seed] No CDL payload for ${state.slug}, skipping.`)
+        continue
+      }
       const existing = await payload.find({
         collection: 'articles',
-        where: { slug: { equals: guide.slug } },
+        where: { slug: { equals: built.slug } },
         limit: 1,
       })
 
       if (existing.docs.length > 0) {
-        console.log(`[seed] Article "${guide.slug}" already exists. Skipping.`)
+        console.log(`[seed] Article "${built.slug}" already exists. Skipping.`)
         continue
       }
 
       await payload.create({
         collection: 'articles',
         data: {
-          title: guide.title,
-          slug: guide.slug,
-          excerpt: guide.excerpt,
+          title: built.title,
+          slug: built.slug,
+          excerpt: built.excerpt,
           category: stateCategoryId,
-          relatedEndorsements: guide.relatedEndorsements,
-          content: guide.content,
+          relatedEndorsements: built.relatedEndorsements,
+          content: built.content,
           status: 'published',
           publishedAt: now,
         },
       })
 
-      console.log(`[seed] Article "${guide.title}" created.`)
+      console.log(`[seed] Article "${built.title}" created.`)
     }
 
     console.log('[seed] Career guides seeding complete (50 state guides + career guides).')

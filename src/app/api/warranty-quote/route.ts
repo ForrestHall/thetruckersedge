@@ -84,25 +84,40 @@ If you have any questions in the meantime, just reply to this email.
 — The Trucker's Edge
 `.trim()
 
-  try {
-    await Promise.all([
-      resend.emails.send({
-        from: `The Trucker's Edge <${fromEmail}>`,
-        to: adminEmail,
-        subject: `Warranty Quote Lead: ${contact.firstName} ${contact.lastName}`,
-        text: leadBody,
-      }),
-      resend.emails.send({
-        from: `The Trucker's Edge <${fromEmail}>`,
-        to: contact.email,
-        subject: "Your Truck Warranty Quote – The Trucker's Edge",
-        text: confirmationBody,
-      }),
-    ])
-  } catch (err) {
-    console.error('Warranty quote email error:', err)
+  // Resend returns { data, error } — it does NOT throw on API failures; we must check .error
+  const [leadResult, confirmResult] = await Promise.all([
+    resend.emails.send({
+      from: `The Trucker's Edge <${fromEmail}>`,
+      to: adminEmail,
+      replyTo: contact.email,
+      subject: `Warranty Quote Lead: ${contact.firstName} ${contact.lastName}`,
+      text: leadBody,
+    }),
+    resend.emails.send({
+      from: `The Trucker's Edge <${fromEmail}>`,
+      to: contact.email,
+      subject: "Your Truck Warranty Quote – The Trucker's Edge",
+      text: confirmationBody,
+    }),
+  ])
+
+  const errors: string[] = []
+  if (leadResult.error) {
+    console.error('Warranty quote — lead email failed:', leadResult.error)
+    errors.push(`Lead notification: ${leadResult.error.message}`)
+  }
+  if (confirmResult.error) {
+    console.error('Warranty quote — confirmation email failed:', confirmResult.error)
+    errors.push(`Confirmation email: ${confirmResult.error.message}`)
+  }
+
+  if (errors.length > 0) {
+    const isDev = process.env.NODE_ENV === 'development'
     return NextResponse.json(
-      { error: 'Failed to send. Please try again later.' },
+      {
+        error: 'Email could not be sent. Check Resend domain setup and env vars.',
+        ...(isDev && { resendDetails: errors }),
+      },
       { status: 500 }
     )
   }

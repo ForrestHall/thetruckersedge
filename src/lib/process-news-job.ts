@@ -98,6 +98,10 @@ export async function runProcessNewsJob(): Promise<{
           source: item.source,
           publishedAt: item.publishedAt.toISOString(),
           processedAt: new Date().toISOString(),
+          seo: {
+            metaTitle: result.metaTitle,
+            metaDescription: result.metaDescription,
+          },
         },
       })
       processed++

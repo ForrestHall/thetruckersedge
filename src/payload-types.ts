@@ -522,6 +522,19 @@ export interface ProcessedNewsItem {
    * When AI processed this item
    */
   processedAt?: string | null;
+  /**
+   * Generated with the headline for search/social; edit if needed.
+   */
+  seo?: {
+    /**
+     * Title tag / SERP title (~50–60 characters).
+     */
+    metaTitle?: string | null;
+    /**
+     * Meta description for search snippets (~150–160 characters).
+     */
+    metaDescription?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -805,6 +818,12 @@ export interface ProcessedNewsItemsSelect<T extends boolean = true> {
   source?: T;
   publishedAt?: T;
   processedAt?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

@@ -80,5 +80,29 @@ export const ProcessedNewsItems: CollectionConfig = {
         description: 'When AI processed this item',
       },
     },
+    {
+      name: 'seo',
+      type: 'group',
+      label: 'SEO',
+      admin: {
+        description: 'Generated with the headline for search/social; edit if needed.',
+      },
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          admin: {
+            description: 'Title tag / SERP title (~50–60 characters).',
+          },
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          admin: {
+            description: 'Meta description for search snippets (~150–160 characters).',
+          },
+        },
+      ],
+    },
   ],
 }

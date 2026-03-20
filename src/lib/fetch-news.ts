@@ -12,6 +12,8 @@ export interface NewsItem {
   type: 'rss' | 'post' | 'link'
   category?: string
   viralScore?: number
+  /** AI-generated SERP description (processed RSS items only) */
+  metaDescription?: string
 }
 
 const parser = new Parser()
@@ -76,15 +78,29 @@ async function fetchAllNewsUncached(): Promise<NewsItem[]> {
     }),
   ])
 
-  const processedItems: NewsItem[] = processedRes.docs.map((doc) => ({
-    id: `processed-${doc.id}`,
-    title: doc.headlineOverride || doc.rewrittenTitle || doc.originalTitle,
-    url: doc.url,
-    source: doc.source,
-    publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : new Date(),
-    type: 'rss' as const,
-    viralScore: doc.viralScore ?? 0,
-  }))
+  const processedItems: NewsItem[] = processedRes.docs.map((doc) => {
+    const d = doc as {
+      id: string | number
+      headlineOverride?: string | null
+      rewrittenTitle?: string | null
+      originalTitle?: string
+      url: string
+      source: string
+      publishedAt?: string | null
+      viralScore?: number | null
+      seo?: { metaDescription?: string | null } | null
+    }
+    return {
+      id: `processed-${doc.id}`,
+      title: d.headlineOverride || d.rewrittenTitle || d.originalTitle || '(No title)',
+      url: d.url,
+      source: d.source,
+      publishedAt: d.publishedAt ? new Date(d.publishedAt) : new Date(),
+      type: 'rss' as const,
+      viralScore: d.viralScore ?? 0,
+      metaDescription: d.seo?.metaDescription ?? undefined,
+    }
+  })
 
   if (processedItems.length > 0) {
     const postItems: NewsItem[] = postsRes.docs.map((post) => ({

@@ -43,6 +43,7 @@ export default async function NewsPage() {
                     target={item.url.startsWith('http') ? '_blank' : undefined}
                     rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                     className="text-xl font-bold text-brand-navy hover:text-brand-yellow hover:underline block"
+                    title={item.metaDescription || item.title}
                   >
                     {item.title}
                   </a>
@@ -60,6 +61,7 @@ export default async function NewsPage() {
                   target={item.url.startsWith('http') ? '_blank' : undefined}
                   rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className="text-brand-navy hover:text-brand-yellow hover:underline font-medium block"
+                  title={item.metaDescription || item.title}
                 >
                   {item.title}
                 </a>

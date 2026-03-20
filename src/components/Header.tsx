@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { LogoWordmark } from '@/components/LogoWordmark'
 
 const navLinks = [
   { href: '/practice-tests', label: 'Practice Tests' },
@@ -17,12 +18,7 @@ export function Header() {
   return (
     <header className="bg-brand-navy text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14 sm:h-16 gap-2">
-        <Link href="/" className="flex items-center gap-2 font-extrabold text-base sm:text-xl no-underline hover:no-underline shrink-0 min-w-0">
-          <span className="text-brand-yellow">🚛</span>
-          <span className="truncate">
-            The Truckers<span className="text-brand-yellow">Edge</span>
-          </span>
-        </Link>
+        <LogoWordmark variant="header" />
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
