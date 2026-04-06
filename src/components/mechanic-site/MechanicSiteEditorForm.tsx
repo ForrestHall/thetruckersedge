@@ -50,14 +50,20 @@ async function uploadMediaFile(file: File, alt: string): Promise<number> {
   const fd = new FormData()
   fd.append('file', file)
   fd.append('alt', alt)
-  const res = await fetch('/api/media', {
+  const res = await fetch('/api/mechanic-media', {
     method: 'POST',
     credentials: 'include',
     body: fd,
   })
-  const j = (await res.json().catch(() => ({}))) as { doc?: { id?: number }; message?: string }
+  const j = (await res.json().catch(() => ({}))) as {
+    doc?: { id?: number }
+    message?: string
+    errors?: { message?: string }[]
+  }
   if (!res.ok) {
-    throw new Error(typeof j.message === 'string' ? j.message : 'Image upload failed')
+    const msg =
+      j.errors?.[0]?.message || (typeof j.message === 'string' ? j.message : null) || 'Image upload failed'
+    throw new Error(msg)
   }
   const id = j.doc?.id
   if (typeof id !== 'number') throw new Error('Invalid upload response')
