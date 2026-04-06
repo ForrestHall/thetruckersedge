@@ -14,13 +14,14 @@ const staticPages: MetadataRoute.Sitemap = [
   { url: `${baseUrl}/tools/ifta-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/tools/per-diem-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/tools/service-intervals`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+  { url: `${baseUrl}/mechanics`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const payload = await getPayload({ config })
 
-    const [posts, articles, tests] = await Promise.all([
+    const [posts, articles, tests, mechanicSites] = await Promise.all([
       payload.find({
         collection: 'posts',
         where: { status: { equals: 'published' } },
@@ -38,6 +39,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         where: { status: { equals: 'published' } },
         limit: 100,
         select: { slug: true, updatedAt: true },
+      }),
+      payload.find({
+        collection: 'mechanic-sites',
+        where: { status: { equals: 'active' } },
+        limit: 500,
+        select: { slug: true, updatedAt: true },
+        overrideAccess: true,
       }),
     ])
 
@@ -68,7 +76,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }))
 
-    return [...staticPages, ...blogUrls, ...guideUrls, ...testUrls]
+    const mechanicUrls: MetadataRoute.Sitemap = mechanicSites.docs
+      .filter((m) => m.slug)
+      .map((m) => ({
+        url: `${baseUrl}/mechanics/${m.slug}`,
+        lastModified: (m.updatedAt ? new Date(m.updatedAt) : new Date()) as Date,
+        changeFrequency: 'weekly' as const,
+        priority: 0.65,
+      }))
+
+    return [...staticPages, ...blogUrls, ...guideUrls, ...testUrls, ...mechanicUrls]
   } catch {
     return staticPages
   }

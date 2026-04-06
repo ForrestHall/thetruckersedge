@@ -38,7 +38,7 @@
 State guides used to share one template with only the state name swapped (thin duplicate content). The site now builds **state-specific copy** (agency, capital, rotated paragraphs) from [`src/data/cdl-state-facts.ts`](src/data/cdl-state-facts.ts).
 
 - **New installs:** `npm run seed:guides` seeds differentiated guides.
-- **Existing production DB:** run once with env loaded: `npm run enrich:cdl-guides` to rewrite CDL-by-state article bodies and excerpts in Payload.
+- **Existing production DB:** run once with env loaded: `npm run enrich:cdl-guides` to rewrite CDL-by-state **titles**, bodies, and excerpts (unique per-state angles + varied headings/order). Re-run after any template change in `src/data/cdl-state-*.ts`.
 
 ## 8. Warranty quote emails (optional)
 - Add `RESEND_API_KEY` from [Resend](https://resend.com)

@@ -63,6 +63,7 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
+    mechanics: MechanicAuthOperations;
     users: UserAuthOperations;
   };
   blocks: {};
@@ -76,6 +77,8 @@ export interface Config {
     'feed-sources': FeedSource;
     'news-links': NewsLink;
     'processed-news-items': ProcessedNewsItem;
+    mechanics: Mechanic;
+    'mechanic-sites': MechanicSite;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -93,6 +96,8 @@ export interface Config {
     'feed-sources': FeedSourcesSelect<false> | FeedSourcesSelect<true>;
     'news-links': NewsLinksSelect<false> | NewsLinksSelect<true>;
     'processed-news-items': ProcessedNewsItemsSelect<false> | ProcessedNewsItemsSelect<true>;
+    mechanics: MechanicsSelect<false> | MechanicsSelect<true>;
+    'mechanic-sites': MechanicSitesSelect<false> | MechanicSitesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -109,10 +114,28 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: Mechanic | User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
+  };
+}
+export interface MechanicAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
   };
 }
 export interface UserAuthOperations {
@@ -539,6 +562,119 @@ export interface ProcessedNewsItem {
   createdAt: string;
 }
 /**
+ * Diesel mechanics who can log in to manage their hosted page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanics".
+ */
+export interface Mechanic {
+  id: number;
+  businessName?: string | null;
+  phone?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'mechanics';
+}
+/**
+ * Hosted one-page sites for diesel mechanics. Filter by status to review pending submissions.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanic-sites".
+ */
+export interface MechanicSite {
+  id: number;
+  /**
+   * Account that owns this page.
+   */
+  mechanic: number | Mechanic;
+  /**
+   * Pending: awaiting review. Approved: mechanic can pay. Active: live on the site.
+   */
+  status: 'pending_review' | 'approved' | 'active' | 'suspended' | 'rejected';
+  /**
+   * Shown to the mechanic when status is Rejected (optional).
+   */
+  rejectionNote?: string | null;
+  businessName: string;
+  /**
+   * Public URL: /mechanics/your-slug
+   */
+  slug: string;
+  tagline?: string | null;
+  logo?: (number | null) | Media;
+  about?: string | null;
+  services?:
+    | {
+        name: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  certifications?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  businessHours?:
+    | {
+        day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+        /**
+         * e.g. 8:00 AM or Closed
+         */
+        open?: string | null;
+        /**
+         * e.g. 5:00 PM
+         */
+        close?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  city?: string | null;
+  /**
+   * State or province
+   */
+  state?: string | null;
+  zip?: string | null;
+  /**
+   * Optional external site (https://...)
+   */
+  website?: string | null;
+  gallery?: (number | Media)[] | null;
+  ctaText?: string | null;
+  /**
+   * tel:, mailto:, or https:// URL
+   */
+  ctaLink?: string | null;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  subscriptionStatus?: ('trialing' | 'active' | 'past_due' | 'cancelled' | 'unpaid') | null;
+  /**
+   * Updated when invoices are paid.
+   */
+  subscriptionPaidThrough?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -599,14 +735,27 @@ export interface PayloadLockedDocument {
         value: number | ProcessedNewsItem;
       } | null)
     | ({
+        relationTo: 'mechanics';
+        value: number | Mechanic;
+      } | null)
+    | ({
+        relationTo: 'mechanic-sites';
+        value: number | MechanicSite;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'mechanics';
+        value: number | Mechanic;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -616,10 +765,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'mechanics';
+        value: number | Mechanic;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   key?: string | null;
   value?:
     | {
@@ -824,6 +978,81 @@ export interface ProcessedNewsItemsSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanics_select".
+ */
+export interface MechanicsSelect<T extends boolean = true> {
+  businessName?: T;
+  phone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanic-sites_select".
+ */
+export interface MechanicSitesSelect<T extends boolean = true> {
+  mechanic?: T;
+  status?: T;
+  rejectionNote?: T;
+  businessName?: T;
+  slug?: T;
+  tagline?: T;
+  logo?: T;
+  about?: T;
+  services?:
+    | T
+    | {
+        name?: T;
+        description?: T;
+        id?: T;
+      };
+  certifications?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  businessHours?:
+    | T
+    | {
+        day?: T;
+        open?: T;
+        close?: T;
+        id?: T;
+      };
+  phone?: T;
+  email?: T;
+  address?: T;
+  city?: T;
+  state?: T;
+  zip?: T;
+  website?: T;
+  gallery?: T;
+  ctaText?: T;
+  ctaLink?: T;
+  stripeCustomerId?: T;
+  stripeSubscriptionId?: T;
+  subscriptionStatus?: T;
+  subscriptionPaidThrough?: T;
   updatedAt?: T;
   createdAt?: T;
 }

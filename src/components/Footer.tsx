@@ -27,13 +27,18 @@ const links = {
     { href: '/tools/ifta-calculator', label: 'IFTA Calculator' },
     { href: '/tools/per-diem-calculator', label: 'Per Diem Calculator' },
   ],
+  'For mechanics': [
+    { href: '/mechanics', label: 'Mechanic directory' },
+    { href: '/mechanics/signup', label: 'List your diesel shop' },
+    { href: '/mechanics/login', label: 'Mechanic login' },
+  ],
 }
 
 export function Footer() {
   return (
     <footer className="bg-brand-navy text-gray-300 pt-10 sm:pt-16 pb-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12">
           <div>
             <LogoWordmark variant="footer" />
             <p className="text-sm mt-3 leading-relaxed text-gray-400">

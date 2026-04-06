@@ -9,6 +9,13 @@ import { getPayload } from 'payload'
 import config from '../src/payload.config'
 import { buildStateCdlGuidePayload } from '../src/lib/cdl-state-guide-content'
 
+function stateDisplayNameFromSlug(stateSlug: string): string {
+  return stateSlug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
 async function main() {
   try {
     const payload = await getPayload({ config })
@@ -38,13 +45,7 @@ async function main() {
       if (!slug.startsWith('how-to-get-cdl-')) continue
 
       const stateSlug = slug.replace(/^how-to-get-cdl-/, '')
-      const title = typeof art.title === 'string' ? art.title : ''
-      const m = title.match(/How to Get Your CDL in (.+?) \(\d{4}/)
-      const stateName = m ? m[1].trim() : null
-      if (!stateName) {
-        console.warn(`[enrich] Could not parse state name from title: ${title}`)
-        continue
-      }
+      const stateName = stateDisplayNameFromSlug(stateSlug)
 
       const built = buildStateCdlGuidePayload(stateName, stateSlug)
       if (!built) {
@@ -56,6 +57,7 @@ async function main() {
         collection: 'articles',
         id: art.id,
         data: {
+          title: built.title,
           content: built.content,
           excerpt: built.excerpt,
         },

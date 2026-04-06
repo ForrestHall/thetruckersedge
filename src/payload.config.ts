@@ -5,6 +5,8 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
 
+import { Mechanics } from './collections/Mechanics'
+import { MechanicSites } from './collections/MechanicSites'
 import { Users } from './collections/Users'
 import { Articles } from './collections/Articles'
 import { Posts } from './collections/Posts'
@@ -52,7 +54,20 @@ export default buildConfig({
       },
     },
   ],
-  collections: [Articles, Posts, PracticeTests, Categories, Media, ServiceIntervals, FeedSources, NewsLinks, ProcessedNewsItems, Users],
+  collections: [
+    Articles,
+    Posts,
+    PracticeTests,
+    Categories,
+    Media,
+    ServiceIntervals,
+    FeedSources,
+    NewsLinks,
+    ProcessedNewsItems,
+    Mechanics,
+    MechanicSites,
+    Users,
+  ],
   editor: lexicalEditor({}),
   db: postgresAdapter({
     pool: {

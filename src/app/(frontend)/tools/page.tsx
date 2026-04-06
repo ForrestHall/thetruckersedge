@@ -9,12 +9,22 @@ export const metadata: Metadata = {
 
 const tools = [
   {
+    href: '/mechanics/signup',
+    icon: '🔩',
+    title: 'Hosted page for your diesel shop',
+    description:
+      'Get a professional one-page website on The Truckers Edge. Submit your shop for review, subscribe monthly when approved, and reach drivers looking for heavy-truck service.',
+    tags: ['Mechanics', 'Marketing'],
+    cta: 'Get started →',
+  },
+  {
     href: '/tools/warranty-quote',
     icon: '🛡️',
     title: 'Truck Warranty Quote',
     description:
       'Get a free warranty quote matched to your truck. Answer a few questions and we\'ll search top providers to find the best coverage for your rig.',
     tags: ['Owner-Operator', 'Protection'],
+    cta: 'Open tool →',
   },
   {
     href: '/tools/ifta-calculator',
@@ -23,6 +33,7 @@ const tools = [
     description:
       'Calculate your quarterly IFTA fuel tax filing quickly. Enter your miles by state and fuel purchases — we do the math.',
     tags: ['Owner-Operator', 'Taxes'],
+    cta: 'Open calculator →',
   },
   {
     href: '/tools/per-diem-calculator',
@@ -31,6 +42,7 @@ const tools = [
     description:
       'Find out how much you can deduct for meals and incidentals based on your days on the road. Saves most drivers $3,000–$7,000/year in taxes.',
     tags: ['Tax Savings', 'All Drivers'],
+    cta: 'Open calculator →',
   },
   {
     href: '/tools/service-intervals',
@@ -39,8 +51,9 @@ const tools = [
     description:
       'Look up maintenance intervals for your truck or engine by make, model, or year. Volvo, Cummins, Detroit, PACCAR, and more.',
     tags: ['Maintenance', 'All Drivers'],
+    cta: 'Open tool →',
   },
-]
+] as const
 
 export default function ToolsPage() {
   return (
@@ -67,7 +80,7 @@ export default function ToolsPage() {
                 </span>
               ))}
             </div>
-            <span className="text-brand-yellow font-semibold text-sm mt-auto">Open Calculator →</span>
+            <span className="text-brand-yellow font-semibold text-sm mt-auto">{tool.cta}</span>
           </Link>
         ))}
       </div>

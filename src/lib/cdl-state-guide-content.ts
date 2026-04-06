@@ -1,17 +1,24 @@
 import {
   buildContent,
+  bulletList,
   heading,
   paragraph,
 } from '@/lib/lexical-blocks'
 import {
+  buildGuideTitle,
   buildKnowledgeParagraph,
   buildNextStepsParagraph,
   buildRegionalOpening,
+  buildRequirementsBody,
+  buildRequirementsChecklist,
   buildSkillsParagraph,
   buildTrainingParagraph,
   buildUniqueExcerpt,
   getCdlStateMeta,
+  headingsForGuide,
+  slot,
 } from '@/data/cdl-state-facts'
+import { getCdlUniqueAngle } from '@/data/cdl-state-unique-angles'
 
 export type StateCdlGuidePayload = {
   slug: string
@@ -22,34 +29,55 @@ export type StateCdlGuidePayload = {
 }
 
 /**
- * Rich, state-specific CDL guide body (reduces duplicate/thin SEO content vs one global template).
+ * State CDL guides: unique angle + varied headings, section order, checklist vs prose.
+ * Re-run `npm run enrich:cdl-guides` after changing generators to refresh Payload.
  */
 export function buildStateCdlGuidePayload(stateName: string, slug: string): StateCdlGuidePayload | null {
   const meta = getCdlStateMeta(slug)
-  if (!meta) return null
+  const uniqueAngle = getCdlUniqueAngle(slug)
+  if (!meta || !uniqueAngle) return null
 
+  const h = headingsForGuide(stateName, slug)
   const slugFull = `how-to-get-cdl-${slug}`
 
-  const blocks = [
-    heading('h2', `Who issues CDLs in ${stateName}?`),
+  const blocks: object[] = [
+    heading('h2', h.issuing),
     paragraph(buildRegionalOpening(stateName, meta, slug)),
-    heading('h2', `${stateName} CDL requirements (overview)`),
-    paragraph(
-      `To get a Commercial Driver's License in ${stateName}, you must meet federal age rules: at least 18 for intrastate operation and 21 for interstate. You need a valid ${stateName} driver's license (or transfer process if new to the state), a current DOT medical certificate, and passing scores on the knowledge and skills tests for your class and endorsements. ${meta.agencyShort} publishes fee schedules and ID requirements.`
-    ),
-    heading('h2', 'CDL knowledge tests'),
-    paragraph(buildKnowledgeParagraph(stateName, meta, slug)),
-    heading('h2', 'Skills test (behind-the-wheel)'),
-    paragraph(buildSkillsParagraph(stateName, meta, slug)),
-    heading('h2', `CDL training options in ${stateName}`),
-    paragraph(buildTrainingParagraph(stateName, meta, slug)),
-    heading('h2', 'Next steps'),
-    paragraph(buildNextStepsParagraph(stateName, slug)),
+    heading('h2', h.context),
+    paragraph(uniqueAngle),
+    heading('h2', h.requirements),
   ]
+
+  const useChecklist = slot(slug, 2, 'bl') === 0
+  if (useChecklist) {
+    blocks.push(bulletList(buildRequirementsChecklist(stateName, meta, meta.capital)))
+    blocks.push(
+      paragraph(
+        `Policies and fees change—confirm every line item with ${meta.agencyShort} before you pay. Waivers, endorsements, and out-of-state transfers have extra steps not shown in a short list.`
+      )
+    )
+  } else {
+    blocks.push(paragraph(buildRequirementsBody(stateName, meta, uniqueAngle, slug)))
+  }
+
+  const knowledgeBlocks = [heading('h2', h.knowledge), paragraph(buildKnowledgeParagraph(stateName, meta, slug))]
+  const skillsBlocks = [heading('h2', h.skills), paragraph(buildSkillsParagraph(stateName, meta, slug))]
+  const trainingBlocks = [heading('h2', h.training), paragraph(buildTrainingParagraph(stateName, meta, slug))]
+
+  const order = slot(slug, 3, 'ord')
+  if (order === 0) {
+    blocks.push(...knowledgeBlocks, ...skillsBlocks, ...trainingBlocks)
+  } else if (order === 1) {
+    blocks.push(...trainingBlocks, ...knowledgeBlocks, ...skillsBlocks)
+  } else {
+    blocks.push(...skillsBlocks, ...trainingBlocks, ...knowledgeBlocks)
+  }
+
+  blocks.push(heading('h2', h.next), paragraph(buildNextStepsParagraph(stateName, slug)))
 
   return {
     slug: slugFull,
-    title: `How to Get Your CDL in ${stateName} (2026 Guide)`,
+    title: buildGuideTitle(stateName, slug),
     excerpt: buildUniqueExcerpt(stateName, meta, slug),
     relatedEndorsements: ['general-knowledge', 'air-brakes'],
     content: buildContent(blocks),

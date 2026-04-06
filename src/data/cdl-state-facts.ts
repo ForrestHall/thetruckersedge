@@ -68,15 +68,27 @@ export function getCdlStateMeta(slug: string): CdlStateMeta | null {
   return CDL_STATE_META[slug] ?? null
 }
 
-/** Stable 0..n-1 from slug */
-function slot(slug: string, modulo: number): number {
-  let h = 0
-  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0
-  return h % modulo
+/** Stable 0..modulo-1 from slug; salt separates hash spaces so section picks decorrelate */
+export function slot(slug: string, modulo: number, salt = ''): number {
+  const s = slug + salt
+  let h = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return Math.abs(h) % modulo
+}
+
+/** Vary title tags across states (still keyword-rich) */
+export function buildGuideTitle(stateName: string, slug: string): string {
+  const v = slot(slug, 3, 'ti')
+  if (v === 0) return `How to Get Your CDL in ${stateName} (2026 Guide)`
+  if (v === 1) return `${stateName} CDL: Requirements, Tests & Training (2026)`
+  return `Commercial Driver's License in ${stateName} — Full Guide (2026)`
 }
 
 export function buildUniqueExcerpt(stateName: string, meta: CdlStateMeta, slug: string): string {
-  const v = slot(slug, 3)
+  const v = slot(slug, 5, 'ex')
   const a = meta.agencyShort
   const c = meta.capital
   if (v === 0) {
@@ -85,12 +97,18 @@ export function buildUniqueExcerpt(stateName: string, meta: CdlStateMeta, slug: 
   if (v === 1) {
     return `How to get a CDL in ${stateName}: ${a} oversees licensing from ${c}. Intrastate vs interstate rules, knowledge and skills tests, and finding training.`
   }
-  return `Commercial driver's license steps for ${stateName}. ${a} schedules written and skills tests; start in ${c} or a regional office. Endorsements and medical card covered.`
+  if (v === 2) {
+    return `Commercial driver's license steps for ${stateName}. ${a} schedules written and skills tests; start in ${c} or a regional office. Endorsements and medical card covered.`
+  }
+  if (v === 3) {
+    return `${stateName} truckers: CLP, knowledge exams, and road test paths through ${a}. Medical card, fees, and CDL school tips—built for ${c} and statewide offices.`
+  }
+  return `Earn a CDL-A or CDL-B in ${stateName}: what ${a} requires before you haul freight. Covers skills test prep, endorsements, and first-job training choices.`
 }
 
 export function buildRegionalOpening(stateName: string, meta: CdlStateMeta, slug: string): string {
   const { capital, agencyPhrase } = meta
-  const s = slot(slug, 4)
+  const s = slot(slug, 4, 'ro')
   if (s === 0) {
     return `Commercial licensing in ${stateName} is handled by ${agencyPhrase}. Most drivers begin by obtaining a Commercial Learner's Permit (CLP) after passing the required knowledge exams; skills tests are often scheduled at larger offices in or near ${capital}.`
   }
@@ -104,7 +122,7 @@ export function buildRegionalOpening(stateName: string, meta: CdlStateMeta, slug
 }
 
 export function buildKnowledgeParagraph(stateName: string, meta: CdlStateMeta, slug: string): string {
-  const s = slot(slug, 5)
+  const s = slot(slug, 7, 'kn')
   const { agencyShort } = meta
   if (s === 0) {
     return `${stateName} requires a passing score on the General Knowledge exam for most CDL applicants. ${agencyShort} may bundle endorsements (Air Brakes, HazMat, etc.) into the same visit—confirm which tests you need for your job before you schedule.`
@@ -118,11 +136,17 @@ export function buildKnowledgeParagraph(stateName: string, meta: CdlStateMeta, s
   if (s === 3) {
     return `Each knowledge test typically allows a limited number of mistakes; ${agencyShort} can tell you the exact pass threshold and whether translations or accommodations are available at your preferred ${stateName} location.`
   }
+  if (s === 4) {
+    return `If English isn't your first language, ask ${agencyShort} whether ${stateName} permits interpreters for knowledge exams or offers study guides in other languages—policies differ by office.`
+  }
+  if (s === 5) {
+    return `Combination Vehicles and Air Brakes tests stack on top of General Knowledge for typical tractor-trailer applicants. ${agencyShort} can print a checklist so you don't pay for tests your employer will never use.`
+  }
   return `Schedule knowledge tests through ${agencyShort} once you hold a valid medical certificate. ${stateName} may require a CLP holding period before skills testing—verify current wait times before you commit to a training school.`
 }
 
 export function buildSkillsParagraph(stateName: string, meta: CdlStateMeta, slug: string): string {
-  const s = slot(slug, 5)
+  const s = slot(slug, 7, 'sk')
   const { capital } = meta
   if (s === 0) {
     return `The CDL skills test has three parts: vehicle inspection, basic control maneuvers, and on-road driving. In ${stateName}, you must supply an appropriate vehicle (or use a school truck). Skills tests near ${capital} may book out—reserve early.`
@@ -136,11 +160,17 @@ export function buildSkillsParagraph(stateName: string, meta: CdlStateMeta, slug
   if (s === 3) {
     return `Failing one segment often means retaking the full skills test in ${stateName}. Confirm whether your CLP remains valid if you need a second attempt—${meta.agencyShort} can clarify renewal rules.`
   }
+  if (s === 4) {
+    return `Automatic vs manual transmission restrictions appear on some CDLs if you test without certain equipment. ${stateName} examiners document what you tested in—ask employers whether that restriction blocks the trucks you'd drive day one.`
+  }
+  if (s === 5) {
+    return `Pre-trip inspection scripts vary slightly by examiner; practice the same sequence every time so muscle memory carries you through nerves on test day in ${stateName}.`
+  }
   return `Some carriers sponsor training and provide trucks for testing. If you're testing privately, ensure registration, insurance, and vehicle class match the CDL you're pursuing—${stateName} examiners will turn away mismatched equipment.`
 }
 
 export function buildTrainingParagraph(stateName: string, meta: CdlStateMeta, slug: string): string {
-  const s = slot(slug, 5)
+  const s = slot(slug, 7, 'tr')
   if (s === 0) {
     return `CDL schools in ${stateName} range from community colleges to private academies and carrier-sponsored programs. Compare total cost, equipment used, and job placement—not just price. ${meta.agencyShort} lists approved providers.`
   }
@@ -153,11 +183,17 @@ export function buildTrainingParagraph(stateName: string, meta: CdlStateMeta, sl
   if (s === 3) {
     return `Part-time and evening programs exist in larger ${stateName} metros; rural students may need lodging near training hubs. Budget for DOT physicals, permit fees, and testing fees separate from tuition.`
   }
+  if (s === 4) {
+    return `ELDT (Entry-Level Driver Training) rules apply to many first-time Class A or certain upgrade paths—confirm your school appears on FMCSA's registry and that ${meta.agencyShort} recognizes the completion certificate you receive.`
+  }
+  if (s === 5) {
+    return `Refresher courses help if you let a CDL lapse or are returning after years away; ${stateName} schools sometimes tailor shorter programs than full beginner academies.`
+  }
   return `Veterans' benefits and workforce grants sometimes apply to CDL training—ask schools and ${meta.agencyShort} about eligibility.`
 }
 
 export function buildNextStepsParagraph(stateName: string, slug: string): string {
-  const s = slot(slug, 4)
+  const s = slot(slug, 6, 'nx')
   if (s === 0) {
     return `Start with our free General Knowledge practice tests, then study ${stateName}'s CDL manual. Book knowledge tests only after you're consistently passing practice exams—retakes cost time and money.`
   }
@@ -167,5 +203,100 @@ export function buildNextStepsParagraph(stateName: string, slug: string): string
   if (s === 2) {
     return `Join forums and talk to recent grads from your area—local nuances (test sites, examiners' expectations) matter. Pair book study with hands-on practice in the vehicle class you'll test in.`
   }
+  if (s === 3) {
+    return `Screenshot your CLP and appointment confirmations; ${stateName} offices occasionally reschedule weather or staffing. Keep copies of medical cards and endorsements in the truck once you're hired.`
+  }
+  if (s === 4) {
+    return `If you're job-hunting while testing, ask recruiters which endorsements they reimburse—some pay for HazMat after hire, which changes your study order.`
+  }
   return `After licensing, consider which endorsements your employer needs next. ${stateName} CDL holders often add HazMat or Tanker after their first year—plan study time between runs.`
+}
+
+/** Varied H2s so page outlines differ in HTML, not only body text */
+export function headingsForGuide(stateName: string, slug: string) {
+  const pick = (salt: string) => slot(slug, 3, salt)
+  return {
+    issuing: [
+      `Who issues CDLs in ${stateName}?`,
+      `${stateName} CDL authority: where to start`,
+      `Commercial driver licensing in ${stateName}`,
+    ][pick('h0')],
+    context: [
+      `Why ${stateName} CDL applicants plan ahead`,
+      `${stateName} trucking context before you test`,
+      `Local angle: getting licensed in ${stateName}`,
+    ][pick('h1')],
+    requirements: [
+      `${stateName} CDL requirements (overview)`,
+      `Age, medical card, and permits in ${stateName}`,
+      `What you need before testing in ${stateName}`,
+    ][pick('h2')],
+    knowledge: [
+      `CDL knowledge tests`,
+      `Written exams and endorsements in ${stateName}`,
+      `Passing ${stateName}'s CDL written tests`,
+    ][pick('h3')],
+    skills: [
+      `Skills test (behind-the-wheel)`,
+      `Road test and inspection in ${stateName}`,
+      `Your ${stateName} CDL skills exam`,
+    ][pick('h4')],
+    training: [
+      `CDL training options in ${stateName}`,
+      `Schools and employer programs in ${stateName}`,
+      `Where to train for your ${stateName} CDL`,
+    ][pick('h5')],
+    next: [
+      `Next steps`,
+      `Checklist: after you finish reading`,
+      `Moving forward with your ${stateName} CDL`,
+    ][pick('h6')],
+  }
+}
+
+/** Requirements body — 8 variants; weaves uniqueAngle so overlap with other states drops */
+export function buildRequirementsBody(
+  stateName: string,
+  meta: CdlStateMeta,
+  uniqueAngle: string,
+  slug: string
+): string {
+  const { agencyShort, capital } = meta
+  const v = slot(slug, 8, 'rq')
+  const hook = uniqueAngle
+
+  if (v === 0) {
+    return `${hook} Federally, you need to be 18 for intrastate CDL work in ${stateName} and 21 for interstate. Hold a valid ${stateName} operator license (or complete out-of-state transfer steps), carry a current Medical Examiner's Certificate, and pass knowledge and skills tests for your class. ${agencyShort} publishes current fee tables and ID checklists—download them before you visit ${capital}.`
+  }
+  if (v === 1) {
+    return `Before you sit for exams, ${agencyShort} will expect proof of identity, lawful presence, and ${stateName} residency where applicable. ${hook} The DOT physical is non-negotiable for non-excepted interstate operation; intrastate drivers follow ${stateName} medical rules tied to federal standards.`
+  }
+  if (v === 2) {
+    return `${hook} Once eligible, you'll apply for a CLP, pass applicable knowledge tests, wait any required holding period, then schedule a skills test in a vehicle matching the CDL class. ${agencyShort} offices in and around ${capital} often handle the highest volume—rural sites may offer shorter waits but fewer weekly slots.`
+  }
+  if (v === 3) {
+    return `Endorsements (tank, HazMat, passenger, etc.) add knowledge tests—and HazMat adds TSA background steps. ${hook} Map every endorsement to your target job before you pay fees at ${agencyShort}, since retakes add up.`
+  }
+  if (v === 4) {
+    return `If you're upgrading from Class B to A, or adding/removing restrictions, ${agencyShort} treats that as a new testing sequence for the pieces that changed. ${hook} Bring registration and insurance for any vehicle you supply for the skills test.`
+  }
+  if (v === 5) {
+    return `${hook} Military CDL skills-test waiver programs sometimes apply in ${stateName} for qualifying veterans—ask ${agencyShort} whether your MOS and discharge status fit current rules before skipping training you might still want for insurance or employers.`
+  }
+  if (v === 6) {
+    return `Out-of-state CDL holders moving to ${stateName} typically surrender the old credential and pass any ${stateName}-specific tests not covered by reciprocity. ${hook} Start online if ${agencyShort} offers appointment scheduling—it saves a wasted trip to ${capital}.`
+  }
+  return `${hook} New entrants to trucking should budget for CLP fees, each knowledge attempt, skills test fees, and third-party tester charges if used. ${agencyShort} can itemize what's due at each step so you don't stall mid-process.`
+}
+
+/** Checklist-style requirements (different HTML shape than paragraph-only guides) */
+export function buildRequirementsChecklist(stateName: string, meta: CdlStateMeta, capital: string): string[] {
+  return [
+    `Meet age rules: 18+ intrastate / 21+ interstate CDL work originating in ${stateName}`,
+    `Hold a valid ${stateName} driver license or complete transfer if new to the state`,
+    `DOT medical certificate on file before non-excepted operation`,
+    `Pass knowledge tests for class and endorsements through ${meta.agencyShort}`,
+    `Obtain a CLP and complete any required waiting period before skills testing`,
+    `Schedule skills test in ${capital} or another authorized ${meta.agencyShort} location with the correct vehicle class`,
+  ]
 }

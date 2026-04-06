@@ -11,6 +11,8 @@ export const Media: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: ({ req: { user } }) =>
+      user?.collection === 'users' || user?.collection === 'mechanics',
   },
   fields: [
     {
