@@ -13,6 +13,11 @@ const SCHEMA_DAY: Record<string, string> = {
 
 function mediaAbsoluteUrls(site: MechanicSite): string[] {
   const out: string[] = []
+  const heroBg = site.heroBackground
+  if (heroBg && typeof heroBg === 'object' && heroBg.url) {
+    const u = getMediaUrl(heroBg.url)
+    if (u) out.push(u)
+  }
   const logo = site.logo
   if (logo && typeof logo === 'object' && logo.url) {
     const u = getMediaUrl(logo.url)
@@ -76,6 +81,14 @@ export function buildMechanicMetaDescription(site: MechanicSite): string {
   }
 
   return clampMetaDescription(text)
+}
+
+export function resolveMechanicMetaTitle(site: MechanicSite): string {
+  return site.seoMetaTitle?.trim() || buildMechanicPageTitle(site)
+}
+
+export function resolveMechanicMetaDescription(site: MechanicSite): string {
+  return site.seoMetaDescription?.trim() || buildMechanicMetaDescription(site)
 }
 
 export function buildMechanicKeywords(site: MechanicSite): string[] {
@@ -151,9 +164,12 @@ export function buildMechanicOpeningHoursSpecs(site: MechanicSite): Record<strin
   return rows
 }
 
-export function buildMechanicJsonLdGraph(site: MechanicSite): Record<string, unknown>[] {
+export function buildMechanicJsonLdGraph(
+  site: MechanicSite,
+  opts?: { mechanicPageUrl?: string },
+): Record<string, unknown>[] {
   const base = getBaseUrl().replace(/\/$/, '')
-  const pageUrl = `${base}/mechanics/${site.slug}`
+  const pageUrl = opts?.mechanicPageUrl ?? `${base}/mechanics/${site.slug}`
   const images = mediaAbsoluteUrls(site)
 
   const orgId = `${base}/#organization`
@@ -225,8 +241,8 @@ export function buildMechanicJsonLdGraph(site: MechanicSite): Record<string, unk
     '@type': 'WebPage',
     '@id': webpageId,
     url: pageUrl,
-    name: buildMechanicPageTitle(site),
-    description: buildMechanicMetaDescription(site),
+    name: resolveMechanicMetaTitle(site),
+    description: resolveMechanicMetaDescription(site),
     isPartOf: { '@id': websiteId },
     about: { '@id': businessId },
     breadcrumb: { '@id': breadcrumbId },

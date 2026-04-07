@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { MechanicSite } from '@/payload-types'
-import { getBaseUrl, getMediaUrl } from '@/lib/media'
+import { getMediaUrl } from '@/lib/media'
+import { resolveMechanicMicrositePublicUrl } from '@/lib/mechanic-subdomain'
 import {
   buildMechanicJsonLdGraph,
   buildMechanicKeywords,
@@ -65,8 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const base = getBaseUrl()
-  const url = `${base}/mechanics/${site.slug}`
+  const h = await headers()
+  const url = resolveMechanicMicrositePublicUrl(site, h.get('host'), h.get('x-forwarded-proto'))
   const title = resolveMechanicMetaTitle(site)
   const description = resolveMechanicMetaDescription(site)
   const images = ogImages(site)
@@ -117,9 +119,11 @@ export default async function MechanicPublicPage({ params }: Props) {
     notFound()
   }
 
+  const h = await headers()
+  const publicPageUrl = resolveMechanicMicrositePublicUrl(site, h.get('host'), h.get('x-forwarded-proto'))
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@graph': buildMechanicJsonLdGraph(site),
+    '@graph': buildMechanicJsonLdGraph(site, { mechanicPageUrl: publicPageUrl }),
   }
 
   const rootClass = mechanicMicrositeRootClass(site)

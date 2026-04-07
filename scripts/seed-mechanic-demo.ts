@@ -3,6 +3,7 @@
  * Run: npx tsx scripts/seed-mechanic-demo.ts
  *
  * Visit: /mechanics/demo-diesel-little-rock (slug below)
+ * Subdomain (set MECHANIC_SUBDOMAIN_ROOT_DOMAIN=localhost in .env.local): http://demo-diesel-little-rock.localhost:3000/
  * Login (optional): demo.mechanic@thetruckersedge.local / demo-mechanic-2024
  */
 process.env.NODE_ENV = 'development'
