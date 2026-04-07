@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import type { MechanicSite, Media } from '@/payload-types'
 import { MECHANIC_DAY_OPTIONS } from '@/components/mechanic-site/mechanic-form-constants'
+import { MECHANIC_THEME_FORM_OPTIONS } from '@/lib/mechanic-theme'
 
 function relId(v: number | Media | null | undefined): number | undefined {
   if (v == null) return undefined
@@ -43,6 +44,10 @@ function initialFromSite(site: MechanicSite) {
         open: h.open || '',
         close: h.close || '',
       })) || ([] as HourRow[]),
+    themePreset: site.themePreset || 'classic_navy',
+    layoutDensity: site.layoutDensity || 'comfortable',
+    seoMetaTitle: site.seoMetaTitle || '',
+    seoMetaDescription: site.seoMetaDescription || '',
   }
 }
 
@@ -97,6 +102,10 @@ export function MechanicSiteEditorForm(props: Props) {
       services: [{ name: '', description: '' }] as ServiceRow[],
       certifications: [{ label: '' }] as CertRow[],
       businessHours: [] as HourRow[],
+      themePreset: 'classic_navy',
+      layoutDensity: 'comfortable',
+      seoMetaTitle: '',
+      seoMetaDescription: '',
     }
   }, [props])
 
@@ -116,12 +125,18 @@ export function MechanicSiteEditorForm(props: Props) {
   const [services, setServices] = useState<ServiceRow[]>(defaults.services)
   const [certifications, setCertifications] = useState<CertRow[]>(defaults.certifications)
   const [businessHours, setBusinessHours] = useState<HourRow[]>(defaults.businessHours)
+  const [themePreset, setThemePreset] = useState<string>(defaults.themePreset)
+  const [layoutDensity, setLayoutDensity] = useState<string>(defaults.layoutDensity)
+  const [seoMetaTitle, setSeoMetaTitle] = useState(defaults.seoMetaTitle)
+  const [seoMetaDescription, setSeoMetaDescription] = useState(defaults.seoMetaDescription)
   const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [heroBgFile, setHeroBgFile] = useState<File | null>(null)
   const [galleryFiles, setGalleryFiles] = useState<File[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const existingLogoId = isEdit ? relId(props.initial.logo) : undefined
+  const existingHeroBgId = isEdit ? relId(props.initial.heroBackground) : undefined
   const existingGalleryIds =
     isEdit && props.initial.gallery
       ? props.initial.gallery.map((g) => relId(g)).filter((x): x is number => typeof x === 'number')
@@ -168,6 +183,11 @@ export function MechanicSiteEditorForm(props: Props) {
         logoId = await uploadMediaFile(logoFile, `${businessName || 'Shop'} logo`)
       }
 
+      let heroBgId = existingHeroBgId
+      if (heroBgFile) {
+        heroBgId = await uploadMediaFile(heroBgFile, `${businessName || 'Shop'} hero background`)
+      }
+
       const newGalleryIds: number[] = []
       for (let i = 0; i < galleryFiles.length; i++) {
         const f = galleryFiles[i]
@@ -192,6 +212,10 @@ export function MechanicSiteEditorForm(props: Props) {
 
       const body: Record<string, unknown> = {
         businessName: businessName.trim(),
+        themePreset,
+        layoutDensity,
+        seoMetaTitle: seoMetaTitle.trim() || undefined,
+        seoMetaDescription: seoMetaDescription.trim() || undefined,
         tagline: tagline.trim() || undefined,
         about: about.trim() || undefined,
         phone: phone.trim() || undefined,
@@ -213,6 +237,9 @@ export function MechanicSiteEditorForm(props: Props) {
       }
       if (logoId != null) {
         body.logo = logoId
+      }
+      if (heroBgId != null) {
+        body.heroBackground = heroBgId
       }
       if (galleryIds.length > 0) {
         body.gallery = galleryIds
@@ -294,6 +321,67 @@ export function MechanicSiteEditorForm(props: Props) {
           {isEdit && existingLogoId && !logoFile && (
             <p className="text-xs text-gray-500 mt-1">Current logo will be kept unless you choose a new file.</p>
           )}
+        </div>
+      </section>
+
+      <section className="card p-6 space-y-4">
+        <h2 className="text-lg font-bold text-brand-navy">Look &amp; SEO</h2>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Color theme</label>
+            <select
+              className={inputClass}
+              value={themePreset}
+              onChange={(e) => setThemePreset(e.target.value)}
+            >
+              {MECHANIC_THEME_FORM_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Section spacing</label>
+            <select
+              className={inputClass}
+              value={layoutDensity}
+              onChange={(e) => setLayoutDensity(e.target.value)}
+            >
+              <option value="comfortable">Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Hero background (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            className="text-sm text-gray-600"
+            onChange={(e) => setHeroBgFile(e.target.files?.[0] ?? null)}
+          />
+          {isEdit && existingHeroBgId && !heroBgFile && (
+            <p className="text-xs text-gray-500 mt-1">Current hero image is kept unless you upload a new one.</p>
+          )}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">SEO title override (optional)</label>
+          <input
+            className={inputClass}
+            value={seoMetaTitle}
+            onChange={(e) => setSeoMetaTitle(e.target.value)}
+            placeholder="Leave blank for auto-generated title"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">SEO description override (optional)</label>
+          <textarea
+            className={`${inputClass} min-h-[80px]`}
+            value={seoMetaDescription}
+            onChange={(e) => setSeoMetaDescription(e.target.value)}
+            placeholder="~150–160 characters for Google; leave blank for auto"
+          />
         </div>
       </section>
 

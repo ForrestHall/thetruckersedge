@@ -616,6 +616,20 @@ export interface MechanicSite {
    */
   slug: string;
   tagline?: string | null;
+  themePreset?: ('classic_navy' | 'steel_slate' | 'amber_forge' | 'forest_line') | null;
+  layoutDensity?: ('comfortable' | 'compact') | null;
+  /**
+   * Optional wide photo behind the header (shop, bay, or trucks). Dark overlay is applied for readability.
+   */
+  heroBackground?: (number | null) | Media;
+  /**
+   * ~50–60 characters. Shown in search results.
+   */
+  seoMetaTitle?: string | null;
+  /**
+   * ~150–160 characters. Shown under the title in search results.
+   */
+  seoMetaDescription?: string | null;
   logo?: (number | null) | Media;
   about?: string | null;
   services?:
@@ -1016,6 +1030,11 @@ export interface MechanicSitesSelect<T extends boolean = true> {
   businessName?: T;
   slug?: T;
   tagline?: T;
+  themePreset?: T;
+  layoutDensity?: T;
+  heroBackground?: T;
+  seoMetaTitle?: T;
+  seoMetaDescription?: T;
   logo?: T;
   about?: T;
   services?:

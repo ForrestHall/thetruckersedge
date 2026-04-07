@@ -10,18 +10,23 @@ export function MechanicSiteGalleryGrid({ site }: { site: MechanicSite }) {
   if (imgs.length === 0) return null
   const altBase = site.businessName || 'Shop photo'
   return (
-    <section id="gallery" className="py-14 px-4 bg-white">
+    <section id="gallery" className="mechanic-section" style={{ backgroundColor: 'var(--ms-surface)' }}>
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-brand-navy mb-8 text-center">Gallery</h2>
+        <h2 className="mechanic-h2 mb-8 text-center">Gallery</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {imgs.map((src, i) => (
-            <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 ring-1 ring-gray-200">
+            <div
+              key={i}
+              className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 ring-1 ring-black/5"
+            >
               <Image
                 src={src}
                 alt={`${altBase} — photo ${i + 1}`}
                 fill
                 className="object-cover"
-                sizes="(max-width:768px) 50vw, 33vw"
+                sizes="(max-width: 768px) 50vw, 33vw"
+                loading={i < 2 ? 'eager' : 'lazy'}
+                decoding="async"
                 unoptimized
               />
             </div>

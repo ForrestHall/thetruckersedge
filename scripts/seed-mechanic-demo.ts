@@ -64,6 +64,8 @@ async function main() {
       data: {
         mechanic: mechanicId,
         status: 'active',
+        themePreset: 'steel_slate',
+        layoutDensity: 'comfortable',
         businessName: 'I-40 Diesel & Truck Repair',
         slug: DEMO_SLUG,
         tagline: 'Full-service diesel engine and heavy truck repair — OTR drivers and fleets welcome.',

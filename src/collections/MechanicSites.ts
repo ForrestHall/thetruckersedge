@@ -196,6 +196,71 @@ export const MechanicSites: CollectionConfig = {
       label: 'Tagline',
     },
     {
+      type: 'collapsible',
+      label: 'Look & layout',
+      admin: {
+        description: 'Theme and optional hero photo for your public page.',
+      },
+      fields: [
+        {
+          name: 'themePreset',
+          type: 'select',
+          label: 'Color theme',
+          defaultValue: 'classic_navy',
+          options: [
+            { label: 'Classic navy (Truckers Edge)', value: 'classic_navy' },
+            { label: 'Steel & slate', value: 'steel_slate' },
+            { label: 'Amber forge', value: 'amber_forge' },
+            { label: 'Forest line', value: 'forest_line' },
+          ],
+        },
+        {
+          name: 'layoutDensity',
+          type: 'select',
+          label: 'Spacing',
+          defaultValue: 'comfortable',
+          options: [
+            { label: 'Comfortable', value: 'comfortable' },
+            { label: 'Compact', value: 'compact' },
+          ],
+        },
+        {
+          name: 'heroBackground',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Hero background image',
+          admin: {
+            description: 'Optional wide photo behind the header (shop, bay, or trucks). Dark overlay is applied for readability.',
+          },
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'SEO (optional)',
+      admin: {
+        description: 'Override auto-generated title and description for Google. Leave blank to use defaults.',
+      },
+      fields: [
+        {
+          name: 'seoMetaTitle',
+          type: 'text',
+          label: 'Meta title',
+          admin: {
+            description: '~50–60 characters. Shown in search results.',
+          },
+        },
+        {
+          name: 'seoMetaDescription',
+          type: 'textarea',
+          label: 'Meta description',
+          admin: {
+            description: '~150–160 characters. Shown under the title in search results.',
+          },
+        },
+      ],
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',

@@ -11,27 +11,41 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
   if (!phone && !email && !website && !ctaHref) return null
 
   return (
-    <section id="contact" className="py-14 px-4 bg-brand-navy text-white">
+    <section
+      id="contact"
+      className="mechanic-section"
+      style={{ backgroundColor: 'var(--ms-contact-bg)', color: 'var(--ms-contact-fg)' }}
+    >
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-6">Contact</h2>
-        <div className="space-y-3 text-blue-100">
+        <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--ms-contact-fg)' }}>
+          Contact
+        </h2>
+        <div className="space-y-3" style={{ color: 'var(--ms-contact-muted)' }}>
           {phone && (
             <p>
-              <a href={`tel:${phone.replace(/\s/g, '')}`} className="text-white font-semibold hover:underline text-lg">
+              <a
+                href={`tel:${phone.replace(/\s/g, '')}`}
+                className="font-semibold hover:underline text-lg"
+                style={{ color: 'var(--ms-contact-fg)' }}
+              >
                 {phone}
               </a>
             </p>
           )}
           {email && (
             <p>
-              <a href={`mailto:${email}`} className="text-white hover:underline">
+              <a href={`mailto:${email}`} className="hover:underline" style={{ color: 'var(--ms-contact-fg)' }}>
                 {email}
               </a>
             </p>
           )}
           {website && (
             <p>
-              <a href={website.startsWith('http') ? website : `https://${website}`} className="text-white hover:underline">
+              <a
+                href={website.startsWith('http') ? website : `https://${website}`}
+                className="hover:underline"
+                style={{ color: 'var(--ms-contact-fg)' }}
+              >
                 Visit website
               </a>
             </p>
@@ -39,7 +53,7 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
         </div>
         {ctaText && ctaHref && (
           <div className="mt-8">
-            <a href={ctaHref} className="inline-flex btn-primary px-8 py-3">
+            <a href={ctaHref} className="mechanic-cta px-8 py-3">
               {ctaText}
             </a>
           </div>

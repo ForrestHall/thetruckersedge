@@ -8,17 +8,23 @@ export function MechanicSiteHoursLocation({ site }: { site: MechanicSite }) {
   if (hours.length === 0 && !hasAddress) return null
 
   return (
-    <section id="hours-location" className="py-14 px-4 bg-white">
+    <section id="hours-location" className="mechanic-section" style={{ backgroundColor: 'var(--ms-surface)' }}>
       <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-10">
         {hours.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-brand-navy mb-4">Hours</h2>
+            <h2 className="mechanic-h2 mb-4">Hours</h2>
             <table className="w-full text-sm">
               <tbody>
                 {hours.map((h, i) => (
-                  <tr key={h.id ?? i} className="border-b border-gray-100">
-                    <th className="py-2 pr-4 text-left font-medium text-gray-700">{mechanicDayLabel(h.day)}</th>
-                    <td className="py-2 text-gray-600">
+                  <tr
+                    key={h.id ?? i}
+                    className="border-b"
+                    style={{ borderColor: 'var(--ms-card-border)' }}
+                  >
+                    <th className="py-2.5 pr-4 text-left font-medium" style={{ color: 'var(--ms-heading)' }}>
+                      {mechanicDayLabel(h.day)}
+                    </th>
+                    <td className="py-2.5" style={{ color: 'var(--ms-muted)' }}>
                       {h.open?.trim() || '—'} {h.close?.trim() ? `– ${h.close}` : ''}
                     </td>
                   </tr>
@@ -29,8 +35,8 @@ export function MechanicSiteHoursLocation({ site }: { site: MechanicSite }) {
         )}
         {hasAddress && (
           <div id="location">
-            <h2 className="text-2xl font-bold text-brand-navy mb-4">Location</h2>
-            <address className="not-italic text-gray-700 leading-relaxed">
+            <h2 className="mechanic-h2 mb-4">Location</h2>
+            <address className="not-italic leading-relaxed" style={{ color: 'var(--ms-body)' }}>
               {site.address?.trim() && (
                 <>
                   {site.address}

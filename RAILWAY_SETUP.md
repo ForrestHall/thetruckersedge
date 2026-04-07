@@ -19,6 +19,13 @@
 - With Railway CLI: `railway run npx tsx scripts/seed-news-feeds.ts` (runs against your linked project’s DB)
 - Or add `&& npx tsx scripts/seed-news-feeds.ts` to the start command for one deploy, then remove it
 
+## 3c. Mechanic demo page (pre-deploy)
+- [`railway.json`](railway.json) **`deploy.preDeployCommand`** runs `npx tsx scripts/seed-mechanic-demo.ts` **after** the image build and **before** the new release goes live; it uses the service env (`DATABASE_URL`, etc.). DB writes are fine; app **volumes** are not mounted in pre-deploy.
+- The script is **idempotent**: it only inserts the demo listing (slug `demo-diesel-little-rock`) if that slug is missing.
+- Preview: `/mechanics/demo-diesel-little-rock` (demo login is in the script header).
+- **Railway dashboard (alternative):** Service → **Settings** → **Deploy** → **Pre-deploy Command** → same command.
+- Remove **`preDeployCommand`** when you no longer want the demo on every deploy.
+
 ## 4. Deploy
 - Push to GitHub; Railway auto-deploys
 - First load may take ~30s: init creates tables, seed adds the CDL General Knowledge test

@@ -146,4 +146,123 @@
   .prose-truckers a {
     word-break: break-word;
   }
+
+  /* Mechanic microsite themes (scoped under .frontend-app .mechanic-microsite) */
+  .mechanic-microsite {
+    --ms-heading: #0c2562;
+    --ms-body: #374151;
+    --ms-muted: #6b7280;
+    --ms-surface: #ffffff;
+    --ms-surface-alt: #f4f5f7;
+    --ms-card-border: rgb(229 231 235);
+    --ms-hero-a: #0c2562;
+    --ms-hero-b: #153d7a;
+    --ms-hero-c: #0c2562;
+    --ms-hero-sub: rgb(191 219 254 / 0.95);
+    --ms-hero-tagline: rgb(219 234 254);
+    --ms-accent: #f5a623;
+    --ms-accent-hover: #d4911e;
+    --ms-accent-contrast: #0f2044;
+    --ms-contact-bg: #0c2562;
+    --ms-contact-fg: #ffffff;
+    --ms-contact-muted: rgb(191 219 254);
+    --ms-breadcrumb-bg: #f4f5f7;
+    --ms-breadcrumb-text: #4b5563;
+    --ms-breadcrumb-edge: #e5e7eb;
+    --ms-badge-border: rgb(12 37 98 / 0.15);
+    --ms-section-y: 3.5rem;
+    --ms-section-y-sm: 4rem;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .mechanic-microsite.mechanic-theme-steel_slate {
+    --ms-heading: #0f172a;
+    --ms-hero-a: #1e293b;
+    --ms-hero-b: #334155;
+    --ms-hero-c: #0f172a;
+    --ms-hero-sub: rgb(226 232 240 / 0.92);
+    --ms-hero-tagline: rgb(203 213 225);
+    --ms-contact-bg: #1e293b;
+    --ms-accent: #38bdf8;
+    --ms-accent-hover: #0ea5e9;
+    --ms-accent-contrast: #0f172a;
+    --ms-surface-alt: #f1f5f9;
+    --ms-badge-border: rgb(15 23 42 / 0.12);
+  }
+
+  .mechanic-microsite.mechanic-theme-amber_forge {
+    --ms-heading: #292524;
+    --ms-hero-a: #44403c;
+    --ms-hero-b: #57534e;
+    --ms-hero-c: #1c1917;
+    --ms-hero-sub: rgb(253 230 138 / 0.95);
+    --ms-hero-tagline: rgb(254 243 199);
+    --ms-contact-bg: #292524;
+    --ms-accent: #f59e0b;
+    --ms-accent-hover: #d97706;
+    --ms-accent-contrast: #1c1917;
+    --ms-surface-alt: #fafaf9;
+    --ms-badge-border: rgb(41 37 36 / 0.15);
+  }
+
+  .mechanic-microsite.mechanic-theme-forest_line {
+    --ms-heading: #14532d;
+    --ms-hero-a: #14532d;
+    --ms-hero-b: #166534;
+    --ms-hero-c: #052e16;
+    --ms-hero-sub: rgb(187 247 208 / 0.95);
+    --ms-hero-tagline: rgb(220 252 231);
+    --ms-contact-bg: #14532d;
+    --ms-accent: #eab308;
+    --ms-accent-hover: #ca8a04;
+    --ms-accent-contrast: #14532d;
+    --ms-surface-alt: #f0fdf4;
+    --ms-badge-border: rgb(20 83 45 / 0.18);
+  }
+
+  .mechanic-microsite.mechanic-density-compact {
+    --ms-section-y: 2.25rem;
+    --ms-section-y-sm: 2.5rem;
+  }
+
+  .mechanic-microsite .mechanic-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: var(--ms-section-y);
+    padding-bottom: var(--ms-section-y);
+  }
+  @media (min-width: 640px) {
+    .mechanic-microsite .mechanic-section {
+      padding-top: var(--ms-section-y-sm);
+      padding-bottom: var(--ms-section-y-sm);
+    }
+  }
+
+  .mechanic-microsite .mechanic-h2 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--ms-heading);
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .mechanic-microsite .mechanic-h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .mechanic-microsite .mechanic-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 2rem;
+    background-color: var(--ms-accent);
+    color: var(--ms-accent-contrast);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.12);
+  }
+  .mechanic-microsite .mechanic-cta:hover {
+    background-color: var(--ms-accent-hover);
+  }
 }

@@ -7,9 +7,10 @@ import { getBaseUrl, getMediaUrl } from '@/lib/media'
 import {
   buildMechanicJsonLdGraph,
   buildMechanicKeywords,
-  buildMechanicMetaDescription,
-  buildMechanicPageTitle,
+  resolveMechanicMetaDescription,
+  resolveMechanicMetaTitle,
 } from '@/lib/mechanic-seo'
+import { mechanicMicrositeRootClass } from '@/lib/mechanic-theme'
 import { MechanicSiteHero } from '@/components/mechanic-site/MechanicSiteHero'
 import { MechanicSiteAboutBlock } from '@/components/mechanic-site/MechanicSiteAboutBlock'
 import { MechanicSiteServicesGrid } from '@/components/mechanic-site/MechanicSiteServicesGrid'
@@ -21,10 +22,15 @@ import { MechanicVisibleBreadcrumbs } from '@/components/mechanic-site/MechanicV
 
 type Props = { params: Promise<{ slug: string }> }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 function ogImages(site: MechanicSite): { url: string; alt?: string }[] {
   const out: { url: string; alt?: string }[] = []
+  const heroBg = site.heroBackground
+  if (heroBg && typeof heroBg === 'object' && heroBg.url) {
+    const u = getMediaUrl(heroBg.url)
+    if (u) out.push({ url: u, alt: heroBg.alt || `${site.businessName} — shop photo` })
+  }
   const logo = site.logo
   if (logo && typeof logo === 'object' && logo.url) {
     const u = getMediaUrl(logo.url)
@@ -61,8 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const base = getBaseUrl()
   const url = `${base}/mechanics/${site.slug}`
-  const title = buildMechanicPageTitle(site)
-  const description = buildMechanicMetaDescription(site)
+  const title = resolveMechanicMetaTitle(site)
+  const description = resolveMechanicMetaDescription(site)
   const images = ogImages(site)
 
   return {
@@ -116,19 +122,23 @@ export default async function MechanicPublicPage({ params }: Props) {
     '@graph': buildMechanicJsonLdGraph(site),
   }
 
+  const rootClass = mechanicMicrositeRootClass(site)
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <MechanicVisibleBreadcrumbs businessName={site.businessName} />
-      <article>
-        <MechanicSiteHero site={site} />
-        <MechanicSiteAboutBlock site={site} />
-        <MechanicSiteServicesGrid site={site} />
-        <MechanicSiteGalleryGrid site={site} />
-        <MechanicSiteCertifications site={site} />
-        <MechanicSiteHoursLocation site={site} />
-        <MechanicSiteContactBlock site={site} />
-      </article>
+      <div className={rootClass}>
+        <MechanicVisibleBreadcrumbs businessName={site.businessName} />
+        <article>
+          <MechanicSiteHero site={site} />
+          <MechanicSiteAboutBlock site={site} />
+          <MechanicSiteServicesGrid site={site} />
+          <MechanicSiteGalleryGrid site={site} />
+          <MechanicSiteCertifications site={site} />
+          <MechanicSiteHoursLocation site={site} />
+          <MechanicSiteContactBlock site={site} />
+        </article>
+      </div>
     </>
   )
 }
