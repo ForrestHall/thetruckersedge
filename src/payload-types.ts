@@ -64,6 +64,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     mechanics: MechanicAuthOperations;
+    'owner-operators': OwnerOperatorAuthOperations;
     users: UserAuthOperations;
   };
   blocks: {};
@@ -78,6 +79,7 @@ export interface Config {
     'news-links': NewsLink;
     'processed-news-items': ProcessedNewsItem;
     mechanics: Mechanic;
+    'owner-operators': OwnerOperator;
     'mechanic-sites': MechanicSite;
     'mechanic-leads': MechanicLead;
     users: User;
@@ -98,6 +100,7 @@ export interface Config {
     'news-links': NewsLinksSelect<false> | NewsLinksSelect<true>;
     'processed-news-items': ProcessedNewsItemsSelect<false> | ProcessedNewsItemsSelect<true>;
     mechanics: MechanicsSelect<false> | MechanicsSelect<true>;
+    'owner-operators': OwnerOperatorsSelect<false> | OwnerOperatorsSelect<true>;
     'mechanic-sites': MechanicSitesSelect<false> | MechanicSitesSelect<true>;
     'mechanic-leads': MechanicLeadsSelect<false> | MechanicLeadsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -116,13 +119,31 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: Mechanic | User;
+  user: Mechanic | OwnerOperator | User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface MechanicAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface OwnerOperatorAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -593,6 +614,66 @@ export interface Mechanic {
   collection: 'mechanics';
 }
 /**
+ * Driver accounts: saved truck, lanes, and cost assumptions for the owner-operator hub.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owner-operators".
+ */
+export interface OwnerOperator {
+  id: number;
+  /**
+   * How we greet you on the dashboard.
+   */
+  displayName?: string | null;
+  homeBaseCity?: string | null;
+  /**
+   * Two-letter code helps pre-fill directory search.
+   */
+  homeBaseState?: string | null;
+  /**
+   * e.g. I-35 Dallas–Kansas City, Southeast regional
+   */
+  frequentLanes?: string | null;
+  truckMake?: string | null;
+  truckModel?: string | null;
+  truckYear?: number | null;
+  /**
+   * Example: 0.55
+   */
+  fuelCostPerMile?: number | null;
+  /**
+   * Set aside for PM and wear
+   */
+  maintenanceCostPerMile?: number | null;
+  insuranceMonthly?: number | null;
+  /**
+   * ELD, software, parking, etc.
+   */
+  otherMonthly?: number | null;
+  /**
+   * Used to spread monthly fixed costs into $/mi.
+   */
+  avgMilesPerMonth?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'owner-operators';
+}
+/**
  * Hosted one-page sites for diesel mechanics. Filter by status to review pending submissions.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -783,6 +864,10 @@ export interface PayloadLockedDocument {
         value: number | Mechanic;
       } | null)
     | ({
+        relationTo: 'owner-operators';
+        value: number | OwnerOperator;
+      } | null)
+    | ({
         relationTo: 'mechanic-sites';
         value: number | MechanicSite;
       } | null)
@@ -801,6 +886,10 @@ export interface PayloadLockedDocument {
         value: number | Mechanic;
       }
     | {
+        relationTo: 'owner-operators';
+        value: number | OwnerOperator;
+      }
+    | {
         relationTo: 'users';
         value: number | User;
       };
@@ -817,6 +906,10 @@ export interface PayloadPreference {
     | {
         relationTo: 'mechanics';
         value: number | Mechanic;
+      }
+    | {
+        relationTo: 'owner-operators';
+        value: number | OwnerOperator;
       }
     | {
         relationTo: 'users';
@@ -1036,6 +1129,40 @@ export interface ProcessedNewsItemsSelect<T extends boolean = true> {
 export interface MechanicsSelect<T extends boolean = true> {
   businessName?: T;
   phone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owner-operators_select".
+ */
+export interface OwnerOperatorsSelect<T extends boolean = true> {
+  displayName?: T;
+  homeBaseCity?: T;
+  homeBaseState?: T;
+  frequentLanes?: T;
+  truckMake?: T;
+  truckModel?: T;
+  truckYear?: T;
+  fuelCostPerMile?: T;
+  maintenanceCostPerMile?: T;
+  insuranceMonthly?: T;
+  otherMonthly?: T;
+  avgMilesPerMonth?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

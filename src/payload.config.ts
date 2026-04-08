@@ -6,6 +6,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
 
 import { Mechanics } from './collections/Mechanics'
+import { OwnerOperators } from './collections/OwnerOperators'
 import { MechanicSites } from './collections/MechanicSites'
 import { MechanicLeads } from './collections/MechanicLeads'
 import { Users } from './collections/Users'
@@ -66,6 +67,7 @@ export default buildConfig({
     NewsLinks,
     ProcessedNewsItems,
     Mechanics,
+    OwnerOperators,
     MechanicSites,
     MechanicLeads,
     Users,

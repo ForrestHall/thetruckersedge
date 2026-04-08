@@ -34,6 +34,13 @@ export default function WarrantyQuotePage() {
           Answer a few questions about your truck and we&apos;ll match you with top warranty providers. You&apos;ll
           receive a personalized quote by email.
         </p>
+        <p className="mt-4 text-base text-gray-600 max-w-2xl">
+          New to extended warranties? Start with our{' '}
+          <Link href="/tools/truck-warranty-reviews" className="font-semibold text-brand-navy underline">
+            commercial truck warranty guide
+          </Link>
+          .
+        </p>
       </div>
 
       <WarrantyQuoteQuiz />

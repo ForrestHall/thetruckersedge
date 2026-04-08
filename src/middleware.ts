@@ -26,6 +26,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname.startsWith('/command-center')) {
+    const main = getMainSiteOrigin()
+    if (main) {
+      return NextResponse.redirect(new URL(pathname + request.nextUrl.search, main))
+    }
+    return NextResponse.next()
+  }
+
   if (pathname !== '/') {
     const home = request.nextUrl.clone()
     home.pathname = '/'

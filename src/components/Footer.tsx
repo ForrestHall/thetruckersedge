@@ -24,6 +24,7 @@ const links = {
   ],
   'Free Tools': [
     { href: '/tools', label: 'All Tools' },
+    { href: '/command-center', label: 'Command center (drivers)' },
     { href: '/tools/ifta-calculator', label: 'IFTA Calculator' },
     { href: '/tools/per-diem-calculator', label: 'Per Diem Calculator' },
   ],

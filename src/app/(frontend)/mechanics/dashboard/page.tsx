@@ -42,9 +42,33 @@ export default async function MechanicDashboardPage({
 
   const site = JSON.parse(JSON.stringify(raw)) as MechanicSite
 
+  const { docs: leadDocs } = await payload.find({
+    collection: 'mechanic-leads',
+    where: { mechanic: { equals: mechanic.id } },
+    sort: '-createdAt',
+    limit: 100,
+    depth: 0,
+    overrideAccess: true,
+  })
+
+  const leads = leadDocs.map((row) => ({
+    id: row.id as number,
+    contactName: typeof row.contactName === 'string' ? row.contactName : '',
+    phone: row.phone,
+    email: row.email,
+    cityOrLocation: row.cityOrLocation,
+    message: typeof row.message === 'string' ? row.message : '',
+    createdAt: typeof row.createdAt === 'string' ? row.createdAt : new Date().toISOString(),
+  }))
+
   const stripeReady = Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PRICE_ID)
 
   return (
-    <MechanicDashboardClient site={site} checkoutFlash={checkoutFlash} stripeReady={stripeReady} />
+    <MechanicDashboardClient
+      site={site}
+      leads={leads}
+      checkoutFlash={checkoutFlash}
+      stripeReady={stripeReady}
+    />
   )
 }

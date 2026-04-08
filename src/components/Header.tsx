@@ -10,6 +10,7 @@ const navLinks = [
   { href: '/news', label: 'News' },
   { href: '/blog', label: 'Blog' },
   { href: '/tools', label: 'Free Tools' },
+  { href: '/command-center', label: 'Command center' },
   { href: '/mechanics', label: 'For Mechanics' },
 ]
 

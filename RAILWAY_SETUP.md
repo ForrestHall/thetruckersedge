@@ -4,6 +4,9 @@
 - Railway dashboard → your project → **+ New** → **Database** → **Add PostgreSQL**
 - Wait for it to spin up
 
+## 2b. Owner-operator Command Center
+- Deploy creates the **`owner-operators`** auth collection (Postgres `push`). Drivers sign up at `/command-center/signup` and use `/command-center` after login. Same Payload session cookie pattern as mechanics — **only one frontend role should be logged in per browser** (mechanic vs driver).
+
 ## 2. Set Variables (app service)
 - Click your **app** (not Postgres) → **Variables** tab
 - Add/ensure:

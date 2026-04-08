@@ -9,6 +9,15 @@ export const metadata: Metadata = {
 
 const tools = [
   {
+    href: '/command-center',
+    icon: '📊',
+    title: 'Owner-operator command center',
+    description:
+      'Save your truck, home base, lanes, and rough cost-per-mile assumptions — with one-tap access to IFTA, service intervals, warranty tools, and the diesel mechanic directory. Built to power a future mobile app.',
+    tags: ['Owner-Operator', 'Planning'],
+    cta: 'Open hub →',
+  },
+  {
     href: '/mechanics/signup',
     icon: '🔩',
     title: 'Hosted page for your diesel shop',
@@ -25,6 +34,15 @@ const tools = [
       'Find heavy-truck and diesel shops by state or search. Listings with hosted profiles on The Truckers Edge — contact shops or request a callback from their page.',
     tags: ['Drivers', 'Maintenance'],
     cta: 'Open directory →',
+  },
+  {
+    href: '/tools/truck-warranty-reviews',
+    icon: '📋',
+    title: "Truck warranty buyer's guide",
+    description:
+      'What to ask, common exclusions, and red flags before you buy commercial truck extended warranty — plus a short form to get matched with options.',
+    tags: ['Owner-Operator', 'Protection'],
+    cta: 'Read guide →',
   },
   {
     href: '/tools/warranty-quote',
@@ -76,6 +94,10 @@ export default function ToolsPage() {
           Need a shop?{' '}
           <Link href="/mechanics" className="font-semibold text-brand-navy underline">
             Search the diesel mechanic directory
+          </Link>
+          . Running your own truck?{' '}
+          <Link href="/command-center" className="font-semibold text-brand-navy underline">
+            Open the owner-operator command center
           </Link>
           .
         </p>
