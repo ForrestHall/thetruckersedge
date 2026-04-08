@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { ArticleCard } from '@/components/ArticleCard'
@@ -57,6 +58,13 @@ export default async function GuidesPage() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Trucking Career Guides</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Straight-talk guides on getting your CDL in every state, picking the right company, going owner-operator, and everything in between.
+        </p>
+        <p className="mt-6 text-base text-gray-600 max-w-2xl">
+          On the road and need service?{' '}
+          <Link href="/mechanics" className="font-semibold text-brand-navy underline">
+            Browse diesel mechanics in our directory
+          </Link>
+          .
         </p>
       </div>
 

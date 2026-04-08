@@ -23,6 +23,7 @@
 - [`railway.json`](railway.json) **`deploy.preDeployCommand`** runs `npx tsx scripts/seed-mechanic-demo.ts` **after** the image build and **before** the new release goes live; it uses the service env (`DATABASE_URL`, etc.). DB writes are fine; app **volumes** are not mounted in pre-deploy.
 - The script is **idempotent**: it only inserts the demo listing (slug `demo-diesel-little-rock`) if that slug is missing.
 - Preview: `/mechanics/demo-diesel-little-rock` (demo login is in the script header).
+- **Mechanic lead form:** Public POST creates rows in `mechanic-leads` (schema pushed on deploy). Optional email to the shop: set `RESEND_API_KEY`, `MECHANIC_LEADS_FROM_EMAIL` (or `WARRANTY_FROM_EMAIL`), and a public **contact email** on the listing.
 - **Railway dashboard (alternative):** Service → **Settings** → **Deploy** → **Pre-deploy Command** → same command.
 - Remove **`preDeployCommand`** when you no longer want the demo on every deploy.
 

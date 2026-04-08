@@ -2,9 +2,12 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getPayload } from 'payload'
+import type { Where } from 'payload'
 import config from '@payload-config'
 import type { MechanicSite } from '@/payload-types'
 import { getBaseUrl, getMediaUrl } from '@/lib/media'
+import { MECHANIC_DIRECTORY_US_STATES } from '@/lib/mechanic-directory-us-states'
+import { MechanicsDirectorySearchForm } from './MechanicsDirectorySearchForm'
 
 const directoryDesc =
   'Find diesel mechanics and heavy truck repair shops listed on The Truckers Edge. Browse by location, services, and certifications — hosted profiles for independent shops and fleets.'
@@ -49,11 +52,36 @@ function thumb(site: MechanicSite): string | null {
   return null
 }
 
-export default async function MechanicsDirectoryPage() {
+const allowedStateCodes = new Set(MECHANIC_DIRECTORY_US_STATES.map((s) => s.value))
+
+export default async function MechanicsDirectoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ state?: string; q?: string }>
+}) {
+  const sp = await searchParams
+  const stateParam = sp.state?.trim().toUpperCase() ?? ''
+  const stateFilter = stateParam && allowedStateCodes.has(stateParam) ? stateParam : ''
+  const qRaw = (sp.q ?? '').trim().slice(0, 80)
+
+  const andParts: Where[] = [{ status: { equals: 'active' } }]
+  if (stateFilter) {
+    andParts.push({ state: { equals: stateFilter } })
+  }
+  if (qRaw) {
+    andParts.push({
+      or: [
+        { businessName: { contains: qRaw } },
+        { city: { contains: qRaw } },
+        { tagline: { contains: qRaw } },
+      ],
+    })
+  }
+
   const payload = await getPayload({ config })
   const { docs } = await payload.find({
     collection: 'mechanic-sites',
-    where: { status: { equals: 'active' } },
+    where: { and: andParts },
     sort: 'businessName',
     limit: 200,
     depth: 1,
@@ -73,8 +101,14 @@ export default async function MechanicsDirectoryPage() {
         </p>
       </header>
 
+      <MechanicsDirectorySearchForm stateValue={stateFilter} qValue={qRaw} />
+
       {docs.length === 0 ? (
-        <p className="text-center text-gray-600 py-16">Listings will appear here as mechanics go live.</p>
+        <p className="text-center text-gray-600 py-16">
+          {stateFilter || qRaw
+            ? 'No shops match those filters. Try clearing search or choosing another state.'
+            : 'Listings will appear here as mechanics go live.'}
+        </p>
       ) : (
         <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {docs.map((doc) => {

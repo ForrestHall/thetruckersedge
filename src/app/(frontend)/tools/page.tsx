@@ -18,6 +18,15 @@ const tools = [
     cta: 'Get started →',
   },
   {
+    href: '/mechanics',
+    icon: '📍',
+    title: 'Diesel mechanic directory',
+    description:
+      'Find heavy-truck and diesel shops by state or search. Listings with hosted profiles on The Truckers Edge — contact shops or request a callback from their page.',
+    tags: ['Drivers', 'Maintenance'],
+    cta: 'Open directory →',
+  },
+  {
     href: '/tools/warranty-quote',
     icon: '🛡️',
     title: 'Truck Warranty Quote',
@@ -62,6 +71,13 @@ export default function ToolsPage() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-navy mb-4">Free Trucking Tools</h1>
         <p className="text-xl text-gray-500 max-w-2xl">
           Calculators and tools to help you run smarter — whether you&apos;re a company driver or running your own rig.
+        </p>
+        <p className="mt-4 text-base text-gray-600 max-w-2xl">
+          Need a shop?{' '}
+          <Link href="/mechanics" className="font-semibold text-brand-navy underline">
+            Search the diesel mechanic directory
+          </Link>
+          .
         </p>
       </div>
 

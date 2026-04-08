@@ -1,4 +1,5 @@
 import type { MechanicSite } from '@/payload-types'
+import { MechanicLeadForm } from '@/components/mechanic-site/MechanicLeadForm'
 
 export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
   const phone = site.phone?.trim()
@@ -7,8 +8,9 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
   const ctaText = site.ctaText?.trim()
   const ctaLink = site.ctaLink?.trim()
   const ctaHref = ctaLink || (phone ? `tel:${phone.replace(/\s/g, '')}` : undefined)
-
-  if (!phone && !email && !website && !ctaHref) return null
+  const phoneDigits = phone ? phone.replace(/\D/g, '') : ''
+  const smsHref = phoneDigits.length >= 10 ? `sms:${phoneDigits}` : undefined
+  const hasDirectContact = Boolean(phone || email || website || ctaHref)
 
   return (
     <section
@@ -20,9 +22,10 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
         <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--ms-contact-fg)' }}>
           Contact
         </h2>
+        {hasDirectContact && (
         <div className="space-y-3" style={{ color: 'var(--ms-contact-muted)' }}>
           {phone && (
-            <p>
+            <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
               <a
                 href={`tel:${phone.replace(/\s/g, '')}`}
                 className="font-semibold hover:underline text-lg"
@@ -30,6 +33,15 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
               >
                 {phone}
               </a>
+              {smsHref && (
+                <a
+                  href={smsHref}
+                  className="text-sm font-semibold hover:underline"
+                  style={{ color: 'var(--ms-contact-fg)' }}
+                >
+                  Text
+                </a>
+              )}
             </p>
           )}
           {email && (
@@ -51,12 +63,16 @@ export function MechanicSiteContactBlock({ site }: { site: MechanicSite }) {
             </p>
           )}
         </div>
+        )}
         {ctaText && ctaHref && (
           <div className="mt-8">
             <a href={ctaHref} className="mechanic-cta px-8 py-3">
               {ctaText}
             </a>
           </div>
+        )}
+        {site.slug && site.businessName && (
+          <MechanicLeadForm siteSlug={site.slug} businessName={site.businessName} />
         )}
       </div>
     </section>

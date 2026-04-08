@@ -5,8 +5,19 @@ import Link from 'next/link'
 import type { MechanicSite } from '@/payload-types'
 import { MechanicSiteEditorForm } from '@/components/mechanic-site/MechanicSiteEditorForm'
 
+export type MechanicDashboardLead = {
+  id: number
+  contactName: string
+  phone?: string | null
+  email?: string | null
+  cityOrLocation?: string | null
+  message: string
+  createdAt: string
+}
+
 type Props = {
   site: MechanicSite
+  leads: MechanicDashboardLead[]
   checkoutFlash?: string | null
   stripeReady: boolean
 }
@@ -34,7 +45,7 @@ const statusCopy: Record<MechanicSite['status'], { label: string; detail: string
   },
 }
 
-export function MechanicDashboardClient({ site, checkoutFlash, stripeReady }: Props) {
+export function MechanicDashboardClient({ site, leads, checkoutFlash, stripeReady }: Props) {
   const router = useRouter()
 
   async function logout() {
@@ -152,6 +163,42 @@ export function MechanicDashboardClient({ site, checkoutFlash, stripeReady }: Pr
           <p className="text-xs text-amber-800">Payments are not configured on this server yet (missing Stripe keys).</p>
         )}
       </div>
+
+      {site.status === 'active' && (
+        <div className="card p-6 space-y-4">
+          <h2 className="text-lg font-bold text-brand-navy">Leads from your page</h2>
+          <p className="text-sm text-gray-600">
+            Messages drivers send from the &quot;Request a callback&quot; form on your public profile.
+          </p>
+          {leads.length === 0 ? (
+            <p className="text-sm text-gray-500 py-2">No messages yet. They will appear here when someone contacts you through your page.</p>
+          ) : (
+            <ul className="divide-y divide-gray-100 border border-gray-100 rounded-lg max-h-[28rem] overflow-y-auto">
+              {leads.map((lead) => (
+                <li key={lead.id} className="p-4 text-left text-sm space-y-1">
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <span className="font-semibold text-gray-900">{lead.contactName}</span>
+                    <time className="text-xs text-gray-500" dateTime={lead.createdAt}>
+                      {new Date(lead.createdAt).toLocaleString()}
+                    </time>
+                  </div>
+                  {(lead.phone || lead.email) && (
+                    <p className="text-gray-700">
+                      {lead.phone && <span>{lead.phone}</span>}
+                      {lead.phone && lead.email && <span className="mx-1">·</span>}
+                      {lead.email && <span>{lead.email}</span>}
+                    </p>
+                  )}
+                  {lead.cityOrLocation?.trim() && (
+                    <p className="text-gray-600 text-xs">Location: {lead.cityOrLocation}</p>
+                  )}
+                  <p className="text-gray-700 whitespace-pre-wrap pt-1">{lead.message}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <div>
         <h2 className="text-xl font-bold text-brand-navy mb-4">Edit your page</h2>

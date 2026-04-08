@@ -7,6 +7,7 @@ import sharp from 'sharp'
 
 import { Mechanics } from './collections/Mechanics'
 import { MechanicSites } from './collections/MechanicSites'
+import { MechanicLeads } from './collections/MechanicLeads'
 import { Users } from './collections/Users'
 import { Articles } from './collections/Articles'
 import { Posts } from './collections/Posts'
@@ -66,6 +67,7 @@ export default buildConfig({
     ProcessedNewsItems,
     Mechanics,
     MechanicSites,
+    MechanicLeads,
     Users,
   ],
   editor: lexicalEditor({}),

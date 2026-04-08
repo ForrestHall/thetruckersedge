@@ -79,6 +79,7 @@ export interface Config {
     'processed-news-items': ProcessedNewsItem;
     mechanics: Mechanic;
     'mechanic-sites': MechanicSite;
+    'mechanic-leads': MechanicLead;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -98,6 +99,7 @@ export interface Config {
     'processed-news-items': ProcessedNewsItemsSelect<false> | ProcessedNewsItemsSelect<true>;
     mechanics: MechanicsSelect<false> | MechanicsSelect<true>;
     'mechanic-sites': MechanicSitesSelect<false> | MechanicSitesSelect<true>;
+    'mechanic-leads': MechanicLeadsSelect<false> | MechanicLeadsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -689,6 +691,34 @@ export interface MechanicSite {
   createdAt: string;
 }
 /**
+ * Driver/fleet messages submitted from hosted mechanic pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanic-leads".
+ */
+export interface MechanicLead {
+  id: number;
+  /**
+   * Shop account (denormalized for access control).
+   */
+  mechanic: number | Mechanic;
+  /**
+   * Page this lead was sent from.
+   */
+  mechanicSite: number | MechanicSite;
+  contactName: string;
+  cityOrLocation?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  message: string;
+  /**
+   * Request path when submitted (optional, for debugging).
+   */
+  sourcePath?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -755,6 +785,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'mechanic-sites';
         value: number | MechanicSite;
+      } | null)
+    | ({
+        relationTo: 'mechanic-leads';
+        value: number | MechanicLead;
       } | null)
     | ({
         relationTo: 'users';
@@ -1072,6 +1106,22 @@ export interface MechanicSitesSelect<T extends boolean = true> {
   stripeSubscriptionId?: T;
   subscriptionStatus?: T;
   subscriptionPaidThrough?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mechanic-leads_select".
+ */
+export interface MechanicLeadsSelect<T extends boolean = true> {
+  mechanic?: T;
+  mechanicSite?: T;
+  contactName?: T;
+  cityOrLocation?: T;
+  phone?: T;
+  email?: T;
+  message?: T;
+  sourcePath?: T;
   updatedAt?: T;
   createdAt?: T;
 }
