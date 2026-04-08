@@ -2,14 +2,32 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import type { OwnerOperator } from '@/payload-types'
 import { estimatedTotalCostPerMile } from '@/lib/command-center-costs'
 
 type Props = { initial: OwnerOperator }
 
 const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy'
+  'w-full min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy'
+
+/** Keeps grid columns aligned; without min-w-0, flex/grid children overflow and break layout. */
+function Field({
+  label,
+  children,
+  className = '',
+}: {
+  label: string
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={`flex flex-col gap-1.5 min-w-0 ${className}`}>
+      <label className="text-sm font-medium text-gray-700 leading-snug">{label}</label>
+      {children}
+    </div>
+  )
+}
 
 export function CommandCenterDashboard({ initial }: Props) {
   const router = useRouter()
@@ -144,34 +162,52 @@ export function CommandCenterDashboard({ initial }: Props) {
 
       <section>
         <h2 className="text-xl font-bold text-brand-navy mb-4">Quick tools</h2>
-        <ul className="grid sm:grid-cols-2 gap-3">
-          <li>
-            <Link href="/tools/service-intervals" className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch">
+          <li className="min-w-0 flex">
+            <Link
+              href="/tools/service-intervals"
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               Service intervals
             </Link>
           </li>
-          <li>
-            <Link href="/tools/ifta-calculator" className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+          <li className="min-w-0 flex">
+            <Link
+              href="/tools/ifta-calculator"
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               IFTA calculator
             </Link>
           </li>
-          <li>
-            <Link href="/tools/per-diem-calculator" className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+          <li className="min-w-0 flex">
+            <Link
+              href="/tools/per-diem-calculator"
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               Per diem calculator
             </Link>
           </li>
-          <li>
-            <Link href="/tools/truck-warranty-reviews" className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+          <li className="min-w-0 flex">
+            <Link
+              href="/tools/truck-warranty-reviews"
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               Warranty buyer&apos;s guide
             </Link>
           </li>
-          <li>
-            <Link href="/tools/warranty-quote" className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+          <li className="min-w-0 flex">
+            <Link
+              href="/tools/warranty-quote"
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               Warranty quote
             </Link>
           </li>
-          <li>
-            <Link href={mechanicsHref} className="card block p-4 hover:shadow-md no-underline text-brand-navy font-semibold">
+          <li className="min-w-0 flex">
+            <Link
+              href={mechanicsHref}
+              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
+            >
               Diesel mechanic directory{homeBaseState && /^[A-Z]{2}$/.test(homeBaseState) ? ` (${homeBaseState})` : ''}
             </Link>
           </li>
@@ -180,106 +216,126 @@ export function CommandCenterDashboard({ initial }: Props) {
 
       <section>
         <h2 className="text-xl font-bold text-brand-navy mb-4">Your profile</h2>
-        <form onSubmit={onSave} className="card p-6 space-y-6">
-          {saveMsg && (
-            <p className="text-sm text-green-800 bg-green-50 border border-green-100 rounded-lg px-3 py-2" role="status">
-              {saveMsg}
-            </p>
-          )}
-          {err && (
-            <p className="text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2" role="alert">
-              {err}
-            </p>
-          )}
+        <form onSubmit={onSave} className="card p-6 sm:p-8 max-w-full overflow-hidden">
+          <div className="space-y-8">
+            {saveMsg && (
+              <p className="text-sm text-green-800 bg-green-50 border border-green-100 rounded-lg px-3 py-2" role="status">
+                {saveMsg}
+              </p>
+            )}
+            {err && (
+              <p className="text-sm text-red-800 bg-red-50 border border-red-100 rounded-lg px-3 py-2" role="alert">
+                {err}
+              </p>
+            )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Display name</label>
-            <input className={inputClass} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-          </div>
+            <Field label="Display name">
+              <input className={inputClass} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            </Field>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Home base city</label>
-              <input className={inputClass} value={homeBaseCity} onChange={(e) => setHomeBaseCity(e.target.value)} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 items-start">
+              <Field label="Home base city">
+                <input className={inputClass} value={homeBaseCity} onChange={(e) => setHomeBaseCity(e.target.value)} />
+              </Field>
+              <Field label="Home state">
+                <input
+                  className={`${inputClass} sm:max-w-[8rem]`}
+                  value={homeBaseState}
+                  onChange={(e) => setHomeBaseState(e.target.value.toUpperCase().slice(0, 2))}
+                  maxLength={2}
+                  placeholder="TX"
+                  title="Two-letter state code"
+                />
+                <span className="text-xs text-gray-500">2-letter code</span>
+              </Field>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Home state (2 letters)</label>
-              <input
+
+            <Field label="Frequent lanes / regions">
+              <textarea
                 className={inputClass}
-                value={homeBaseState}
-                onChange={(e) => setHomeBaseState(e.target.value.toUpperCase().slice(0, 2))}
-                maxLength={2}
-                placeholder="TX"
+                rows={3}
+                value={frequentLanes}
+                onChange={(e) => setFrequentLanes(e.target.value)}
               />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Frequent lanes / regions</label>
-            <textarea
-              className={inputClass}
-              rows={3}
-              value={frequentLanes}
-              onChange={(e) => setFrequentLanes(e.target.value)}
-            />
-          </div>
+            </Field>
 
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Truck</h3>
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Make</label>
-                <input className={inputClass} value={truckMake} onChange={(e) => setTruckMake(e.target.value)} placeholder="Freightliner" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Model / engine</label>
-                <input className={inputClass} value={truckModel} onChange={(e) => setTruckModel(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                <input className={inputClass} value={truckYear} onChange={(e) => setTruckYear(e.target.value)} inputMode="numeric" />
+            <div className="border-t border-gray-100 pt-8 space-y-6">
+              <h3 className="text-base font-semibold text-gray-900">Truck</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-6 items-start">
+                <Field label="Make">
+                  <input
+                    className={inputClass}
+                    value={truckMake}
+                    onChange={(e) => setTruckMake(e.target.value)}
+                    placeholder="Freightliner"
+                  />
+                </Field>
+                <Field label="Model / engine">
+                  <input className={inputClass} value={truckModel} onChange={(e) => setTruckModel(e.target.value)} />
+                </Field>
+                <Field label="Year">
+                  <input
+                    className={`${inputClass} sm:max-w-[7rem]`}
+                    value={truckYear}
+                    onChange={(e) => setTruckYear(e.target.value)}
+                    inputMode="numeric"
+                  />
+                </Field>
               </div>
             </div>
-          </div>
 
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Cost assumptions</h3>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fuel $/mile</label>
-                <input className={inputClass} value={fuelCostPerMile} onChange={(e) => setFuelCostPerMile(e.target.value)} inputMode="decimal" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Maintenance reserve $/mile</label>
-                <input
-                  className={inputClass}
-                  value={maintenanceCostPerMile}
-                  onChange={(e) => setMaintenanceCostPerMile(e.target.value)}
-                  inputMode="decimal"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Insurance $/month</label>
-                <input
-                  className={inputClass}
-                  value={insuranceMonthly}
-                  onChange={(e) => setInsuranceMonthly(e.target.value)}
-                  inputMode="decimal"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Other fixed $/month</label>
-                <input className={inputClass} value={otherMonthly} onChange={(e) => setOtherMonthly(e.target.value)} inputMode="decimal" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Avg miles / month</label>
-                <input className={inputClass} value={avgMilesPerMonth} onChange={(e) => setAvgMilesPerMonth(e.target.value)} inputMode="numeric" />
+            <div className="border-t border-gray-100 pt-8 space-y-6">
+              <h3 className="text-base font-semibold text-gray-900">Cost assumptions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 items-start">
+                <Field label="Fuel ($/mile)">
+                  <input
+                    className={inputClass}
+                    value={fuelCostPerMile}
+                    onChange={(e) => setFuelCostPerMile(e.target.value)}
+                    inputMode="decimal"
+                  />
+                </Field>
+                <Field label="Maintenance reserve ($/mile)">
+                  <input
+                    className={inputClass}
+                    value={maintenanceCostPerMile}
+                    onChange={(e) => setMaintenanceCostPerMile(e.target.value)}
+                    inputMode="decimal"
+                  />
+                </Field>
+                <Field label="Insurance ($/month)">
+                  <input
+                    className={inputClass}
+                    value={insuranceMonthly}
+                    onChange={(e) => setInsuranceMonthly(e.target.value)}
+                    inputMode="decimal"
+                  />
+                </Field>
+                <Field label="Other fixed ($/month)">
+                  <input
+                    className={inputClass}
+                    value={otherMonthly}
+                    onChange={(e) => setOtherMonthly(e.target.value)}
+                    inputMode="decimal"
+                  />
+                </Field>
+                <Field label="Avg miles / month" className="sm:col-span-2">
+                  <input
+                    className={`${inputClass} sm:max-w-[12rem]`}
+                    value={avgMilesPerMonth}
+                    onChange={(e) => setAvgMilesPerMonth(e.target.value)}
+                    inputMode="numeric"
+                  />
+                </Field>
               </div>
             </div>
-          </div>
 
-          <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
-            {saving ? 'Saving…' : 'Save profile'}
-          </button>
+            <div className="pt-2">
+              <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
+                {saving ? 'Saving…' : 'Save profile'}
+              </button>
+            </div>
+          </div>
         </form>
       </section>
     </div>
