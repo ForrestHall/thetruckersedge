@@ -48,8 +48,7 @@ export function MechanicSignupForm() {
         router.push('/mechanics/login')
         return
       }
-      router.push('/mechanics/onboarding')
-      router.refresh()
+      window.location.assign('/mechanics/onboarding')
     } catch {
       setError('Something went wrong. Try again.')
       setLoading(false)

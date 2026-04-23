@@ -9,8 +9,11 @@ export const metadata: Metadata = {
 
 export default function CommandCenterSignupPage() {
   return (
-    <div className="max-w-md mx-auto px-4 py-12">
-      <Link href="/command-center/login" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
+    <div className="max-w-md mx-auto">
+      <Link
+        href="/command-center/login"
+        className="text-sm font-medium text-gray-500 hover:text-brand-navy transition-colors"
+      >
         ← Sign in
       </Link>
       <h1 className="text-3xl font-bold text-brand-navy mt-4 mb-2">Create your account</h1>

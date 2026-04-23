@@ -51,8 +51,7 @@ export function OwnerOperatorSignupForm() {
         router.push('/command-center/login')
         return
       }
-      router.push('/command-center')
-      router.refresh()
+      window.location.assign('/command-center')
     } catch {
       setError('Something went wrong. Try again.')
       setLoading(false)

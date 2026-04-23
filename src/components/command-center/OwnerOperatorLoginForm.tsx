@@ -1,10 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function OwnerOperatorLoginForm({ redirectTo = '/command-center' }: { redirectTo?: string }) {
-  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -24,14 +22,22 @@ export function OwnerOperatorLoginForm({ redirectTo = '/command-center' }: { red
         credentials: 'include',
         body: JSON.stringify({ email, password }),
       })
-      const data = (await res.json().catch(() => ({}))) as { message?: string }
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string
+        errors?: { message?: string }[]
+      }
       if (!res.ok) {
-        setError(typeof data.message === 'string' ? data.message : 'Invalid email or password')
+        const msg =
+          data.errors?.[0]?.message ||
+          (typeof data.message === 'string' ? data.message : null) ||
+          'Invalid email or password'
+        setError(msg)
         setLoading(false)
         return
       }
-      router.push(redirectTo)
-      router.refresh()
+      // Full navigation so the next document request includes the new Set-Cookie
+      // (router.push + refresh can race the cookie store on some browsers / Next RSC).
+      window.location.assign(redirectTo)
     } catch {
       setError('Something went wrong. Try again.')
       setLoading(false)

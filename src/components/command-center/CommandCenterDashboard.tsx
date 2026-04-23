@@ -124,99 +124,89 @@ export function CommandCenterDashboard({ initial }: Props) {
 
   const greeting = displayName.trim() || 'there'
 
+  const quickTools = [
+    {
+      href: '/tools/service-intervals',
+      title: 'Service intervals',
+      desc: 'PM reminders by truck age and miles.',
+    },
+    {
+      href: '/tools/ifta-calculator',
+      title: 'IFTA calculator',
+      desc: 'Rough fuel-tax estimates by jurisdiction.',
+    },
+    {
+      href: '/tools/per-diem-calculator',
+      title: 'Per diem calculator',
+      desc: 'Meals & incidental expense planning.',
+    },
+    {
+      href: '/tools/truck-warranty-reviews',
+      title: "Warranty buyer's guide",
+      desc: 'Coverage angles before you buy.',
+    },
+    {
+      href: '/tools/warranty-quote',
+      title: 'Warranty quote',
+      desc: 'Request a follow-up on extended coverage.',
+    },
+    {
+      href: mechanicsHref,
+      title: `Diesel mechanics${homeBaseState && /^[A-Z]{2}$/.test(homeBaseState) ? ` (${homeBaseState})` : ''}`,
+      desc: 'Shops filtered from your home state when set.',
+    },
+  ] as const
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-brand-navy">Command center</h1>
-          <p className="text-gray-600 mt-1">
-            Hi {greeting} — your saved truck, lanes, and cost assumptions in one place.
+    <div className="space-y-10 sm:space-y-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between border-b border-gray-200/90 pb-8">
+        <div className="space-y-2 min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-navy/70">Owner-operator hub</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight">Command center</h1>
+          <p className="text-gray-600 text-base sm:text-lg max-w-2xl leading-relaxed">
+            Hi {greeting} — your truck, lanes, and cost assumptions stay here for the tools you use every week.
           </p>
         </div>
-        <button type="button" onClick={logout} className="btn-secondary text-sm !py-2 !px-4 self-start">
+        <button
+          type="button"
+          onClick={logout}
+          className="btn-secondary text-sm shrink-0 self-start lg:self-auto !py-2.5 !px-5"
+        >
           Log out
         </button>
       </div>
 
-      <section className="card p-6 border-2 border-brand-navy/10 bg-brand-gray/30">
-        <h2 className="text-lg font-bold text-brand-navy mb-2">Mobile app roadmap</h2>
-        <p className="text-sm text-gray-700 leading-relaxed">
-          This hub is built so we can ship <strong>iOS / Android</strong> later without redoing your data: same{' '}
-          <code className="text-xs bg-white/80 px-1 rounded">owner-operators</code> account, login API, and profile
-          fields. Next steps for native apps: secure token storage, optional <strong>GET /api/command-center/me</strong>{' '}
-          JSON profile, push reminders (IFTA quarters, PM intervals), and offline-first edits that sync when you&apos;re
-          back on network.
-        </p>
-      </section>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="lg:col-span-8 space-y-10 min-w-0">
+          <section aria-labelledby="quick-tools-heading">
+            <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
+              <h2 id="quick-tools-heading" className="text-xl font-bold text-brand-navy">
+                Quick tools
+              </h2>
+              <p className="text-sm text-gray-500 max-w-md">
+                Jump into calculators and directories using the profile you save below.
+              </p>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {quickTools.map((t) => (
+                <li key={t.href} className="min-w-0">
+                  <Link
+                    href={t.href}
+                    className="group card flex h-full min-h-[5.5rem] flex-col justify-center gap-1 border border-gray-100 p-4 sm:p-5 no-underline transition-all hover:border-brand-navy/25 hover:shadow-md"
+                  >
+                    <span className="font-semibold text-brand-navy group-hover:text-brand-navy">{t.title}</span>
+                    <span className="text-sm text-gray-500 leading-snug">{t.desc}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      {totalPerMile != null && (
-        <section className="card p-6 bg-white border border-gray-200">
-          <h2 className="text-lg font-bold text-brand-navy mb-1">Estimated operating cost / mile</h2>
-          <p className="text-sm text-gray-500 mb-3">Planning number only — not tax, legal, or load-level profit.</p>
-          <p className="text-3xl font-extrabold text-brand-navy">${totalPerMile.toFixed(3)}</p>
-          <p className="text-xs text-gray-500 mt-2">
-            Fuel + maintenance reserve + (insurance + other fixed) ÷ avg monthly miles.
-          </p>
-        </section>
-      )}
-
-      <section>
-        <h2 className="text-xl font-bold text-brand-navy mb-4">Quick tools</h2>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch">
-          <li className="min-w-0 flex">
-            <Link
-              href="/tools/service-intervals"
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              Service intervals
-            </Link>
-          </li>
-          <li className="min-w-0 flex">
-            <Link
-              href="/tools/ifta-calculator"
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              IFTA calculator
-            </Link>
-          </li>
-          <li className="min-w-0 flex">
-            <Link
-              href="/tools/per-diem-calculator"
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              Per diem calculator
-            </Link>
-          </li>
-          <li className="min-w-0 flex">
-            <Link
-              href="/tools/truck-warranty-reviews"
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              Warranty buyer&apos;s guide
-            </Link>
-          </li>
-          <li className="min-w-0 flex">
-            <Link
-              href="/tools/warranty-quote"
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              Warranty quote
-            </Link>
-          </li>
-          <li className="min-w-0 flex">
-            <Link
-              href={mechanicsHref}
-              className="card flex h-full w-full min-h-[3.25rem] min-w-0 items-center p-4 hover:shadow-md no-underline text-brand-navy font-semibold"
-            >
-              Diesel mechanic directory{homeBaseState && /^[A-Z]{2}$/.test(homeBaseState) ? ` (${homeBaseState})` : ''}
-            </Link>
-          </li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-bold text-brand-navy mb-4">Your profile</h2>
-        <form onSubmit={onSave} className="card p-6 sm:p-8 max-w-full overflow-hidden">
+          <section aria-labelledby="profile-heading">
+            <h2 id="profile-heading" className="text-xl font-bold text-brand-navy mb-4">
+              Your profile
+            </h2>
+            <form onSubmit={onSave} className="card p-6 sm:p-8 max-w-full overflow-hidden border border-gray-100 shadow-sm">
           <div className="space-y-8">
             {saveMsg && (
               <p className="text-sm text-green-800 bg-green-50 border border-green-100 rounded-lg px-3 py-2" role="status">
@@ -337,7 +327,49 @@ export function CommandCenterDashboard({ initial }: Props) {
             </div>
           </div>
         </form>
-      </section>
+          </section>
+        </div>
+
+        <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-24 min-w-0">
+          {totalPerMile != null && (
+            <div className="card overflow-hidden border border-brand-navy/15 bg-gradient-to-br from-white to-slate-50/90 shadow-sm">
+              <div className="border-b border-gray-100 bg-brand-navy/[0.04] px-5 py-3">
+                <h2 className="text-sm font-bold uppercase tracking-wide text-brand-navy/90">
+                  Est. operating cost / mile
+                </h2>
+                <p className="text-xs text-gray-500 mt-0.5">Planning only — not tax, legal, or load profit.</p>
+              </div>
+              <div className="px-5 py-5">
+                <p className="text-4xl font-extrabold text-brand-navy tracking-tight">${totalPerMile.toFixed(3)}</p>
+                <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+                  Fuel + maintenance reserve + (insurance + other fixed) ÷ avg monthly miles from your profile.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <details className="card border border-gray-100 group open:shadow-sm">
+            <summary className="cursor-pointer list-none px-5 py-4 font-semibold text-brand-navy flex items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
+              <span>Mobile app roadmap</span>
+              <span
+                className="text-gray-400 text-xs font-medium group-open:rotate-180 transition-transform"
+                aria-hidden
+              >
+                ▾
+              </span>
+            </summary>
+            <div className="px-5 pb-5 pt-0 text-sm text-gray-600 leading-relaxed border-t border-gray-50">
+              <p className="pt-4">
+                Built so we can ship <strong>iOS / Android</strong> later without redoing your data: same{' '}
+                <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-800">owner-operators</code>{' '}
+                account, login API, and profile fields. Next steps: secure token storage, optional{' '}
+                <strong>GET /api/command-center/me</strong>, push reminders (IFTA, PM intervals), and offline-first edits
+                that sync when you&apos;re back on network.
+              </p>
+            </div>
+          </details>
+        </aside>
+      </div>
     </div>
   )
 }

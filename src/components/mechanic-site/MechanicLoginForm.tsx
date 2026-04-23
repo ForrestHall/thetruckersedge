@@ -1,10 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function MechanicLoginForm({ redirectTo = '/mechanics/dashboard' }: { redirectTo?: string }) {
-  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -30,8 +28,7 @@ export function MechanicLoginForm({ redirectTo = '/mechanics/dashboard' }: { red
         setLoading(false)
         return
       }
-      router.push(redirectTo)
-      router.refresh()
+      window.location.assign(redirectTo)
     } catch {
       setError('Something went wrong. Try again.')
       setLoading(false)
