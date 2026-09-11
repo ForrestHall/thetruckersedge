@@ -197,7 +197,12 @@ export function WarrantyQualifyQuiz() {
             <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
             <p className="text-gray-600 leading-relaxed">
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
-              <strong>America&apos;s Trucking Warranty</strong> coverage — free and no obligation.
+              <strong>America&apos;s Trucking Warranty</strong> Executive Plan coverage — free and no
+              obligation.
+            </p>
+            <p className="text-sm text-gray-500 mt-4 leading-relaxed">
+              Heavy duty: up to 20 years old, under 1,000,000 miles. Medium duty: 15 years or newer,
+              under 500,000 miles.
             </p>
           </div>
           <button type="button" className="btn-primary w-full py-3.5" onClick={goNext}>
@@ -352,8 +357,8 @@ export function WarrantyQualifyQuiz() {
             </div>
             <p className="text-gray-700 font-semibold">
               {tier === 'unlikely'
-                ? 'Your results are ready. Where should we send your qualification review?'
-                : 'Good news — your rig looks like a strong fit. Where should we send your qualification?'}
+                ? 'Your results are ready. Want an ATW specialist to review other options?'
+                : 'Good news — your rig qualifies. Where should we send your Executive Plan details?'}
             </p>
           </div>
 
@@ -416,26 +421,32 @@ export function WarrantyQualifyQuiz() {
 
       {step === 6 && (
         <section className="warranty-funnel-step text-center">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-700 text-3xl mb-4">
-            ✓
+          <div
+            className={`inline-flex h-16 w-16 items-center justify-center rounded-full text-3xl mb-4 ${
+              tier === 'likely' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+            }`}
+          >
+            {tier === 'likely' ? '✓' : '!'}
           </div>
           <h2 className="text-2xl font-bold text-brand-navy mb-2">{executivePlanHeadline(tier)}</h2>
           <p className="text-gray-600 mb-6">{executivePlanSubhead(tier)} {deliveryNote}</p>
-          <div className="text-left rounded-xl border-2 border-brand-yellow/40 bg-brand-yellow/5 p-5 mb-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
-              Recommended plan
-            </p>
-            <h3 className="font-bold text-brand-navy text-lg mb-2">{ATW_EXECUTIVE_PLAN.name}</h3>
-            <p className="text-sm text-gray-600 mb-3">{ATW_EXECUTIVE_PLAN.tagline}</p>
-            <ul className="space-y-1.5 text-sm text-gray-700">
-              {ATW_EXECUTIVE_PLAN.highlights.map((line) => (
-                <li key={line} className="flex gap-2">
-                  <span className="text-brand-yellow">✓</span>
-                  <span>{line}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {tier === 'likely' && (
+            <div className="text-left rounded-xl border-2 border-brand-yellow/40 bg-brand-yellow/5 p-5 mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
+                Recommended plan
+              </p>
+              <h3 className="font-bold text-brand-navy text-lg mb-2">{ATW_EXECUTIVE_PLAN.name}</h3>
+              <p className="text-sm text-gray-600 mb-3">{ATW_EXECUTIVE_PLAN.tagline}</p>
+              <ul className="space-y-1.5 text-sm text-gray-700">
+                {ATW_EXECUTIVE_PLAN.highlights.map((line) => (
+                  <li key={line} className="flex gap-2">
+                    <span className="text-brand-yellow">✓</span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="text-left rounded-xl border-2 border-brand-gray bg-brand-gray/30 p-5 mb-6">
             <h3 className="font-bold text-brand-navy mb-3">Your truck profile</h3>
             <ul className="space-y-2 text-sm text-gray-700">

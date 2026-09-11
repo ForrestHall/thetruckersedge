@@ -90,21 +90,38 @@ export const ATW_EXECUTIVE_PLAN = {
   ],
 } as const
 
+export const HD_MAX_AGE_YEARS = 20
+export const HD_MAX_MILEAGE = 1_000_000
+export const MD_MAX_AGE_YEARS = 15
+export const MD_MAX_MILEAGE = 500_000
+
+export function isHeavyDutyTruckType(truckType: TruckType): boolean {
+  return truckType === 'class8-otr' || truckType === 'class8-regional' || truckType === 'class7'
+}
+
+export function isMediumDutyTruckType(truckType: TruckType): boolean {
+  return truckType === 'medium-duty'
+}
+
+export function eligibilityRulesLabel(truckType: TruckType): string {
+  if (isMediumDutyTruckType(truckType)) {
+    return `Medium duty: ${MD_MAX_AGE_YEARS} years or newer, under ${MD_MAX_MILEAGE.toLocaleString()} miles`
+  }
+  return `Heavy duty: ${HD_MAX_AGE_YEARS} years or newer, under ${HD_MAX_MILEAGE.toLocaleString()} miles`
+}
+
 export function executivePlanHeadline(tier: QualificationTier): string {
   if (tier === 'unlikely') {
-    return 'You may qualify for the ATW Executive Plan'
+    return 'Outside standard Executive Plan eligibility'
   }
   return 'You qualify for the ATW Executive Plan'
 }
 
 export function executivePlanSubhead(tier: QualificationTier): string {
   if (tier === 'unlikely') {
-    return 'Based on your rig details, Executive coverage from America\'s Trucking Warranty looks possible — a specialist will confirm final eligibility and pricing.'
+    return 'Your rig may fall outside America\'s Trucking Warranty standard eligibility — an ATW specialist can still review options or alternative coverage.'
   }
-  if (tier === 'maybe') {
-    return 'Based on your year, mileage, and usage, you appear eligible for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
-  }
-  return 'Based on your year, mileage, and usage, you qualify for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
+  return 'Based on your year and mileage, you qualify for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
 }
 
 export function evaluateWarrantyQualification(input: {
@@ -114,16 +131,23 @@ export function evaluateWarrantyQualification(input: {
 }): QualificationTier {
   const { year, mileage, truckType } = input
   const currentYear = new Date().getFullYear()
-  const isHeavy = truckType === 'class8-otr' || truckType === 'class8-regional' || truckType === 'class7'
 
-  if (!isHeavy && truckType !== 'medium-duty') return 'maybe'
-  if (year < 2008 || year > currentYear) return 'unlikely'
-  if (mileage > 850_000) return 'unlikely'
+  if (year > currentYear) return 'unlikely'
 
-  if (year >= 2016 && mileage <= 550_000) return 'likely'
-  if (year >= 2010 && mileage <= 700_000) return 'maybe'
+  if (isMediumDutyTruckType(truckType)) {
+    const minYear = currentYear - MD_MAX_AGE_YEARS
+    if (year >= minYear && mileage < MD_MAX_MILEAGE) return 'likely'
+    return 'unlikely'
+  }
 
-  return 'maybe'
+  // Heavy duty (Class 7/8) and other specialty rigs use HD rules
+  if (isHeavyDutyTruckType(truckType) || truckType === 'other') {
+    const minYear = currentYear - HD_MAX_AGE_YEARS
+    if (year >= minYear && mileage < HD_MAX_MILEAGE) return 'likely'
+    return 'unlikely'
+  }
+
+  return 'unlikely'
 }
 
 export function buildMatchSummary(input: {
@@ -145,12 +169,11 @@ export function buildMatchSummary(input: {
     lines.push(`Odometer: ${Number(input.mileage.replace(/,/g, '')).toLocaleString()} miles`)
   }
   lines.push(`Usage: ${USAGE_LABELS[input.usage]}`)
+  lines.push(`Guideline: ${eligibilityRulesLabel(input.truckType)}`)
   if (input.tier === 'likely') {
-    lines.push('Eligibility: strong qualification based on year and mileage')
-  } else if (input.tier === 'maybe') {
-    lines.push('Eligibility: preliminary qualification — specialist will confirm')
+    lines.push('Eligibility: qualifies under ATW Executive Plan guidelines')
   } else {
-    lines.push('Eligibility: pending specialist review')
+    lines.push('Eligibility: outside standard guidelines — specialist review recommended')
   }
   return lines
 }

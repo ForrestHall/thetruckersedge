@@ -40,7 +40,7 @@ const tools = [
     icon: '✅',
     title: 'See if your truck qualifies for coverage',
     description:
-      'Quick eligibility check for owner-operators and fleet owners. See if you qualify for America\'s Trucking Warranty Executive Plan coverage based on year, mileage, and usage.',
+      'Quick eligibility check for owner-operators and fleet owners. HD up to 20 years old and under 1M miles; MD 15 years or newer and under 500K miles.',
     tags: ['Owner-Operator', 'Protection'],
     cta: 'Check eligibility →',
   },
