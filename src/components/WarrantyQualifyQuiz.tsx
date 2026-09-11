@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
+  ATW_EXECUTIVE_PLAN,
   buildMatchSummary,
   coverageOptionsForTruckType,
   evaluateWarrantyQualification,
+  executivePlanHeadline,
+  executivePlanSubhead,
   TRUCK_TYPE_OPTIONS,
   USAGE_OPTIONS,
   type CoveragePriority,
@@ -58,7 +61,7 @@ export function WarrantyQualifyQuiz() {
   const [contact, setContact] = useState({ firstName: '', email: '', phone: '' })
   const [tier, setTier] = useState<QualificationTier>('maybe')
   const [summary, setSummary] = useState<string[]>([])
-  const [deliveryNote, setDeliveryNote] = useState('Check your email for the details.')
+  const [deliveryNote, setDeliveryNote] = useState('Check your email for Executive Plan details.')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [utm, setUtm] = useState<Record<string, string>>({})
@@ -164,8 +167,8 @@ export function WarrantyQualifyQuiz() {
       setSummary(matchSummary)
       setDeliveryNote(
         requestType === 'call'
-          ? 'A specialist will call you shortly.'
-          : 'Check your email for the details.',
+          ? 'An ATW specialist will call you shortly to review your Executive Plan qualification.'
+          : 'Check your email for Executive Plan details and next steps.',
       )
       setStep(6)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -191,14 +194,14 @@ export function WarrantyQualifyQuiz() {
             <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-navy text-2xl shadow-lg mb-4">
               🛡️
             </div>
-            <h2 className="text-2xl font-bold text-brand-navy mb-3">Let us find your best-fit warranty</h2>
+            <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
             <p className="text-gray-600 leading-relaxed">
-              Answer a few quick questions about your rig. We search top commercial truck warranty providers and
-              match you with <strong>one</strong> best-fit option. No obligation.
+              Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
+              <strong>America&apos;s Trucking Warranty</strong> coverage — free and no obligation.
             </p>
           </div>
           <button type="button" className="btn-primary w-full py-3.5" onClick={goNext}>
-            Start matching
+            Check my eligibility
           </button>
           <StepIndicator n={1} />
         </section>
@@ -316,7 +319,7 @@ export function WarrantyQualifyQuiz() {
 
       {step === 4 && (
         <section className="warranty-funnel-step">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">What&apos;s your coverage priority?</h2>
+          <h2 className="text-xl font-bold text-brand-navy mb-4">What level of protection do you want?</h2>
           <div className="grid gap-3 mb-6">
             {coverageOptions.map((opt) => (
               <OptionCard
@@ -343,12 +346,14 @@ export function WarrantyQualifyQuiz() {
               <span />
               <span />
             </div>
-            <p className="text-sm font-medium text-brand-navy mb-3">Analyzing provider network…</p>
+            <p className="text-sm font-medium text-brand-navy mb-3">Checking your eligibility…</p>
             <div className="funnel-analyzing-bar mb-4">
               <div className="funnel-analyzing-bar-fill" />
             </div>
             <p className="text-gray-700 font-semibold">
-              We&apos;ve found your best-fit match. How would you like to receive it?
+              {tier === 'unlikely'
+                ? 'Your results are ready. Where should we send your qualification review?'
+                : 'Good news — your rig looks like a strong fit. Where should we send your qualification?'}
             </p>
           </div>
 
@@ -391,7 +396,7 @@ export function WarrantyQualifyQuiz() {
               className="btn-primary w-full py-3.5 disabled:opacity-60"
               onClick={() => submitLead('quote')}
             >
-              {submitting ? 'Submitting…' : 'Get my match by email'}
+              {submitting ? 'Submitting…' : 'Email my qualification'}
             </button>
             <button
               type="button"
@@ -414,12 +419,25 @@ export function WarrantyQualifyQuiz() {
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-700 text-3xl mb-4">
             ✓
           </div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-2">Match delivered</h2>
-          <p className="text-gray-600 mb-6">
-            We&apos;ve matched you with one provider — the best fit for your rig. {deliveryNote}
-          </p>
+          <h2 className="text-2xl font-bold text-brand-navy mb-2">{executivePlanHeadline(tier)}</h2>
+          <p className="text-gray-600 mb-6">{executivePlanSubhead(tier)} {deliveryNote}</p>
+          <div className="text-left rounded-xl border-2 border-brand-yellow/40 bg-brand-yellow/5 p-5 mb-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
+              Recommended plan
+            </p>
+            <h3 className="font-bold text-brand-navy text-lg mb-2">{ATW_EXECUTIVE_PLAN.name}</h3>
+            <p className="text-sm text-gray-600 mb-3">{ATW_EXECUTIVE_PLAN.tagline}</p>
+            <ul className="space-y-1.5 text-sm text-gray-700">
+              {ATW_EXECUTIVE_PLAN.highlights.map((line) => (
+                <li key={line} className="flex gap-2">
+                  <span className="text-brand-yellow">✓</span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="text-left rounded-xl border-2 border-brand-gray bg-brand-gray/30 p-5 mb-6">
-            <h3 className="font-bold text-brand-navy mb-3">Your match profile</h3>
+            <h3 className="font-bold text-brand-navy mb-3">Your truck profile</h3>
             <ul className="space-y-2 text-sm text-gray-700">
               {summary.map((line) => (
                 <li key={line} className="flex gap-2">
@@ -430,11 +448,11 @@ export function WarrantyQualifyQuiz() {
             </ul>
           </div>
           <p className="text-xs text-gray-500 mb-6">
-            A licensed specialist will be in touch to review your match and answer any questions. This is not
+            An ATW specialist will follow up to confirm eligibility, pricing, and term options. This is not
             insurance or legal advice.
           </p>
           <Link href="/tools/warranty-quote" className="btn-primary inline-flex">
-            Full quote questionnaire
+            Request a full quote
           </Link>
         </section>
       )}

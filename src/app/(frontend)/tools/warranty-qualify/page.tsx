@@ -5,14 +5,14 @@ import { getBaseUrl } from '@/lib/media'
 
 const path = '/tools/warranty-qualify'
 const desc =
-  'Free commercial truck warranty match in 60 seconds. Tell us about your rig and get matched with one best-fit extended warranty option — no obligation.'
+  'See if your truck qualifies for coverage in 60 seconds. Free eligibility check for America\'s Trucking Warranty Executive Plan — no obligation.'
 
 export const metadata: Metadata = {
-  title: 'See If You Qualify for a Truck Warranty — Free Match',
+  title: 'See If Your Truck Qualifies for Coverage — Free Check',
   description: desc,
   alternates: { canonical: `${getBaseUrl()}${path}` },
   openGraph: {
-    title: 'See If You Qualify for a Truck Warranty | The Truckers Edge',
+    title: 'See If Your Truck Qualifies for Coverage | The Truckers Edge',
     description: desc,
     url: `${getBaseUrl()}${path}`,
     type: 'website',

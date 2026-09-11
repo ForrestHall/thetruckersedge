@@ -107,17 +107,17 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: `The Trucker's Edge <${fromEmail}>`,
         to: contact.email,
-        subject: "Your truck warranty match — The Trucker's Edge",
+        subject: "You qualify for ATW Executive Plan coverage — The Trucker's Edge",
         text: [
           `Hi ${contact.firstName},`,
           '',
-          "Thanks for using The Trucker's Edge warranty match tool. We've received your information.",
+          "Thanks for checking whether your truck qualifies for coverage. Based on your answers, you appear eligible for America's Trucking Warranty Executive Plan.",
           '',
           ...summaryLines.map((line) => `• ${line}`),
           '',
           requestType === 'call'
-            ? 'A specialist will call you shortly to review your match.'
-            : 'A specialist will follow up with your warranty match details.',
+            ? 'An ATW specialist will call you shortly to review your Executive Plan qualification.'
+            : 'An ATW specialist will follow up with Executive Plan details and pricing.',
           '',
           `Full quote questionnaire: ${base}/tools/warranty-quote`,
           '',

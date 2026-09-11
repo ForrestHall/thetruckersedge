@@ -36,8 +36,8 @@ export const COVERAGE_OPTIONS: {
 }[] = [
   {
     value: 'comprehensive',
-    label: 'Exclusionary',
-    hint: 'Max protection — named exclusions only',
+    label: 'Exclusionary (Executive-style)',
+    hint: 'Highest tier — like the ATW Executive Plan',
   },
   {
     value: 'balanced',
@@ -79,6 +79,34 @@ const COVERAGE_LABELS: Record<CoveragePriority, string> = {
   aftertreatment: 'Aftertreatment / emissions',
 }
 
+export const ATW_EXECUTIVE_PLAN = {
+  name: "America's Trucking Warranty Executive Plan",
+  shortName: 'ATW Executive Plan',
+  tagline: 'Highest-tier exclusionary coverage for heavy-duty trucks',
+  highlights: [
+    'Exclusionary-style protection — covered unless specifically excluded',
+    'Engine, transmission, and major driveline components',
+    'Ideal for OTR owner-operators running high annual miles',
+  ],
+} as const
+
+export function executivePlanHeadline(tier: QualificationTier): string {
+  if (tier === 'unlikely') {
+    return 'You may qualify for the ATW Executive Plan'
+  }
+  return 'You qualify for the ATW Executive Plan'
+}
+
+export function executivePlanSubhead(tier: QualificationTier): string {
+  if (tier === 'unlikely') {
+    return 'Based on your rig details, Executive coverage from America\'s Trucking Warranty looks possible — a specialist will confirm final eligibility and pricing.'
+  }
+  if (tier === 'maybe') {
+    return 'Based on your year, mileage, and usage, you appear eligible for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
+  }
+  return 'Based on your year, mileage, and usage, you qualify for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
+}
+
 export function evaluateWarrantyQualification(input: {
   year: number
   mileage: number
@@ -110,12 +138,20 @@ export function buildMatchSummary(input: {
 }): string[] {
   const lines = [
     `${input.year} ${input.make} ${input.model} — ${TRUCK_TYPE_LABELS[input.truckType]}`,
-    `Matched with ${COVERAGE_LABELS[input.coverage]} from our provider network`,
+    `Recommended coverage: ${ATW_EXECUTIVE_PLAN.shortName}`,
+    ATW_EXECUTIVE_PLAN.tagline,
   ]
-  if (input.mileage) lines.push(`Mileage: ${Number(input.mileage.replace(/,/g, '')).toLocaleString()}`)
-  if (input.usage === 'fulltime-otr') lines.push('Full-time OTR → exclusionary coverage often recommended')
-  if (input.tier === 'likely') lines.push('Eligibility: strong match based on year and mileage')
-  if (input.tier === 'unlikely') lines.push('Eligibility: limited — specialist review recommended')
+  if (input.mileage) {
+    lines.push(`Odometer: ${Number(input.mileage.replace(/,/g, '')).toLocaleString()} miles`)
+  }
+  lines.push(`Usage: ${USAGE_LABELS[input.usage]}`)
+  if (input.tier === 'likely') {
+    lines.push('Eligibility: strong qualification based on year and mileage')
+  } else if (input.tier === 'maybe') {
+    lines.push('Eligibility: preliminary qualification — specialist will confirm')
+  } else {
+    lines.push('Eligibility: pending specialist review')
+  }
   return lines
 }
 
