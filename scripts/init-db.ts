@@ -8,6 +8,7 @@
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
 import { fixImportedBlogSeo, removeCdlTipsFeaturedImage } from '../src/lib/blog-seo-fix'
+import { assignBlogPostAuthors } from '../src/lib/blog-authors'
 import { seedBlogPosts } from '../src/lib/blog-post-seeds'
 
 async function main() {
@@ -18,6 +19,7 @@ async function main() {
     await fixImportedBlogSeo(payload)
     await removeCdlTipsFeaturedImage(payload)
     await seedBlogPosts(payload)
+    await assignBlogPostAuthors(payload)
 
     process.exit(0)
   } catch (err: unknown) {
