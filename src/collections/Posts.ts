@@ -9,8 +9,17 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
+const isAdminUser = ({ req: { user } }: { req: { user?: { collection?: string } | null } }) =>
+  user?.collection === 'users'
+
 export const Posts: CollectionConfig = {
   slug: 'posts',
+  access: {
+    read: () => true,
+    create: isAdminUser,
+    update: isAdminUser,
+    delete: isAdminUser,
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'author', 'status', 'publishedAt'],

@@ -13,6 +13,8 @@ export const Media: CollectionConfig = {
     read: () => true,
     create: ({ req: { user } }) =>
       user?.collection === 'users' || user?.collection === 'mechanics',
+    update: ({ req: { user } }) => user?.collection === 'users',
+    delete: ({ req: { user } }) => user?.collection === 'users',
   },
   fields: [
     {
