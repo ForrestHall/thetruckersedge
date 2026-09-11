@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { QualifySpeedometerIcon } from '@/components/icons/QualifySpeedometerIcon'
 import {
   ATW_EXECUTIVE_PLAN,
   buildMatchSummary,
@@ -191,8 +192,8 @@ export function WarrantyQualifyQuiz() {
       {step === 0 && (
         <section className="warranty-funnel-step">
           <div className="text-center mb-6">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-navy text-2xl shadow-lg mb-4">
-              🛡️
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-navy text-brand-yellow shadow-lg mb-4">
+              <QualifySpeedometerIcon className="h-9 w-9" />
             </div>
             <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
             <p className="text-gray-600 leading-relaxed">
