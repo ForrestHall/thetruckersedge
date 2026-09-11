@@ -1,24 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { WarrantyQualifyQuiz } from '@/components/WarrantyQualifyQuiz'
-import { getBaseUrl } from '@/lib/media'
+import { warrantyQualifyMetadata } from '@/lib/warranty-qualify-meta'
 
 const path = '/tools/warranty-qualify'
-const desc =
-  'See if your truck qualifies for coverage in 60 seconds. Free eligibility check for America\'s Trucking Warranty Executive Plan — no obligation.'
 
-export const metadata: Metadata = {
-  title: 'See If Your Truck Qualifies for Coverage — Free Check',
-  description: desc,
-  alternates: { canonical: `${getBaseUrl()}${path}` },
-  openGraph: {
-    title: 'See If Your Truck Qualifies for Coverage | The Truckers Edge',
-    description: desc,
-    url: `${getBaseUrl()}${path}`,
-    type: 'website',
-  },
-  twitter: { card: 'summary_large_image', title: 'Truck Warranty Match — 60 Seconds' },
-}
+export const metadata: Metadata = warrantyQualifyMetadata(path)
 
 export default function WarrantyQualifyPage() {
   return (

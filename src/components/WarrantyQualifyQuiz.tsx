@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { QualifySpeedometerIcon } from '@/components/icons/QualifySpeedometerIcon'
 import {
-  ATW_EXECUTIVE_PLAN,
+  EXECUTIVE_PLAN,
   buildMatchSummary,
   coverageOptionsForTruckType,
   evaluateWarrantyQualification,
@@ -168,7 +168,7 @@ export function WarrantyQualifyQuiz() {
       setSummary(matchSummary)
       setDeliveryNote(
         requestType === 'call'
-          ? 'An ATW specialist will call you shortly to review your Executive Plan qualification.'
+          ? 'A warranty specialist will call you shortly to review your Executive Plan qualification.'
           : 'Check your email for Executive Plan details and next steps.',
       )
       setStep(6)
@@ -198,8 +198,7 @@ export function WarrantyQualifyQuiz() {
             <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
             <p className="text-gray-600 leading-relaxed">
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
-              <strong>America&apos;s Trucking Warranty</strong> Executive Plan coverage — free and no
-              obligation.
+              <strong>Executive Plan</strong> extended warranty coverage — free and no obligation.
             </p>
             <p className="text-sm text-gray-500 mt-4 leading-relaxed">
               Heavy duty: up to 20 years old, under 1,000,000 miles. Medium duty: 15 years or newer,
@@ -358,7 +357,7 @@ export function WarrantyQualifyQuiz() {
             </div>
             <p className="text-gray-700 font-semibold">
               {tier === 'unlikely'
-                ? 'Your results are ready. Want an ATW specialist to review other options?'
+                ? 'Your results are ready. Want a warranty specialist to review other options?'
                 : 'Good news — your rig qualifies. Where should we send your Executive Plan details?'}
             </p>
           </div>
@@ -436,10 +435,10 @@ export function WarrantyQualifyQuiz() {
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
                 Recommended plan
               </p>
-              <h3 className="font-bold text-brand-navy text-lg mb-2">{ATW_EXECUTIVE_PLAN.name}</h3>
-              <p className="text-sm text-gray-600 mb-3">{ATW_EXECUTIVE_PLAN.tagline}</p>
+              <h3 className="font-bold text-brand-navy text-lg mb-2">{EXECUTIVE_PLAN.name}</h3>
+              <p className="text-sm text-gray-600 mb-3">{EXECUTIVE_PLAN.tagline}</p>
               <ul className="space-y-1.5 text-sm text-gray-700">
-                {ATW_EXECUTIVE_PLAN.highlights.map((line) => (
+                {EXECUTIVE_PLAN.highlights.map((line) => (
                   <li key={line} className="flex gap-2">
                     <span className="text-brand-yellow">✓</span>
                     <span>{line}</span>
@@ -460,7 +459,7 @@ export function WarrantyQualifyQuiz() {
             </ul>
           </div>
           <p className="text-xs text-gray-500 mb-6">
-            An ATW specialist will follow up to confirm eligibility, pricing, and term options. This is not
+            A warranty specialist will follow up to confirm eligibility, pricing, and term options. This is not
             insurance or legal advice.
           </p>
           <Link href="/tools/warranty-quote" className="btn-primary inline-flex">

@@ -37,7 +37,7 @@ export const COVERAGE_OPTIONS: {
   {
     value: 'comprehensive',
     label: 'Exclusionary (Executive-style)',
-    hint: 'Highest tier — like the ATW Executive Plan',
+    hint: 'Highest tier — Executive Plan style',
   },
   {
     value: 'balanced',
@@ -79,9 +79,9 @@ const COVERAGE_LABELS: Record<CoveragePriority, string> = {
   aftertreatment: 'Aftertreatment / emissions',
 }
 
-export const ATW_EXECUTIVE_PLAN = {
-  name: "America's Trucking Warranty Executive Plan",
-  shortName: 'ATW Executive Plan',
+export const EXECUTIVE_PLAN = {
+  name: 'Executive Plan',
+  shortName: 'Executive Plan',
   tagline: 'Highest-tier exclusionary coverage for heavy-duty trucks',
   highlights: [
     'Exclusionary-style protection — covered unless specifically excluded',
@@ -114,14 +114,14 @@ export function executivePlanHeadline(tier: QualificationTier): string {
   if (tier === 'unlikely') {
     return 'Outside standard Executive Plan eligibility'
   }
-  return 'You qualify for the ATW Executive Plan'
+  return 'You qualify for the Executive Plan'
 }
 
 export function executivePlanSubhead(tier: QualificationTier): string {
   if (tier === 'unlikely') {
-    return 'Your rig may fall outside America\'s Trucking Warranty standard eligibility — an ATW specialist can still review options or alternative coverage.'
+    return 'Your rig may fall outside standard eligibility — a warranty specialist can still review options or alternative coverage.'
   }
-  return 'Based on your year and mileage, you qualify for America\'s Trucking Warranty Executive Plan — their top exclusionary-style coverage tier.'
+  return 'Based on your year and mileage, you qualify for Executive Plan coverage — top-tier exclusionary-style protection.'
 }
 
 export function evaluateWarrantyQualification(input: {
@@ -162,8 +162,8 @@ export function buildMatchSummary(input: {
 }): string[] {
   const lines = [
     `${input.year} ${input.make} ${input.model} — ${TRUCK_TYPE_LABELS[input.truckType]}`,
-    `Recommended coverage: ${ATW_EXECUTIVE_PLAN.shortName}`,
-    ATW_EXECUTIVE_PLAN.tagline,
+    `Recommended coverage: ${EXECUTIVE_PLAN.shortName}`,
+    EXECUTIVE_PLAN.tagline,
   ]
   if (input.mileage) {
     lines.push(`Odometer: ${Number(input.mileage.replace(/,/g, '')).toLocaleString()} miles`)
@@ -171,7 +171,7 @@ export function buildMatchSummary(input: {
   lines.push(`Usage: ${USAGE_LABELS[input.usage]}`)
   lines.push(`Guideline: ${eligibilityRulesLabel(input.truckType)}`)
   if (input.tier === 'likely') {
-    lines.push('Eligibility: qualifies under ATW Executive Plan guidelines')
+    lines.push('Eligibility: qualifies under Executive Plan guidelines')
   } else {
     lines.push('Eligibility: outside standard guidelines — specialist review recommended')
   }
