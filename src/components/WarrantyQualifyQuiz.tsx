@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { QualifySpeedometerIcon } from '@/components/icons/QualifySpeedometerIcon'
 import {
-  EXECUTIVE_PLAN,
+  RECOMMENDED_COVERAGE,
   buildMatchSummary,
   coverageOptionsForTruckType,
   evaluateWarrantyQualification,
-  executivePlanHeadline,
-  executivePlanSubhead,
+  qualificationHeadline,
+  qualificationSubhead,
   TRUCK_TYPE_OPTIONS,
   USAGE_OPTIONS,
   type CoveragePriority,
@@ -62,7 +62,7 @@ export function WarrantyQualifyQuiz() {
   const [contact, setContact] = useState({ firstName: '', email: '', phone: '' })
   const [tier, setTier] = useState<QualificationTier>('maybe')
   const [summary, setSummary] = useState<string[]>([])
-  const [deliveryNote, setDeliveryNote] = useState('Check your email for Executive Plan details.')
+  const [deliveryNote, setDeliveryNote] = useState('Check your email for qualification details.')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [utm, setUtm] = useState<Record<string, string>>({})
@@ -168,8 +168,8 @@ export function WarrantyQualifyQuiz() {
       setSummary(matchSummary)
       setDeliveryNote(
         requestType === 'call'
-          ? 'A warranty specialist will call you shortly to review your Executive Plan qualification.'
-          : 'Check your email for Executive Plan details and next steps.',
+          ? 'A warranty specialist will call you shortly to review your qualification.'
+          : 'Check your email for qualification details and next steps.',
       )
       setStep(6)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -198,7 +198,7 @@ export function WarrantyQualifyQuiz() {
             <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
             <p className="text-gray-600 leading-relaxed">
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
-              <strong>Executive Plan</strong> extended warranty coverage — free and no obligation.
+              <strong>extended warranty coverage</strong> — free and no obligation.
             </p>
             <p className="text-sm text-gray-500 mt-4 leading-relaxed">
               Heavy duty: up to 20 years old, under 1,000,000 miles. Medium duty: 15 years or newer,
@@ -358,7 +358,7 @@ export function WarrantyQualifyQuiz() {
             <p className="text-gray-700 font-semibold">
               {tier === 'unlikely'
                 ? 'Your results are ready. Want a warranty specialist to review other options?'
-                : 'Good news — your rig qualifies. Where should we send your Executive Plan details?'}
+                : 'Good news — your rig qualifies. Where should we send your qualification details?'}
             </p>
           </div>
 
@@ -428,17 +428,17 @@ export function WarrantyQualifyQuiz() {
           >
             {tier === 'likely' ? '✓' : '!'}
           </div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-2">{executivePlanHeadline(tier)}</h2>
-          <p className="text-gray-600 mb-6">{executivePlanSubhead(tier)} {deliveryNote}</p>
+          <h2 className="text-2xl font-bold text-brand-navy mb-2">{qualificationHeadline(tier)}</h2>
+          <p className="text-gray-600 mb-6">{qualificationSubhead(tier)} {deliveryNote}</p>
           {tier === 'likely' && (
             <div className="text-left rounded-xl border-2 border-brand-yellow/40 bg-brand-yellow/5 p-5 mb-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
                 Recommended plan
               </p>
-              <h3 className="font-bold text-brand-navy text-lg mb-2">{EXECUTIVE_PLAN.name}</h3>
-              <p className="text-sm text-gray-600 mb-3">{EXECUTIVE_PLAN.tagline}</p>
+              <h3 className="font-bold text-brand-navy text-lg mb-2">{RECOMMENDED_COVERAGE.name}</h3>
+              <p className="text-sm text-gray-600 mb-3">{RECOMMENDED_COVERAGE.tagline}</p>
               <ul className="space-y-1.5 text-sm text-gray-700">
-                {EXECUTIVE_PLAN.highlights.map((line) => (
+                {RECOMMENDED_COVERAGE.highlights.map((line) => (
                   <li key={line} className="flex gap-2">
                     <span className="text-brand-yellow">✓</span>
                     <span>{line}</span>

@@ -36,8 +36,8 @@ export const COVERAGE_OPTIONS: {
 }[] = [
   {
     value: 'comprehensive',
-    label: 'Exclusionary (Executive-style)',
-    hint: 'Highest tier — Executive Plan style',
+    label: 'Exclusionary',
+    hint: 'Highest tier — bumper-to-bumper style',
   },
   {
     value: 'balanced',
@@ -79,9 +79,9 @@ const COVERAGE_LABELS: Record<CoveragePriority, string> = {
   aftertreatment: 'Aftertreatment / emissions',
 }
 
-export const EXECUTIVE_PLAN = {
-  name: 'Executive Plan',
-  shortName: 'Executive Plan',
+export const RECOMMENDED_COVERAGE = {
+  name: 'Exclusionary extended warranty',
+  shortName: 'Exclusionary coverage',
   tagline: 'Highest-tier exclusionary coverage for heavy-duty trucks',
   highlights: [
     'Exclusionary-style protection — covered unless specifically excluded',
@@ -110,18 +110,18 @@ export function eligibilityRulesLabel(truckType: TruckType): string {
   return `Heavy duty: ${HD_MAX_AGE_YEARS} years or newer, under ${HD_MAX_MILEAGE.toLocaleString()} miles`
 }
 
-export function executivePlanHeadline(tier: QualificationTier): string {
+export function qualificationHeadline(tier: QualificationTier): string {
   if (tier === 'unlikely') {
-    return 'Outside standard Executive Plan eligibility'
+    return 'Outside standard warranty eligibility'
   }
-  return 'You qualify for the Executive Plan'
+  return 'You qualify for coverage'
 }
 
-export function executivePlanSubhead(tier: QualificationTier): string {
+export function qualificationSubhead(tier: QualificationTier): string {
   if (tier === 'unlikely') {
     return 'Your rig may fall outside standard eligibility — a warranty specialist can still review options or alternative coverage.'
   }
-  return 'Based on your year and mileage, you qualify for Executive Plan coverage — top-tier exclusionary-style protection.'
+  return 'Based on your year and mileage, you qualify for extended warranty coverage — top-tier exclusionary-style protection.'
 }
 
 export function evaluateWarrantyQualification(input: {
@@ -162,8 +162,8 @@ export function buildMatchSummary(input: {
 }): string[] {
   const lines = [
     `${input.year} ${input.make} ${input.model} — ${TRUCK_TYPE_LABELS[input.truckType]}`,
-    `Recommended coverage: ${EXECUTIVE_PLAN.shortName}`,
-    EXECUTIVE_PLAN.tagline,
+    `Recommended coverage: ${RECOMMENDED_COVERAGE.shortName}`,
+    RECOMMENDED_COVERAGE.tagline,
   ]
   if (input.mileage) {
     lines.push(`Odometer: ${Number(input.mileage.replace(/,/g, '')).toLocaleString()} miles`)
@@ -171,7 +171,7 @@ export function buildMatchSummary(input: {
   lines.push(`Usage: ${USAGE_LABELS[input.usage]}`)
   lines.push(`Guideline: ${eligibilityRulesLabel(input.truckType)}`)
   if (input.tier === 'likely') {
-    lines.push('Eligibility: qualifies under Executive Plan guidelines')
+    lines.push('Eligibility: qualifies under standard warranty guidelines')
   } else {
     lines.push('Eligibility: outside standard guidelines — specialist review recommended')
   }

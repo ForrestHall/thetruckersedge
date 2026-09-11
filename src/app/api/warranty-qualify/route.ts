@@ -107,17 +107,17 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: `The Trucker's Edge <${fromEmail}>`,
         to: contact.email,
-        subject: "You qualify for Executive Plan coverage — The Trucker's Edge",
+        subject: "You qualify for extended warranty coverage — The Trucker's Edge",
         text: [
           `Hi ${contact.firstName},`,
           '',
-          'Thanks for checking whether your truck qualifies for coverage. Based on your answers, you appear eligible for Executive Plan extended warranty coverage.',
+          'Thanks for checking whether your truck qualifies for coverage. Based on your answers, you appear eligible for extended warranty coverage.',
           '',
           ...summaryLines.map((line) => `• ${line}`),
           '',
           requestType === 'call'
-            ? 'A warranty specialist will call you shortly to review your Executive Plan qualification.'
-            : 'A warranty specialist will follow up with Executive Plan details and pricing.',
+            ? 'A warranty specialist will call you shortly to review your qualification.'
+            : 'A warranty specialist will follow up with coverage details and pricing.',
           '',
           `Full quote questionnaire: ${base}/tools/warranty-quote`,
           '',

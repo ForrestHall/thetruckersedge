@@ -3,7 +3,7 @@ import { getBaseUrl } from '@/lib/media'
 export const WARRANTY_QUALIFY_TITLE = 'See If Your Truck Qualifies for Coverage — Free Check'
 
 export const WARRANTY_QUALIFY_DESCRIPTION =
-  'See if your truck qualifies for coverage in 60 seconds. Free eligibility check for Executive Plan extended warranty — no obligation.'
+  'See if your truck qualifies for coverage in 60 seconds. Free extended warranty eligibility check — no obligation.'
 
 export function warrantyQualifyMetadata(path: string) {
   const url = `${getBaseUrl()}${path}`
