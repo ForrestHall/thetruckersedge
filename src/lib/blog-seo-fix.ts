@@ -68,3 +68,24 @@ export async function fixImportedBlogSeo(payload: Payload): Promise<number> {
   console.log(`[fix-blog-seo] Done. Fixed ${fixed} post(s).`)
   return fixed
 }
+
+/** Remove featured image from the CDL tips post (imported hero no longer wanted). */
+export async function removeCdlTipsFeaturedImage(payload: Payload): Promise<boolean> {
+  const { docs } = await payload.find({
+    collection: 'posts',
+    where: { slug: { equals: CDL_TIPS_SLUG } },
+    limit: 1,
+  })
+
+  const post = docs[0]
+  if (!post?.featuredImage) return false
+
+  await payload.update({
+    collection: 'posts',
+    id: post.id,
+    data: { featuredImage: null },
+  })
+
+  console.log(`[fix-blog-seo] Removed featured image: ${CDL_TIPS_SLUG}`)
+  return true
+}

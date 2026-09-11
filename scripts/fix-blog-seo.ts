@@ -6,11 +6,12 @@ process.env.NODE_ENV = 'development'
 
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
-import { fixImportedBlogSeo } from '../src/lib/blog-seo-fix'
+import { fixImportedBlogSeo, removeCdlTipsFeaturedImage } from '../src/lib/blog-seo-fix'
 
 async function main() {
   const payload = await getPayload({ config })
   await fixImportedBlogSeo(payload)
+  await removeCdlTipsFeaturedImage(payload)
   process.exit(0)
 }
 

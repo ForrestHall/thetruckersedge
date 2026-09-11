@@ -7,7 +7,7 @@
 
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
-import { fixImportedBlogSeo } from '../src/lib/blog-seo-fix'
+import { fixImportedBlogSeo, removeCdlTipsFeaturedImage } from '../src/lib/blog-seo-fix'
 import { seedBlogPosts } from '../src/lib/blog-post-seeds'
 
 async function main() {
@@ -16,6 +16,7 @@ async function main() {
     console.log('[init-db] Schema push complete. Tables created.')
 
     await fixImportedBlogSeo(payload)
+    await removeCdlTipsFeaturedImage(payload)
     await seedBlogPosts(payload)
 
     process.exit(0)
