@@ -36,6 +36,15 @@ const tools = [
     cta: 'Open directory →',
   },
   {
+    href: '/tools/warranty-qualify',
+    icon: '✅',
+    title: 'See if you qualify for a warranty',
+    description:
+      'Quick eligibility check for owner-operators and fleet owners. Enter your truck year and mileage — we tell you if extended warranty coverage likely fits, then follow up with options.',
+    tags: ['Owner-Operator', 'Protection'],
+    cta: 'Check eligibility →',
+  },
+  {
     href: '/tools/truck-warranty-reviews',
     icon: '📋',
     title: "Truck warranty buyer's guide",

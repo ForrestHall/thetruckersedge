@@ -12,6 +12,8 @@
     "seed:news-feeds": "npx tsx scripts/seed-news-feeds.ts",
     "seed:guides": "npx tsx scripts/seed-guides.ts",
     "seed:mechanic-demo": "npx tsx scripts/seed-mechanic-demo.ts",
+    "seed:posts": "npx tsx scripts/seed-posts.ts",
+    "fix:blog-seo": "npx tsx scripts/fix-blog-seo.ts",
     "enrich:cdl-guides": "npx tsx scripts/enrich-state-cdl-guides.ts",
     "generate:importmap": "payload generate:importmap",
     "generate:types": "payload generate:types",

@@ -10,6 +10,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/blog/top-10-cdl-practice-test-tips',
+        destination: '/blog/top-10-cdl-practice-test-tips-every-aspiring-trucker-needs',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default withPayload(nextConfig)

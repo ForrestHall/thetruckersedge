@@ -15,6 +15,7 @@ const staticPages: MetadataRoute.Sitemap = [
   { url: `${baseUrl}/tools/ifta-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/tools/per-diem-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   { url: `${baseUrl}/tools/service-intervals`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+  { url: `${baseUrl}/tools/warranty-qualify`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.74 },
   { url: `${baseUrl}/tools/warranty-quote`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.72 },
   { url: `${baseUrl}/tools/truck-warranty-reviews`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.72 },
   { url: `${baseUrl}/mechanics`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },

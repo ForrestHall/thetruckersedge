@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { BlogWarrantyCta } from '@/components/BlogWarrantyCta'
 import { HtmlContent } from '@/components/HtmlContent'
 import { RichText } from '@/components/RichText'
 import { getMediaUrl, getBaseUrl } from '@/lib/media'
+import { buildArticleJsonLd, resolvePostDescription } from '@/lib/seo'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -25,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {}
 
   const title = post.seo?.metaTitle || post.title
-  const description = post.seo?.metaDescription || post.excerpt || undefined
+  const description = resolvePostDescription(post.excerpt, post.seo?.metaDescription)
   const url = `${getBaseUrl()}/blog/${slug}`
   const media = post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage : null
   const imageUrl = media?.url ? getMediaUrl(media.url) : null
@@ -72,27 +74,38 @@ export default async function BlogPostPage({ params }: Props) {
   const media = post.featuredImage && typeof post.featuredImage === 'object' ? post.featuredImage : null
   const imageUrl = media?.url ? getMediaUrl(media.url) : null
 
-  const jsonLd =
-    post.seo?.structuredData && typeof post.seo.structuredData === 'object'
+  const importedStructuredData =
+    post.seo?.structuredData &&
+    typeof post.seo.structuredData === 'object' &&
+    JSON.stringify(post.seo.structuredData).includes('blogr.blog')
+
+  const jsonLd = importedStructuredData
+    ? buildArticleJsonLd({
+        title: post.title,
+        description: resolvePostDescription(post.excerpt, post.seo?.metaDescription),
+        slug,
+        imageUrl,
+        publishedAt: post.publishedAt,
+        updatedAt: post.updatedAt,
+        authorName:
+          author && typeof author === 'object' && 'name' in author && author.name
+            ? (author.name as string)
+            : null,
+      })
+    : post.seo?.structuredData && typeof post.seo.structuredData === 'object'
       ? post.seo.structuredData
-      : {
-          '@context': 'https://schema.org',
-          '@type': 'Article',
-          headline: post.title,
-          description: post.excerpt || post.seo?.metaDescription,
-          image: imageUrl,
-          datePublished: post.publishedAt,
-          dateModified: post.updatedAt || post.publishedAt,
-          author:
+      : buildArticleJsonLd({
+          title: post.title,
+          description: resolvePostDescription(post.excerpt, post.seo?.metaDescription),
+          slug,
+          imageUrl,
+          publishedAt: post.publishedAt,
+          updatedAt: post.updatedAt,
+          authorName:
             author && typeof author === 'object' && 'name' in author && author.name
-              ? { '@type': 'Person', name: author.name }
-              : undefined,
-          publisher: {
-            '@type': 'Organization',
-            name: 'The Truckers Edge',
-            logo: { '@type': 'ImageObject', url: `${getBaseUrl()}/images/og-default.png` },
-          },
-        }
+              ? (author.name as string)
+              : null,
+        })
 
   return (
     <>
@@ -147,7 +160,9 @@ export default async function BlogPostPage({ params }: Props) {
         )}
       </div>
 
-      <div className="mt-16 text-center">
+      <BlogWarrantyCta />
+
+      <div className="mt-10 text-center">
         <a href="/blog" className="text-brand-yellow font-semibold hover:text-brand-yellowDark">
           ← Back to Blog
         </a>
