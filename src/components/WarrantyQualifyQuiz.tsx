@@ -264,7 +264,7 @@ export function WarrantyQualifyQuiz() {
               <QualifySpeedometerIcon className="h-9 w-9" />
             </div>
             <h2 className="text-2xl font-bold text-brand-navy mb-3">
-              Let&apos;s find the right coverage for your truck
+              Let&apos;s see if your truck qualifies for coverage
             </h2>
             <p className="text-gray-600 leading-relaxed">
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
