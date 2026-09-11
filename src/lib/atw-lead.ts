@@ -49,6 +49,14 @@ function buildNotes(input: AtwLeadInput): string | undefined {
   return lines.join('\n')
 }
 
+function resolveAtwLeadUrl(baseUrl: string): string {
+  const normalized = baseUrl.replace(/\/$/, '')
+  if (normalized.endsWith('/api')) {
+    return `${normalized}/leads/truckers-edge`
+  }
+  return `${normalized}/api/leads/truckers-edge`
+}
+
 /** POST lead to ATW Laravel → Salesforce via SForceLead::insert. */
 export async function submitAtwLead(input: AtwLeadInput): Promise<{ leadId: string }> {
   const baseUrl = process.env.ATW_API_BASE_URL?.replace(/\/$/, '')
@@ -87,7 +95,7 @@ export async function submitAtwLead(input: AtwLeadInput): Promise<{ leadId: stri
     if (input.utm.utm_term) payload.UTM_Term__c = input.utm.utm_term
   }
 
-  const res = await fetch(`${baseUrl}/api/leads/truckers-edge`, {
+  const res = await fetch(resolveAtwLeadUrl(baseUrl), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
