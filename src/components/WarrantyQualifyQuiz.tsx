@@ -14,6 +14,7 @@ import {
   computeQualificationScore,
   coverageOptionsForTruckType,
   evaluateWarrantyQualification,
+  HD_MAX_AGE_YEARS,
   qualificationEyebrow,
   qualificationHeadline,
   qualificationSubhead,
@@ -60,7 +61,7 @@ type Step5Phase = 'matching' | 'contact'
 
 export function WarrantyQualifyQuiz() {
   const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 30 }, (_, i) => currentYear - i)
+  const years = Array.from({ length: HD_MAX_AGE_YEARS + 1 }, (_, i) => currentYear - i)
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [step, setStep] = useState(0)
@@ -133,17 +134,18 @@ export function WarrantyQualifyQuiz() {
     return result
   }, [])
 
-  function goNext(fromStep = step) {
+  function goNext(fromStep = step, answerOverrides?: Partial<FunnelAnswers>) {
     setError(null)
-    if (fromStep === 1 && !answers.truckType) return
+    const a = { ...answers, ...answerOverrides }
+    if (fromStep === 1 && !a.truckType) return
     if (fromStep === 2) {
-      if (!answers.year || !answers.make.trim() || !answers.model.trim() || !answers.mileage.trim()) return
+      if (!a.year || !a.make.trim() || !a.model.trim() || !a.mileage.trim()) return
     }
-    if (fromStep === 3 && !answers.usage) return
-    if (fromStep === 4 && !answers.coverage) return
+    if (fromStep === 3 && !a.usage) return
+    if (fromStep === 4 && !a.coverage) return
 
     if (fromStep === 4) {
-      evaluateAndScore(answers)
+      evaluateAndScore(a)
       setStep5Phase('matching')
     }
 
@@ -160,19 +162,24 @@ export function WarrantyQualifyQuiz() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  function scheduleAutoAdvance(fromStep: number) {
+  function scheduleAutoAdvance(fromStep: number, answerOverrides: Partial<FunnelAnswers>) {
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
-    advanceTimerRef.current = setTimeout(() => goNext(fromStep), AUTO_ADVANCE_MS)
+    advanceTimerRef.current = setTimeout(
+      () => goNext(fromStep, answerOverrides),
+      AUTO_ADVANCE_MS,
+    )
   }
 
   function selectTruckType(value: TruckType) {
-    setAnswers((a) => ({ ...a, truckType: value, coverage: '' }))
-    scheduleAutoAdvance(1)
+    const patch = { truckType: value, coverage: '' as const }
+    setAnswers((a) => ({ ...a, ...patch }))
+    scheduleAutoAdvance(1, patch)
   }
 
   function selectUsage(value: TruckUsage) {
-    setAnswers((a) => ({ ...a, usage: value }))
-    scheduleAutoAdvance(3)
+    const patch = { usage: value }
+    setAnswers((a) => ({ ...a, ...patch }))
+    scheduleAutoAdvance(3, patch)
   }
 
   function selectCoverage(value: CoveragePriority) {
