@@ -17,7 +17,8 @@ export type MechanicDashboardLead = {
 
 type Props = {
   site: MechanicSite
-  leads: MechanicDashboardLead[]
+  /** Loaded server-side on dashboard page; defaults to [] if omitted. */
+  leads?: MechanicDashboardLead[]
   checkoutFlash?: string | null
   stripeReady: boolean
 }
@@ -45,7 +46,12 @@ const statusCopy: Record<MechanicSite['status'], { label: string; detail: string
   },
 }
 
-export function MechanicDashboardClient({ site, leads, checkoutFlash, stripeReady }: Props) {
+export function MechanicDashboardClient({
+  site,
+  leads = [],
+  checkoutFlash,
+  stripeReady,
+}: Props) {
   const router = useRouter()
 
   async function logout() {
