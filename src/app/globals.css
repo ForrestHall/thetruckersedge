@@ -356,4 +356,47 @@
       transform: translateX(320%);
     }
   }
+
+  .funnel-option-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .funnel-option-icon-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: color 0.2s ease;
+  }
+
+  .funnel-option-icon-wrap.is-selected {
+    color: #f5a623;
+  }
+
+  .funnel-option-icon {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .funnel-option-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .funnel-year-btn {
+    min-height: 2.75rem;
+  }
+
+  .funnel-contact-reveal {
+    animation: funnelFadeIn 0.35s ease;
+  }
+
+  .funnel-matching {
+    min-height: 18rem;
+  }
 }

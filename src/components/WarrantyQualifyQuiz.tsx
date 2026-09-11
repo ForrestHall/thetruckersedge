@@ -1,15 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
+import {
+  FunnelCoverageIcon,
+  FunnelTruckTypeIcon,
+  FunnelUsageIcon,
+} from '@/components/icons/funnel/FunnelOptionIcons'
 import { QualifySpeedometerIcon } from '@/components/icons/QualifySpeedometerIcon'
 import {
   RECOMMENDED_COVERAGE,
   buildMatchSummary,
+  computeQualificationScore,
   coverageOptionsForTruckType,
   evaluateWarrantyQualification,
+  qualificationEyebrow,
   qualificationHeadline,
   qualificationSubhead,
+  scoreToStarCount,
   TRUCK_TYPE_OPTIONS,
   USAGE_OPTIONS,
   type CoveragePriority,
@@ -20,6 +28,9 @@ import {
 } from '@/lib/warranty-qualify'
 
 const TOTAL_STEPS = 6
+const AUTO_ADVANCE_MS = 300
+const MATCHING_MS = 1500
+
 const TRUCK_MAKES = [
   'Freightliner',
   'Peterbilt',
@@ -45,11 +56,15 @@ type FunnelAnswers = {
   coverage: CoveragePriority | ''
 }
 
+type Step5Phase = 'matching' | 'contact'
+
 export function WarrantyQualifyQuiz() {
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 30 }, (_, i) => currentYear - i)
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [step, setStep] = useState(0)
+  const [step5Phase, setStep5Phase] = useState<Step5Phase>('matching')
   const [answers, setAnswers] = useState<FunnelAnswers>({
     truckType: '',
     year: '',
@@ -60,7 +75,9 @@ export function WarrantyQualifyQuiz() {
     coverage: '',
   })
   const [contact, setContact] = useState({ firstName: '', email: '', phone: '' })
+  const [website, setWebsite] = useState('')
   const [tier, setTier] = useState<QualificationTier>('maybe')
+  const [qualificationScore, setQualificationScore] = useState(82)
   const [summary, setSummary] = useState<string[]>([])
   const [deliveryNote, setDeliveryNote] = useState('Check your email for qualification details.')
   const [submitting, setSubmitting] = useState(false)
@@ -77,30 +94,57 @@ export function WarrantyQualifyQuiz() {
     setUtm(captured)
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (step !== 5 || step5Phase !== 'matching') return
+    const timer = setTimeout(() => setStep5Phase('contact'), MATCHING_MS)
+    return () => clearTimeout(timer)
+  }, [step, step5Phase])
+
   const progressPct = step >= TOTAL_STEPS ? 100 : ((step + 1) / TOTAL_STEPS) * 100
   const coverageOptions = useMemo(
     () => (answers.truckType ? coverageOptionsForTruckType(answers.truckType) : []),
     [answers.truckType],
   )
 
-  function goNext() {
-    setError(null)
-    if (step === 1 && !answers.truckType) return
-    if (step === 2) {
-      if (!answers.year || !answers.make.trim() || !answers.model.trim() || !answers.mileage.trim()) return
-    }
-    if (step === 3 && !answers.usage) return
-    if (step === 4 && !answers.coverage) return
-
-    if (step === 4) {
-      const parsedYear = parseInt(answers.year, 10)
-      const parsedMileage = parseInt(answers.mileage.replace(/,/g, ''), 10) || 0
-      const result = evaluateWarrantyQualification({
+  const evaluateAndScore = useCallback((nextAnswers: FunnelAnswers) => {
+    const parsedYear = parseInt(nextAnswers.year, 10)
+    const parsedMileage = parseInt(nextAnswers.mileage.replace(/,/g, ''), 10) || 0
+    const result = evaluateWarrantyQualification({
+      year: parsedYear,
+      mileage: parsedMileage,
+      truckType: nextAnswers.truckType as TruckType,
+    })
+    setTier(result)
+    setQualificationScore(
+      computeQualificationScore({
+        tier: result,
         year: parsedYear,
         mileage: parsedMileage,
-        truckType: answers.truckType as TruckType,
-      })
-      setTier(result)
+        truckType: nextAnswers.truckType as TruckType,
+        coverage: nextAnswers.coverage as CoveragePriority,
+      }),
+    )
+    return result
+  }, [])
+
+  function goNext(fromStep = step) {
+    setError(null)
+    if (fromStep === 1 && !answers.truckType) return
+    if (fromStep === 2) {
+      if (!answers.year || !answers.make.trim() || !answers.model.trim() || !answers.mileage.trim()) return
+    }
+    if (fromStep === 3 && !answers.usage) return
+    if (fromStep === 4 && !answers.coverage) return
+
+    if (fromStep === 4) {
+      evaluateAndScore(answers)
+      setStep5Phase('matching')
     }
 
     setStep((s) => Math.min(s + 1, TOTAL_STEPS))
@@ -109,12 +153,43 @@ export function WarrantyQualifyQuiz() {
 
   function goBack() {
     setError(null)
+    if (step === 5) {
+      setStep5Phase('matching')
+    }
     setStep((s) => Math.max(s - 1, 0))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  function scheduleAutoAdvance(fromStep: number) {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+    advanceTimerRef.current = setTimeout(() => goNext(fromStep), AUTO_ADVANCE_MS)
+  }
+
+  function selectTruckType(value: TruckType) {
+    setAnswers((a) => ({ ...a, truckType: value, coverage: '' }))
+    scheduleAutoAdvance(1)
+  }
+
+  function selectUsage(value: TruckUsage) {
+    setAnswers((a) => ({ ...a, usage: value }))
+    scheduleAutoAdvance(3)
+  }
+
+  function selectCoverage(value: CoveragePriority) {
+    const nextAnswers = { ...answers, coverage: value }
+    setAnswers(nextAnswers)
+    evaluateAndScore(nextAnswers)
+    setStep5Phase('matching')
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+    advanceTimerRef.current = setTimeout(() => {
+      setStep(5)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, AUTO_ADVANCE_MS)
+  }
+
   async function submitLead(requestType: LeadRequestType) {
     setError(null)
+    if (website.trim()) return
     if (!contact.firstName.trim() || !contact.email.trim()) return
     if (!contact.phone.trim()) {
       setError('Phone is required.')
@@ -180,6 +255,11 @@ export function WarrantyQualifyQuiz() {
     }
   }
 
+  const rigLabel =
+    answers.year && answers.make && answers.model
+      ? `${answers.year} ${answers.make} ${answers.model}`
+      : 'your truck'
+
   return (
     <div className="warranty-funnel mx-auto w-full max-w-md relative pb-14">
       <div className="warranty-funnel-progress fixed top-0 left-0 right-0 z-50 h-0.5 bg-brand-gray">
@@ -195,7 +275,9 @@ export function WarrantyQualifyQuiz() {
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-navy text-brand-yellow shadow-lg mb-4">
               <QualifySpeedometerIcon className="h-9 w-9" />
             </div>
-            <h2 className="text-2xl font-bold text-brand-navy mb-3">See if your truck qualifies for coverage</h2>
+            <h2 className="text-2xl font-bold text-brand-navy mb-3">
+              Let&apos;s find the right coverage for your truck
+            </h2>
             <p className="text-gray-600 leading-relaxed">
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
               <strong>extended warranty coverage</strong> — free and no obligation.
@@ -205,7 +287,7 @@ export function WarrantyQualifyQuiz() {
               under 500,000 miles.
             </p>
           </div>
-          <button type="button" className="btn-primary w-full py-3.5" onClick={goNext}>
+          <button type="button" className="btn-primary w-full py-3.5" onClick={() => goNext(0)}>
             Check my eligibility
           </button>
           <StepIndicator n={1} />
@@ -214,67 +296,67 @@ export function WarrantyQualifyQuiz() {
 
       {step === 1 && (
         <section className="warranty-funnel-step">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">What type of truck?</h2>
-          <div className="grid gap-3 mb-6">
+          <h2 className="text-2xl font-bold text-brand-navy mb-4">What type of truck?</h2>
+          <div className="grid gap-2 mb-6">
             {TRUCK_TYPE_OPTIONS.map((opt) => (
               <OptionCard
                 key={opt.value}
                 name="truckType"
                 value={opt.value}
                 checked={answers.truckType === opt.value}
-                onChange={(value) =>
-                  setAnswers((a) => ({
-                    ...a,
-                    truckType: value as TruckType,
-                    coverage: '',
-                  }))
-                }
+                onChange={() => selectTruckType(opt.value)}
                 label={opt.label}
                 hint={opt.hint}
+                icon={<FunnelTruckTypeIcon value={opt.value} className="funnel-option-icon" />}
               />
             ))}
           </div>
-          <NavButtons onBack={goBack} onNext={goNext} />
+          <BackButton onBack={goBack} />
           <StepIndicator n={2} />
         </section>
       )}
 
       {step === 2 && (
         <section className="warranty-funnel-step">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">Tell us about your rig</h2>
+          <h2 className="text-2xl font-bold text-brand-navy mb-2">Tell us about your rig</h2>
+          <p className="text-sm text-gray-500 mb-4">Select year, then enter make, model, and mileage.</p>
           <div className="space-y-4 mb-6">
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Year">
-                <select
-                  className="funnel-input"
-                  value={answers.year}
-                  onChange={(e) => setAnswers((a) => ({ ...a, year: e.target.value }))}
-                  required
-                >
-                  <option value="">Year</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
+            <Field label="Year">
+              <div className="grid max-h-48 grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-4">
+                {years.map((y) => {
+                  const selected = answers.year === String(y)
+                  return (
+                    <button
+                      key={y}
+                      type="button"
+                      onClick={() => setAnswers((a) => ({ ...a, year: String(y) }))}
+                      className={`funnel-year-btn rounded-xl border-2 px-2 py-2.5 text-sm font-semibold transition-colors ${
+                        selected
+                          ? 'border-brand-yellow bg-brand-yellow/10 text-brand-navy'
+                          : 'border-gray-200 bg-white text-brand-navy hover:border-brand-navy/30'
+                      }`}
+                    >
                       {y}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Make">
-                <select
-                  className="funnel-input"
-                  value={answers.make}
-                  onChange={(e) => setAnswers((a) => ({ ...a, make: e.target.value }))}
-                  required
-                >
-                  <option value="">Make</option>
-                  {TRUCK_MAKES.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </Field>
+            <Field label="Make">
+              <select
+                className="funnel-input"
+                value={answers.make}
+                onChange={(e) => setAnswers((a) => ({ ...a, make: e.target.value }))}
+                required
+              >
+                <option value="">Make</option>
+                {TRUCK_MAKES.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </Field>
             <Field label="Model">
               <input
                 className="funnel-input"
@@ -297,68 +379,80 @@ export function WarrantyQualifyQuiz() {
               />
             </Field>
           </div>
-          <NavButtons onBack={goBack} onNext={goNext} />
+          <NavButtons onBack={goBack} onNext={() => goNext(2)} />
           <StepIndicator n={3} />
         </section>
       )}
 
       {step === 3 && (
         <section className="warranty-funnel-step">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">How is the truck utilized?</h2>
-          <div className="grid gap-3 mb-6">
+          <h2 className="text-2xl font-bold text-brand-navy mb-4">How is the truck utilized?</h2>
+          <div className="grid gap-2 mb-6">
             {USAGE_OPTIONS.map((opt) => (
               <OptionCard
                 key={opt.value}
                 name="usage"
                 value={opt.value}
                 checked={answers.usage === opt.value}
-                onChange={(value) => setAnswers((a) => ({ ...a, usage: value as TruckUsage }))}
+                onChange={() => selectUsage(opt.value)}
                 label={opt.label}
+                icon={<FunnelUsageIcon value={opt.value} className="funnel-option-icon" />}
               />
             ))}
           </div>
-          <NavButtons onBack={goBack} onNext={goNext} />
+          <BackButton onBack={goBack} />
           <StepIndicator n={4} />
         </section>
       )}
 
       {step === 4 && (
         <section className="warranty-funnel-step">
-          <h2 className="text-xl font-bold text-brand-navy mb-4">What level of protection do you want?</h2>
-          <div className="grid gap-3 mb-6">
+          <h2 className="text-2xl font-bold text-brand-navy mb-4">What level of protection do you want?</h2>
+          <div className="grid gap-2 mb-6">
             {coverageOptions.map((opt) => (
               <OptionCard
                 key={opt.value}
                 name="coverage"
                 value={opt.value}
                 checked={answers.coverage === opt.value}
-                onChange={(value) => setAnswers((a) => ({ ...a, coverage: value as CoveragePriority }))}
+                onChange={() => selectCoverage(opt.value)}
                 label={opt.label}
                 hint={opt.hint}
+                icon={<FunnelCoverageIcon value={opt.value} className="funnel-option-icon" />}
               />
             ))}
           </div>
-          <NavButtons onBack={goBack} onNext={goNext} />
+          <BackButton onBack={goBack} />
           <StepIndicator n={5} />
         </section>
       )}
 
-      {step === 5 && (
-        <section className="warranty-funnel-step">
-          <div className="text-center mb-6">
-            <div className="funnel-analyzing-dots mb-3">
-              <span />
-              <span />
-              <span />
-            </div>
-            <p className="text-sm font-medium text-brand-navy mb-3">Checking your eligibility…</p>
-            <div className="funnel-analyzing-bar mb-4">
-              <div className="funnel-analyzing-bar-fill" />
-            </div>
-            <p className="text-gray-700 font-semibold">
+      {step === 5 && step5Phase === 'matching' && (
+        <section
+          className="warranty-funnel-step funnel-matching flex flex-col items-center justify-center gap-4 py-16 text-center"
+          aria-live="polite"
+        >
+          <div
+            className="h-10 w-10 animate-spin rounded-full border-2 border-brand-yellow/30 border-t-brand-yellow"
+            aria-hidden
+          />
+          <h2 className="text-2xl font-bold text-brand-navy">Checking your eligibility…</h2>
+          <p className="max-w-xs text-sm text-gray-600">
+            Reviewing coverage options for {rigLabel}.
+          </p>
+        </section>
+      )}
+
+      {step === 5 && step5Phase === 'contact' && (
+        <section className="warranty-funnel-step funnel-contact-reveal">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-brand-navy mb-2">
+              Where should we send your qualification?
+            </h2>
+            <p className="text-gray-600">
               {tier === 'unlikely'
-                ? 'Your results are ready. Want a warranty specialist to review other options?'
-                : 'Good news — your rig qualifies. Where should we send your qualification details?'}
+                ? `Your results for ${rigLabel} are ready. A specialist can review other options.`
+                : `Good news — ${rigLabel} looks eligible. Enter your details for a free qualification.`}
             </p>
           </div>
 
@@ -367,6 +461,18 @@ export function WarrantyQualifyQuiz() {
               {error}
             </p>
           )}
+
+          <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden>
+            <label htmlFor="website">Website</label>
+            <input
+              id="website"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
 
           <div className="space-y-3 mb-4">
             <input
@@ -401,17 +507,22 @@ export function WarrantyQualifyQuiz() {
               className="btn-primary w-full py-3.5 disabled:opacity-60"
               onClick={() => submitLead('quote')}
             >
-              {submitting ? 'Submitting…' : 'Email my qualification'}
+              {submitting ? 'Submitting…' : 'Get my free qualification'}
             </button>
             <button
               type="button"
               disabled={submitting}
-              className="btn-secondary w-full py-3.5 disabled:opacity-60"
+              className="text-sm text-brand-navy hover:underline w-full disabled:opacity-60"
               onClick={() => submitLead('call')}
             >
-              Request a call
+              Prefer a call? Request a callback
             </button>
           </div>
+
+          <p className="mt-4 text-xs leading-relaxed text-gray-500">
+            By continuing, you agree to be contacted about warranty coverage options. No obligation to buy.
+          </p>
+
           <button type="button" className="mt-4 text-sm text-gray-500 hover:text-brand-navy w-full" onClick={goBack}>
             ← Back
           </button>
@@ -419,17 +530,35 @@ export function WarrantyQualifyQuiz() {
         </section>
       )}
 
+      {step === 5 && step5Phase === 'matching' && <StepIndicator n={6} />}
+
       {step === 6 && (
         <section className="warranty-funnel-step text-center">
           <div
-            className={`inline-flex h-16 w-16 items-center justify-center rounded-full text-3xl mb-4 ${
+            className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full ${
               tier === 'likely' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
             }`}
           >
-            {tier === 'likely' ? '✓' : '!'}
+            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              {tier === 'likely' ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
+              )}
+            </svg>
           </div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-2">{qualificationHeadline(tier)}</h2>
-          <p className="text-gray-600 mb-6">{qualificationSubhead(tier)} {deliveryNote}</p>
+
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-yellow">{qualificationEyebrow(tier)}</p>
+          <h2 className="text-2xl font-bold text-brand-navy mt-2 mb-1">{qualificationHeadline(tier)}</h2>
+          <p className="text-lg font-semibold text-brand-navy">Score = {qualificationScore}/100</p>
+          <MatchStars count={scoreToStarCount(qualificationScore)} />
+          <p className="mx-auto mt-2 mb-4 max-w-sm text-xs italic leading-relaxed text-gray-500">
+            Based on your rig age, mileage, usage, and coverage preference
+          </p>
+          <p className="text-gray-600 mb-6">
+            {qualificationSubhead(tier)} {deliveryNote}
+          </p>
+
           {tier === 'likely' && (
             <div className="text-left rounded-xl border-2 border-brand-yellow/40 bg-brand-yellow/5 p-5 mb-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-navy/70 mb-1">
@@ -447,6 +576,7 @@ export function WarrantyQualifyQuiz() {
               </ul>
             </div>
           )}
+
           <div className="text-left rounded-xl border-2 border-brand-gray bg-brand-gray/30 p-5 mb-6">
             <h3 className="font-bold text-brand-navy mb-3">Your truck profile</h3>
             <ul className="space-y-2 text-sm text-gray-700">
@@ -458,6 +588,7 @@ export function WarrantyQualifyQuiz() {
               ))}
             </ul>
           </div>
+
           <p className="text-xs text-gray-500 mb-6">
             A warranty specialist will follow up to confirm eligibility, pricing, and term options. This is not
             insurance or legal advice.
@@ -471,11 +602,36 @@ export function WarrantyQualifyQuiz() {
   )
 }
 
+function MatchStars({ count }: { count: number }) {
+  return (
+    <div className="mt-3 flex justify-center gap-0.5 text-brand-yellow" aria-label={`${count} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <svg
+          key={index}
+          className={`h-5 w-5 ${index < count ? 'fill-current' : 'fill-none stroke-current opacity-30'}`}
+          viewBox="0 0 20 20"
+          aria-hidden
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 function StepIndicator({ n }: { n: number }) {
   return (
     <p className="fixed bottom-4 left-0 right-0 text-center text-xs font-mono text-gray-400 pointer-events-none">
       {n} of {TOTAL_STEPS}
     </p>
+  )
+}
+
+function BackButton({ onBack }: { onBack: () => void }) {
+  return (
+    <button type="button" className="btn-secondary w-full sm:w-auto px-6" onClick={onBack}>
+      Back
+    </button>
   )
 }
 
@@ -492,7 +648,7 @@ function NavButtons({ onBack, onNext }: { onBack: () => void; onNext: () => void
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="block text-sm font-medium text-gray-700 mb-1">{label}</span>
@@ -508,17 +664,19 @@ function OptionCard({
   onChange,
   label,
   hint,
+  icon,
 }: {
   name: string
   value: string
   checked: boolean
-  onChange: (value: string) => void
+  onChange: () => void
   label: string
   hint?: string
+  icon: ReactNode
 }) {
   return (
     <label
-      className={`funnel-option-card block cursor-pointer rounded-xl border-2 p-4 transition-colors ${
+      className={`funnel-option-card block cursor-pointer rounded-xl border-2 transition-colors ${
         checked ? 'border-brand-yellow bg-brand-yellow/10' : 'border-gray-200 bg-white hover:border-brand-navy/30'
       }`}
     >
@@ -527,11 +685,16 @@ function OptionCard({
         name={name}
         value={value}
         checked={checked}
-        onChange={() => onChange(value)}
+        onChange={onChange}
         className="sr-only"
       />
-      <span className="font-semibold text-brand-navy block">{label}</span>
-      {hint && <span className="text-sm text-gray-500 mt-0.5 block">{hint}</span>}
+      <span className="funnel-option-card-content">
+        <span className={`funnel-option-icon-wrap ${checked ? 'is-selected' : ''}`}>{icon}</span>
+        <span className="funnel-option-text">
+          <span className="font-semibold text-brand-navy block">{label}</span>
+          {hint && <span className="text-sm text-gray-500 mt-0.5 block">{hint}</span>}
+        </span>
+      </span>
     </label>
   )
 }

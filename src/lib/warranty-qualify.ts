@@ -182,3 +182,44 @@ export function coverageOptionsForTruckType(truckType: TruckType) {
   const isClass8 = truckType === 'class8-otr' || truckType === 'class8-regional'
   return COVERAGE_OPTIONS.filter((opt) => !opt.class8Only || isClass8)
 }
+
+export function computeQualificationScore(input: {
+  tier: QualificationTier
+  year: number
+  mileage: number
+  truckType: TruckType
+  coverage: CoveragePriority
+}): number {
+  const currentYear = new Date().getFullYear()
+  const maxAge = isMediumDutyTruckType(input.truckType) ? MD_MAX_AGE_YEARS : HD_MAX_AGE_YEARS
+  const maxMileage = isMediumDutyTruckType(input.truckType) ? MD_MAX_MILEAGE : HD_MAX_MILEAGE
+  const minYear = currentYear - maxAge
+
+  let score =
+    input.tier === 'likely' ? 82 : input.tier === 'maybe' ? 65 : 35
+
+  const ageMargin = Math.max(0, input.year - minYear)
+  const mileageMargin = Math.max(0, maxMileage - input.mileage)
+  const ageBoost = Math.min(8, Math.round((ageMargin / maxAge) * 8))
+  const mileageBoost = Math.min(8, Math.round((mileageMargin / maxMileage) * 8))
+  const coverageBoost =
+    input.coverage === 'comprehensive' ? 3 : input.coverage === 'balanced' ? 2 : 0
+
+  score += ageBoost + mileageBoost + coverageBoost
+
+  if (input.tier === 'likely') return Math.min(98, Math.max(82, score))
+  if (input.tier === 'maybe') return Math.min(78, Math.max(65, score))
+  return Math.min(55, Math.max(35, score))
+}
+
+export function scoreToStarCount(score: number): number {
+  if (score >= 90) return 5
+  if (score >= 78) return 4
+  if (score >= 65) return 3
+  return 2
+}
+
+export function qualificationEyebrow(tier: QualificationTier): string {
+  if (tier === 'unlikely') return 'Review recommended'
+  return "You're qualified"
+}
