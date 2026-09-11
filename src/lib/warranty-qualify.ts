@@ -79,6 +79,9 @@ const COVERAGE_LABELS: Record<CoveragePriority, string> = {
   aftertreatment: 'Aftertreatment / emissions',
 }
 
+/** Default when the funnel skips the coverage question. */
+export const DEFAULT_FUNNEL_COVERAGE: CoveragePriority = 'comprehensive'
+
 export const RECOMMENDED_COVERAGE = {
   name: 'Exclusionary extended warranty',
   shortName: 'Exclusionary coverage',

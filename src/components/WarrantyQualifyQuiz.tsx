@@ -1,18 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import {
-  FunnelCoverageIcon,
-  FunnelTruckTypeIcon,
-  FunnelUsageIcon,
-} from '@/components/icons/funnel/FunnelOptionIcons'
+import { FunnelTruckTypeIcon, FunnelUsageIcon } from '@/components/icons/funnel/FunnelOptionIcons'
 import { QualifySpeedometerIcon } from '@/components/icons/QualifySpeedometerIcon'
 import {
+  DEFAULT_FUNNEL_COVERAGE,
   RECOMMENDED_COVERAGE,
   buildMatchSummary,
   computeQualificationScore,
-  coverageOptionsForTruckType,
   evaluateWarrantyQualification,
   HD_MAX_AGE_YEARS,
   qualificationEyebrow,
@@ -28,7 +24,7 @@ import {
   type TruckUsage,
 } from '@/lib/warranty-qualify'
 
-const TOTAL_STEPS = 6
+const TOTAL_STEPS = 5
 const AUTO_ADVANCE_MS = 300
 const MATCHING_MS = 1500
 
@@ -54,10 +50,10 @@ type FunnelAnswers = {
   model: string
   mileage: string
   usage: TruckUsage | ''
-  coverage: CoveragePriority | ''
+  coverage: CoveragePriority
 }
 
-type Step5Phase = 'matching' | 'contact'
+type ContactPhase = 'matching' | 'contact'
 
 export function WarrantyQualifyQuiz() {
   const currentYear = new Date().getFullYear()
@@ -65,7 +61,7 @@ export function WarrantyQualifyQuiz() {
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [step, setStep] = useState(0)
-  const [step5Phase, setStep5Phase] = useState<Step5Phase>('matching')
+  const [contactPhase, setContactPhase] = useState<ContactPhase>('matching')
   const [answers, setAnswers] = useState<FunnelAnswers>({
     truckType: '',
     year: '',
@@ -73,7 +69,7 @@ export function WarrantyQualifyQuiz() {
     model: '',
     mileage: '',
     usage: '',
-    coverage: '',
+    coverage: DEFAULT_FUNNEL_COVERAGE,
   })
   const [contact, setContact] = useState({ firstName: '', email: '', phone: '' })
   const [website, setWebsite] = useState('')
@@ -102,16 +98,12 @@ export function WarrantyQualifyQuiz() {
   }, [])
 
   useEffect(() => {
-    if (step !== 5 || step5Phase !== 'matching') return
-    const timer = setTimeout(() => setStep5Phase('contact'), MATCHING_MS)
+    if (step !== 4 || contactPhase !== 'matching') return
+    const timer = setTimeout(() => setContactPhase('contact'), MATCHING_MS)
     return () => clearTimeout(timer)
-  }, [step, step5Phase])
+  }, [step, contactPhase])
 
   const progressPct = step >= TOTAL_STEPS ? 100 : ((step + 1) / TOTAL_STEPS) * 100
-  const coverageOptions = useMemo(
-    () => (answers.truckType ? coverageOptionsForTruckType(answers.truckType) : []),
-    [answers.truckType],
-  )
 
   const evaluateAndScore = useCallback((nextAnswers: FunnelAnswers) => {
     const parsedYear = parseInt(nextAnswers.year, 10)
@@ -128,7 +120,7 @@ export function WarrantyQualifyQuiz() {
         year: parsedYear,
         mileage: parsedMileage,
         truckType: nextAnswers.truckType as TruckType,
-        coverage: nextAnswers.coverage as CoveragePriority,
+        coverage: nextAnswers.coverage,
       }),
     )
     return result
@@ -142,12 +134,6 @@ export function WarrantyQualifyQuiz() {
       if (!a.year || !a.make.trim() || !a.model.trim() || !a.mileage.trim()) return
     }
     if (fromStep === 3 && !a.usage) return
-    if (fromStep === 4 && !a.coverage) return
-
-    if (fromStep === 4) {
-      evaluateAndScore(a)
-      setStep5Phase('matching')
-    }
 
     setStep((s) => Math.min(s + 1, TOTAL_STEPS))
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -155,8 +141,8 @@ export function WarrantyQualifyQuiz() {
 
   function goBack() {
     setError(null)
-    if (step === 5) {
-      setStep5Phase('matching')
+    if (step === 4) {
+      setContactPhase('matching')
     }
     setStep((s) => Math.max(s - 1, 0))
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -171,25 +157,20 @@ export function WarrantyQualifyQuiz() {
   }
 
   function selectTruckType(value: TruckType) {
-    const patch = { truckType: value, coverage: '' as const }
+    const patch = { truckType: value }
     setAnswers((a) => ({ ...a, ...patch }))
     scheduleAutoAdvance(1, patch)
   }
 
   function selectUsage(value: TruckUsage) {
-    const patch = { usage: value }
-    setAnswers((a) => ({ ...a, ...patch }))
-    scheduleAutoAdvance(3, patch)
-  }
-
-  function selectCoverage(value: CoveragePriority) {
-    const nextAnswers = { ...answers, coverage: value }
+    const patch = { usage: value, coverage: DEFAULT_FUNNEL_COVERAGE }
+    const nextAnswers = { ...answers, ...patch }
     setAnswers(nextAnswers)
     evaluateAndScore(nextAnswers)
-    setStep5Phase('matching')
+    setContactPhase('matching')
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
     advanceTimerRef.current = setTimeout(() => {
-      setStep(5)
+      setStep(4)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, AUTO_ADVANCE_MS)
   }
@@ -243,7 +224,7 @@ export function WarrantyQualifyQuiz() {
           mileage: answers.mileage,
           truckType: answers.truckType as TruckType,
           usage: answers.usage as TruckUsage,
-          coverage: answers.coverage as CoveragePriority,
+          coverage: answers.coverage,
           tier: data.tier || tier,
         })
 
@@ -253,7 +234,7 @@ export function WarrantyQualifyQuiz() {
           ? 'A warranty specialist will call you shortly to review your qualification.'
           : 'Check your email for qualification details and next steps.',
       )
-      setStep(6)
+      setStep(5)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to submit. Please try again.')
@@ -412,29 +393,7 @@ export function WarrantyQualifyQuiz() {
         </section>
       )}
 
-      {step === 4 && (
-        <section className="warranty-funnel-step">
-          <h2 className="text-2xl font-bold text-brand-navy mb-4">What level of protection do you want?</h2>
-          <div className="grid gap-2 mb-6">
-            {coverageOptions.map((opt) => (
-              <OptionCard
-                key={opt.value}
-                name="coverage"
-                value={opt.value}
-                checked={answers.coverage === opt.value}
-                onChange={() => selectCoverage(opt.value)}
-                label={opt.label}
-                hint={opt.hint}
-                icon={<FunnelCoverageIcon value={opt.value} className="funnel-option-icon" />}
-              />
-            ))}
-          </div>
-          <BackButton onBack={goBack} />
-          <StepIndicator n={5} />
-        </section>
-      )}
-
-      {step === 5 && step5Phase === 'matching' && (
+      {step === 4 && contactPhase === 'matching' && (
         <section
           className="warranty-funnel-step funnel-matching flex flex-col items-center justify-center gap-4 py-16 text-center"
           aria-live="polite"
@@ -447,10 +406,11 @@ export function WarrantyQualifyQuiz() {
           <p className="max-w-xs text-sm text-gray-600">
             Reviewing coverage options for {rigLabel}.
           </p>
+          <StepIndicator n={5} />
         </section>
       )}
 
-      {step === 5 && step5Phase === 'contact' && (
+      {step === 4 && contactPhase === 'contact' && (
         <section className="warranty-funnel-step funnel-contact-reveal">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-brand-navy mb-2">
@@ -533,13 +493,11 @@ export function WarrantyQualifyQuiz() {
           <button type="button" className="mt-4 text-sm text-gray-500 hover:text-brand-navy w-full" onClick={goBack}>
             ← Back
           </button>
-          <StepIndicator n={6} />
+          <StepIndicator n={5} />
         </section>
       )}
 
-      {step === 5 && step5Phase === 'matching' && <StepIndicator n={6} />}
-
-      {step === 6 && (
+      {step === 5 && (
         <section className="warranty-funnel-step text-center">
           <div
             className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full ${
@@ -560,7 +518,7 @@ export function WarrantyQualifyQuiz() {
           <p className="text-lg font-semibold text-brand-navy">Score = {qualificationScore}/100</p>
           <MatchStars count={scoreToStarCount(qualificationScore)} />
           <p className="mx-auto mt-2 mb-4 max-w-sm text-xs italic leading-relaxed text-gray-500">
-            Based on your rig age, mileage, usage, and coverage preference
+            Based on your rig age, mileage, and usage
           </p>
           <p className="text-gray-600 mb-6">
             {qualificationSubhead(tier)} {deliveryNote}
