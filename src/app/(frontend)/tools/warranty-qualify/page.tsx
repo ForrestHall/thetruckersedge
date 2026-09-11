@@ -5,10 +5,10 @@ import { getBaseUrl } from '@/lib/media'
 
 const path = '/tools/warranty-qualify'
 const desc =
-  'See if your commercial truck likely qualifies for extended warranty coverage. Quick eligibility check for owner-operators and fleet owners — free, no obligation.'
+  'Free commercial truck warranty match in 60 seconds. Tell us about your rig and get matched with one best-fit extended warranty option — no obligation.'
 
 export const metadata: Metadata = {
-  title: 'See If You Qualify for a Truck Warranty',
+  title: 'See If You Qualify for a Truck Warranty — Free Match',
   description: desc,
   alternates: { canonical: `${getBaseUrl()}${path}` },
   openGraph: {
@@ -17,33 +17,24 @@ export const metadata: Metadata = {
     url: `${getBaseUrl()}${path}`,
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: 'Truck Warranty Eligibility Check' },
+  twitter: { card: 'summary_large_image', title: 'Truck Warranty Match — 60 Seconds' },
 }
 
 export default function WarrantyQualifyPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
-      <div className="mb-8 sm:mb-10">
-        <Link href="/tools" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
-          ← All Tools
-        </Link>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-navy mt-3 mb-3">
-          See if you qualify for a warranty
-        </h1>
-        <p className="text-gray-500 text-lg max-w-2xl">
-          Answer a few questions about your truck and we&apos;ll tell you whether extended warranty coverage is
-          likely to fit. If it looks good, we&apos;ll follow up with options matched to your rig.
-        </p>
-        <p className="mt-4 text-base text-gray-600 max-w-2xl">
-          Already know your details? Skip straight to the{' '}
-          <Link href="/tools/warranty-quote" className="font-semibold text-brand-navy underline">
-            full warranty quote tool
+    <div className="min-h-[70vh] bg-gradient-to-b from-brand-gray/60 to-white">
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-16 sm:pt-10">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <Link href="/tools" className="text-brand-yellow text-sm font-semibold hover:text-brand-yellowDark">
+            ← All Tools
           </Link>
-          .
-        </p>
-      </div>
+          <Link href="/tools/warranty-quote" className="text-sm text-gray-500 hover:text-brand-navy">
+            Full quote →
+          </Link>
+        </div>
 
-      <WarrantyQualifyQuiz />
+        <WarrantyQualifyQuiz />
+      </div>
     </div>
   )
 }

@@ -265,4 +265,95 @@
   .mechanic-microsite .mechanic-cta:hover {
     background-color: var(--ms-accent-hover);
   }
+
+  /* Truck warranty match funnel (rvwarrantyreview-style flow) */
+  .warranty-funnel-step {
+    animation: funnelFadeIn 0.35s ease;
+  }
+
+  @keyframes funnelFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .funnel-input {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid #e5e7eb;
+    color: #0f2044;
+    background: #fff;
+  }
+
+  .funnel-input:focus {
+    outline: none;
+    border-color: #f5a623;
+    box-shadow: 0 0 0 2px rgb(245 166 35 / 0.25);
+  }
+
+  .funnel-analyzing-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .funnel-analyzing-dots span {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    background: #f5a623;
+    animation: funnelBounce 1.2s infinite ease-in-out;
+  }
+
+  .funnel-analyzing-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .funnel-analyzing-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes funnelBounce {
+    0%,
+    80%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.45;
+    }
+    40% {
+      transform: translateY(-6px);
+      opacity: 1;
+    }
+  }
+
+  .funnel-analyzing-bar {
+    height: 4px;
+    border-radius: 9999px;
+    background: #e5e7eb;
+    overflow: hidden;
+  }
+
+  .funnel-analyzing-bar-fill {
+    height: 100%;
+    width: 35%;
+    background: linear-gradient(90deg, #f5a623, #0f2044);
+    animation: funnelBarSweep 1.8s ease-in-out infinite;
+  }
+
+  @keyframes funnelBarSweep {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(320%);
+    }
+  }
 }

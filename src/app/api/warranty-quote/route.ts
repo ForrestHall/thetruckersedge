@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
+import { submitAtwLead } from '@/lib/atw-lead'
 
 const schema = z.object({
   vehicle: z.object({
@@ -20,17 +21,6 @@ const schema = z.object({
 })
 
 export async function POST(request: Request) {
-  const apiKey = process.env.RESEND_API_KEY
-  const adminEmail = process.env.ADMIN_EMAIL
-  const fromEmail = process.env.WARRANTY_FROM_EMAIL
-
-  if (!apiKey || !adminEmail || !fromEmail) {
-    return NextResponse.json(
-      { error: 'Warranty quote service is not configured' },
-      { status: 503 }
-    )
-  }
-
   let body: unknown
   try {
     body = await request.json()
@@ -46,81 +36,46 @@ export async function POST(request: Request) {
 
   const { vehicle, mileage, usage, contact } = parsed.data
 
-  const resend = new Resend(apiKey)
+  try {
+    const { leadId } = await submitAtwLead({
+      funnel: 'warranty-quote',
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email,
+      phone: contact.phone,
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      mileage,
+      truckClass: vehicle.truckClass,
+      usage,
+      notes: [`Usage type: ${usage}`],
+    })
 
-  const leadBody = `
-Warranty Quote Lead
-==================
+    const apiKey = process.env.RESEND_API_KEY
+    const fromEmail = process.env.WARRANTY_FROM_EMAIL
+    if (apiKey && fromEmail) {
+      const resend = new Resend(apiKey)
+      await resend.emails.send({
+        from: `The Trucker's Edge <${fromEmail}>`,
+        to: contact.email,
+        subject: "Your Truck Warranty Quote – The Trucker's Edge",
+        text: [
+          `Hi ${contact.firstName},`,
+          '',
+          "Thanks for requesting a truck warranty quote. We've received your details and a specialist will follow up with options.",
+          '',
+          "— The Trucker's Edge",
+        ].join('\n'),
+      }).catch((err) => console.error('[warranty-quote] confirmation email:', err))
+    }
 
-Contact
--------
-Name: ${contact.firstName} ${contact.lastName}
-Email: ${contact.email}
-Phone: ${contact.phone}
-
-Vehicle
--------
-Make: ${vehicle.make}
-Model: ${vehicle.model || 'N/A'}
-Year: ${vehicle.year}
-Class: ${vehicle.truckClass}
-
-Usage
------
-Mileage: ${mileage.toLocaleString()}
-Type: ${usage}
-
----
-Submitted via The Trucker's Edge warranty quote tool.
-`.trim()
-
-  const confirmationBody = `
-Hi ${contact.firstName},
-
-Thanks for requesting a truck warranty quote. We're searching top providers and will email your personalized quote soon.
-
-If you have any questions in the meantime, just reply to this email.
-
-— The Trucker's Edge
-`.trim()
-
-  // Resend returns { data, error } — it does NOT throw on API failures; we must check .error
-  const [leadResult, confirmResult] = await Promise.all([
-    resend.emails.send({
-      from: `The Trucker's Edge <${fromEmail}>`,
-      to: adminEmail,
-      replyTo: contact.email,
-      subject: `Warranty Quote Lead: ${contact.firstName} ${contact.lastName}`,
-      text: leadBody,
-    }),
-    resend.emails.send({
-      from: `The Trucker's Edge <${fromEmail}>`,
-      to: contact.email,
-      subject: "Your Truck Warranty Quote – The Trucker's Edge",
-      text: confirmationBody,
-    }),
-  ])
-
-  const errors: string[] = []
-  if (leadResult.error) {
-    console.error('Warranty quote — lead email failed:', leadResult.error)
-    errors.push(`Lead notification: ${leadResult.error.message}`)
-  }
-  if (confirmResult.error) {
-    console.error('Warranty quote — confirmation email failed:', confirmResult.error)
-    errors.push(`Confirmation email: ${confirmResult.error.message}`)
-  }
-
-  if (errors.length > 0) {
-    const isDev = process.env.NODE_ENV === 'development'
+    return NextResponse.json({ success: true, leadId })
+  } catch (err) {
+    console.error('[warranty-quote] ATW lead:', err)
     return NextResponse.json(
-      {
-        error: 'Email could not be sent. Check Resend domain setup and env vars.',
-        ...(isDev && { resendDetails: errors }),
-      },
-      { status: 500 }
+      { error: err instanceof Error ? err.message : 'Lead could not be submitted. Please try again.' },
+      { status: 502 },
     )
   }
-
-  return NextResponse.json({ success: true })
 }

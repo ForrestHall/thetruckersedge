@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
+import { submitAtwLead } from '@/lib/atw-lead'
 import { clientIpFromRequest, mechanicLeadRateLimitOk } from '@/lib/mechanic-lead-rate-limit'
 
 const schema = z.object({
@@ -11,8 +12,6 @@ const schema = z.object({
   notes: z.string().trim().max(2000).optional().or(z.literal('')),
   company: z.string().optional(),
 })
-
-const SOURCE = 'Commercial truck warranty guide (/tools/truck-warranty-reviews)'
 
 export async function POST(request: Request) {
   const ip = clientIpFromRequest(request)
@@ -39,67 +38,44 @@ export async function POST(request: Request) {
 
   const { firstName, lastName, email, phone, notes } = parsed.data
 
-  const apiKey = process.env.RESEND_API_KEY
-  const adminEmail = process.env.ADMIN_EMAIL
-  const fromEmail = process.env.WARRANTY_FROM_EMAIL
+  try {
+    const { leadId } = await submitAtwLead({
+      funnel: 'warranty-guide',
+      firstName,
+      lastName,
+      email,
+      phone,
+      notes: notes?.trim() ? [notes.trim()] : ['Source: truck warranty buyer guide'],
+    })
 
-  if (!apiKey || !adminEmail || !fromEmail) {
-    return NextResponse.json({ error: 'Lead capture is not configured on this server.' }, { status: 503 })
+    const apiKey = process.env.RESEND_API_KEY
+    const fromEmail = process.env.WARRANTY_FROM_EMAIL
+    const base = process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, '') || ''
+
+    if (apiKey && fromEmail) {
+      const resend = new Resend(apiKey)
+      await resend.emails.send({
+        from: `The Trucker's Edge <${fromEmail}>`,
+        to: email,
+        subject: "We received your warranty request — The Trucker's Edge",
+        text: [
+          `Hi ${firstName},`,
+          '',
+          "Thanks for reaching out from our commercial truck warranty guide. We've received your details and will follow up with warranty options that may fit your operation.",
+          '',
+          `Want to move faster? Complete the full quote questionnaire here:\n${base}/tools/warranty-quote`,
+          '',
+          "— The Trucker's Edge",
+        ].join('\n'),
+      }).catch((err) => console.error('[warranty-guide-lead] confirmation email:', err))
+    }
+
+    return NextResponse.json({ ok: true, leadId })
+  } catch (err) {
+    console.error('[warranty-guide-lead] ATW lead:', err)
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Lead could not be submitted. Please try again.' },
+      { status: 502 },
+    )
   }
-
-  const base = process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, '') || ''
-  const quoteUrl = `${base}/tools/warranty-quote`
-
-  const resend = new Resend(apiKey)
-
-  const leadText = [
-    'Warranty guide lead (quick intake)',
-    '================================',
-    '',
-    SOURCE,
-    '',
-    'Contact',
-    '-------',
-    `Name: ${firstName} ${lastName}`,
-    `Email: ${email}`,
-    `Phone: ${phone}`,
-    notes?.trim() ? `\nNotes:\n${notes.trim()}` : '',
-    '',
-    `Full quote questionnaire: ${quoteUrl}`,
-  ]
-    .filter(Boolean)
-    .join('\n')
-
-  const confirmText = [
-    `Hi ${firstName},`,
-    '',
-    "Thanks for reaching out from our commercial truck warranty guide. We've received your details and will follow up with warranty options that may fit your operation.",
-    '',
-    `Want to move faster? Complete the full quote questionnaire here:\n${quoteUrl}`,
-    '',
-    "— The Trucker's Edge",
-  ].join('\n')
-
-  const [leadResult, confirmResult] = await Promise.all([
-    resend.emails.send({
-      from: `The Trucker's Edge <${fromEmail}>`,
-      to: adminEmail,
-      replyTo: email,
-      subject: `Warranty guide lead: ${firstName} ${lastName}`,
-      text: leadText,
-    }),
-    resend.emails.send({
-      from: `The Trucker's Edge <${fromEmail}>`,
-      to: email,
-      subject: "We received your warranty request — The Trucker's Edge",
-      text: confirmText,
-    }),
-  ])
-
-  if (leadResult.error || confirmResult.error) {
-    console.error('[warranty-guide-lead] Resend:', leadResult.error, confirmResult.error)
-    return NextResponse.json({ error: 'Email could not be sent. Please try again later.' }, { status: 500 })
-  }
-
-  return NextResponse.json({ ok: true })
 }
