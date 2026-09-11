@@ -270,10 +270,6 @@ export function WarrantyQualifyQuiz() {
               Answer a few quick questions about your rig. We&apos;ll check whether you qualify for{' '}
               <strong>extended warranty coverage</strong> — free and no obligation.
             </p>
-            <p className="text-sm text-gray-500 mt-4 leading-relaxed">
-              Heavy duty: up to 20 years old, under 1,000,000 miles. Medium duty: 15 years or newer,
-              under 500,000 miles.
-            </p>
           </div>
           <button type="button" className="btn-primary w-full py-3.5" onClick={() => goNext(0)}>
             Check my eligibility
