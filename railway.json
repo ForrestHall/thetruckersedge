@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "preDeployCommand": "npx tsx scripts/fix-blog-seo.ts && npx tsx scripts/seed-posts.ts && npx tsx scripts/seed-mechanic-demo.ts",
+    "preDeployCommand": "npx tsx scripts/seed-mechanic-demo.ts",
     "startCommand": "npx tsx scripts/init-db.ts && npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
