@@ -112,8 +112,8 @@ export function WarrantyQualifyQuiz() {
   async function submitLead(requestType: LeadRequestType) {
     setError(null)
     if (!contact.firstName.trim() || !contact.email.trim()) return
-    if (requestType === 'call' && !contact.phone.trim()) {
-      setError('Phone is required for a callback request.')
+    if (!contact.phone.trim()) {
+      setError('Phone is required.')
       return
     }
 
@@ -380,6 +380,7 @@ export function WarrantyQualifyQuiz() {
               placeholder="Phone number"
               value={contact.phone}
               onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
+              required
             />
           </div>
 

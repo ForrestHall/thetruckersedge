@@ -27,7 +27,7 @@ const schema = z.object({
     firstName: z.string().trim().min(1).max(80),
     lastName: z.string().trim().max(80).optional().or(z.literal('')),
     email: z.string().trim().email(),
-    phone: z.string().trim().max(40).optional().or(z.literal('')),
+    phone: z.string().trim().min(7).max(40),
   }),
   utm: z
     .object({
@@ -61,10 +61,6 @@ export async function POST(request: Request) {
 
   const { truckType, vehicle, mileage, usage, coverage, requestType, contact, utm } = parsed.data
 
-  if (requestType === 'call' && !contact.phone?.trim()) {
-    return NextResponse.json({ error: 'Phone is required for a callback request.' }, { status: 400 })
-  }
-
   const tier = evaluateWarrantyQualification({
     year: vehicle.year,
     mileage,
@@ -88,7 +84,7 @@ export async function POST(request: Request) {
       firstName: contact.firstName,
       lastName: contact.lastName,
       email: contact.email,
-      phone: contact.phone || '',
+      phone: contact.phone,
       make: vehicle.make,
       model: vehicle.model,
       year: vehicle.year,
